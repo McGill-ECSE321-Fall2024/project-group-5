@@ -1,0 +1,229 @@
+class Account
+{
+  abstract;
+  unique String username;
+   passwordHash;
+     randomPassword;
+  int id;
+}
+
+class StaffAccount
+{
+  abstract;
+  isA Account;
+}
+
+class CustomerAccount
+{
+    isA Account;
+  immutable String emailAddress;
+ lazy String name;
+    1 -- 1 Wishlist;
+  1 -- 0..* PaymentInformation;
+  1 -- * Review;
+  1 -- * Order;
+}
+
+class ManagerAccount
+{
+  singleton;
+    isA StaffAccount;
+  String username = "admin";
+}
+
+class EmployeeAccount
+{
+
+    isA StaffAccount;
+}
+
+class Cart
+{
+  int id;
+* -- 1 CustomerAccount;
+  1 -- * GameQty;
+  1 -- 0..1 Order;
+}
+
+class Wishlist
+{
+  int id;
+}
+
+class Catalog
+{
+  int id;
+singleton;
+  1 -- 0..* Game;
+}
+
+class Address
+{
+  String address;
+  String city;
+  String province;
+  String country;
+  String postalCode;
+  int id;
+1 -- * Order;
+  0..* -- 1 CustomerAccount;
+}
+
+enum CardType {Visa, Mastercard, Interact, AmericanExpress}
+
+class PaymentInformation 
+{
+  String cardholderName;
+  int cardNumber;
+  Date expirationDate;
+  int cvc;
+  CardType cardType;
+  int id;
+}
+
+class Order
+{
+  int orderId;
+  double totalPrice;
+  boolean isPaid;
+  boolean deliveryStatus;
+promotionCode;
+boolean userAgreementCheck;
+  * -- 1 PaymentInformation;
+}
+
+class Review
+{
+  Date date;
+  String description;
+  int likeCount;
+  int dislikeCount;
+  float rating;
+  Boolean employeeReviewed;
+  int id;
+0..1 -- * Review reply;
+}
+
+enum Category {Horror, Puzzle, Action, ActionjAdventure, Sports, Strategy, RPG, Multiplayer, Simulation, Survival, Party, Shooter, Casual, Platformer, BattleRoyale, Sandbox, MMO}
+enum GameConsole {PS4, PS5, WiiU, NintendoSwitch, PC, XBoxSeriesS, XBoxSeriesX, Mac}
+
+class Game
+{
+  String name;
+  int price;
+  String description;
+  Category category;
+  GameConsole gameConsole;
+    int id;
+1 -- * GameQty;
+  1 -- * Review;
+}
+
+
+
+class GameStoreApplication
+{
+  policy;
+  int id;
+}
+
+class GameQty
+{
+  int qty;
+  int id;
+}
+
+//$?[End_of_model]$?
+
+namespace -;
+
+
+class Account
+{
+  position 371 25 171.75 125.463;
+  }
+
+class StaffAccount
+{
+  position 260 189 109 57.4625;
+}
+
+class CustomerAccount
+{
+  position 538 178 109 75.4625;
+    position.association CustomerAccount__Wishlist 159,0 0,48;
+  position.association CustomerAccount__PaymentInformation 165,13 0,16;
+  position.association CustomerAccount__Review 121,75 140,0;
+  position.association CustomerAccount__Order 165,70 24,0;
+}
+
+class ManagerAccount
+{
+  position 448 354 109 58.4625;
+  }
+
+class EmployeeAccount
+{
+  position 226 354 109 41.4625;
+  }
+
+class Cart
+{
+  position 703 385 109 58.4625;
+  position.association Cart__CustomerAccount 36,0 151,75;
+  position.association Cart__GameQty 0,41 54,0;
+  position.association Cart__Order 110,58 0,35;
+}
+
+class Wishlist
+{
+  position 779 35 109 58.4625;
+}
+
+class Catalog
+{
+  position 413 569 109 58.4625;
+  position.association Catalog__Game 0,4 217,52;
+}
+
+class Address
+{
+  position 926 196 149.05 126.463;
+  position.association Address__Order 26,124 77,0;
+  position.association Address__CustomerAccount 0,23 165,42;
+}
+
+class PaymentInformation
+{
+  position 1101 161 184.4 126.463;
+}
+
+class Order
+{
+  position 910 507 230.325 143.462;
+    position.association Order__PaymentInformation 202,0 74,124;
+}
+
+class Review
+{
+  position 544 666 216.087 160.462;
+  position.association Review__Review:roleName 216.087,63 216.087,88;
+  position.association Review__Review:reply 216.087,56 216.087,101;
+}
+
+class Game
+{
+  position 0 476 216.087 143.462;
+    position.association Game__GameQty 217,29 0,18;
+  position.association Game__Review 217,126 30,0;
+}
+
+class GameStoreApplication
+{
+  position 1017 17 172.025 58.4625;
+}
+
+class GameQty
+{
+  position 507 468 109 75.4625;
+}
