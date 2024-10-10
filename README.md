@@ -11,17 +11,3 @@
 | Romain Teyssier| [rom618](https://github.com/rom618) | Project Lead, Software Developer | Computer Engineering | U3 |
 | Caroline Thom | [carolinethom2](https://github.com/carolinethom2)  | Software Developer | Mechanical Engineering | U4 |
 | Reswanth Reji Pillai | Data 1   | Software Developer | Software Engineering | U2 |
-
-
-### Deliverable Summary
-#### Contribution 
-| Team Member | Deliverable 1 | Deliverabel 2 |  Deliverable 3 |
-|-------------|---------------|---------------| ---------------|
-| Ana-Maria Floarea | Data 1   | 0 | 0 |
-| Alisha Malik | Data 1   | 0 | 0 |
-| Viviane-Laura Tain   | Data 1   | 0 | 0 |
-| Romain Teyssier| Data 1   | 0 | 0 |
-| Caroline Thom | Data 1   | 0 | 0 |
-| Reswanth Reji Pillai | Data 1   | 0 | 0 |
-#### Deliverable 1 
-
