@@ -1,33 +1,32 @@
-/*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
+package ca.mcgill.ecse321.gamestore.model;
 
-
-import java.util.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 
 // line 11 "model.ump"
 // line 147 "model.ump"
-public abstract class StaffAccount extends Account
-{
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class StaffAccount extends Account {
 
-  //------------------------
+  // ------------------------
   // MEMBER VARIABLES
-  //------------------------
+  // ------------------------
 
-  //------------------------
+  // ------------------------
   // CONSTRUCTOR
-  //------------------------
+  // ------------------------
 
-  public StaffAccount(String aUsername, String aPasswordHash, String aRandomPassword, int aId)
-  {
-    super(aUsername, aPasswordHash, aRandomPassword, aId);
+  public StaffAccount(String aUsername, String aPasswordHash, String aRandomPassword) {
+    super(aUsername, aPasswordHash, aRandomPassword);
   }
 
-  //------------------------
+  // ------------------------
   // INTERFACE
-  //------------------------
+  // ------------------------
 
-  public void delete()
-  {
+  public void delete() {
     super.delete();
   }
 

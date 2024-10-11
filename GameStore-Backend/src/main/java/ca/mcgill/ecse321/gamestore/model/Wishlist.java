@@ -1,81 +1,73 @@
-/*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
+package ca.mcgill.ecse321.gamestore.model;
 
-
-import java.util.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 
 // line 49 "model.ump"
 // line 179 "model.ump"
-public class Wishlist
-{
+@Entity
+public class Wishlist {
 
-  //------------------------
+  // ------------------------
   // MEMBER VARIABLES
-  //------------------------
+  // ------------------------
 
-  //Wishlist Attributes
+  // Wishlist Attributes
+  @Id
+  @GeneratedValue
   private int id;
 
-  //Wishlist Associations
+  // Wishlist Associations
+  @OneToOne
+  @JoinColumn(name = "customer account id", referencedColumnName = "id")
   private CustomerAccount customerAccount;
 
-  //------------------------
+  // ------------------------
   // CONSTRUCTOR
-  //------------------------
+  // ------------------------
 
-  public Wishlist(int aId, CustomerAccount aCustomerAccount)
-  {
-    id = aId;
-    if (aCustomerAccount == null || aCustomerAccount.getWishlist() != null)
-    {
-      throw new RuntimeException("Unable to create Wishlist due to aCustomerAccount. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+  public Wishlist(CustomerAccount aCustomerAccount) {
+    if (aCustomerAccount == null || aCustomerAccount.getWishlist() != null) {
+      throw new RuntimeException(
+          "Unable to create Wishlist due to aCustomerAccount. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
     customerAccount = aCustomerAccount;
   }
 
-  public Wishlist(int aId, String aUsernameForCustomerAccount, String aPasswordHashForCustomerAccount, String aRandomPasswordForCustomerAccount, int aIdForCustomerAccount, String aEmailAddressForCustomerAccount)
-  {
-    id = aId;
-    customerAccount = new CustomerAccount(aUsernameForCustomerAccount, aPasswordHashForCustomerAccount, aRandomPasswordForCustomerAccount, aIdForCustomerAccount, aEmailAddressForCustomerAccount, this);
+  public Wishlist(String aUsernameForCustomerAccount, String aPasswordHashForCustomerAccount,
+      String aRandomPasswordForCustomerAccount, int aIdForCustomerAccount, String aEmailAddressForCustomerAccount) {
+    customerAccount = new CustomerAccount(aUsernameForCustomerAccount, aPasswordHashForCustomerAccount,
+        aRandomPasswordForCustomerAccount, aEmailAddressForCustomerAccount, this);
   }
 
-  //------------------------
+  // ------------------------
   // INTERFACE
-  //------------------------
+  // ------------------------
 
-  public boolean setId(int aId)
-  {
-    boolean wasSet = false;
-    id = aId;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public int getId()
-  {
+  public int getId() {
     return id;
   }
+
   /* Code from template association_GetOne */
-  public CustomerAccount getCustomerAccount()
-  {
+  public CustomerAccount getCustomerAccount() {
     return customerAccount;
   }
 
-  public void delete()
-  {
+  public void delete() {
     CustomerAccount existingCustomerAccount = customerAccount;
     customerAccount = null;
-    if (existingCustomerAccount != null)
-    {
+    if (existingCustomerAccount != null) {
       existingCustomerAccount.delete();
     }
   }
 
-
-  public String toString()
-  {
-    return super.toString() + "["+
-            "id" + ":" + getId()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "customerAccount = "+(getCustomerAccount()!=null?Integer.toHexString(System.identityHashCode(getCustomerAccount())):"null");
+  public String toString() {
+    return super.toString() + "[" +
+        "id" + ":" + getId() + "]" + System.getProperties().getProperty("line.separator") +
+        "  " + "customerAccount = "
+        + (getCustomerAccount() != null ? Integer.toHexString(System.identityHashCode(getCustomerAccount())) : "null");
   }
 }

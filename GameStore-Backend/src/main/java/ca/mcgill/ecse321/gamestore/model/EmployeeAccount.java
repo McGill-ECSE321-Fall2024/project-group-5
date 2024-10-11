@@ -1,33 +1,29 @@
-/*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
+package ca.mcgill.ecse321.gamestore.model;
 
-
-import java.util.*;
+import jakarta.persistence.Entity;
 
 // line 35 "model.ump"
 // line 166 "model.ump"
-public class EmployeeAccount extends StaffAccount
-{
+@Entity
+public class EmployeeAccount extends StaffAccount {
 
-  //------------------------
+  // ------------------------
   // MEMBER VARIABLES
-  //------------------------
+  // ------------------------
 
-  //------------------------
+  // ------------------------
   // CONSTRUCTOR
-  //------------------------
+  // ------------------------
 
-  public EmployeeAccount(String aUsername, String aPasswordHash, String aRandomPassword, int aId)
-  {
-    super(aUsername, aPasswordHash, aRandomPassword, aId);
+  public EmployeeAccount(String aUsername, String aPasswordHash, String aRandomPassword) {
+    super(aUsername, aPasswordHash, aRandomPassword);
   }
 
-  //------------------------
+  // ------------------------
   // INTERFACE
-  //------------------------
+  // ------------------------
 
-  public void delete()
-  {
+  public void delete() {
     super.delete();
   }
 

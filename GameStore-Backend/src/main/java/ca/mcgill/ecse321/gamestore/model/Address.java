@@ -1,214 +1,210 @@
-/*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.34.0.7242.6b8819789 modeling language!*/
-
+package ca.mcgill.ecse321.gamestore.model;
 
 import java.util.*;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+
 // line 61 "model.ump"
 // line 190 "model.ump"
-public class Address
-{
+@Entity
+public class Address {
 
-  //------------------------
+  // ------------------------
   // MEMBER VARIABLES
-  //------------------------
+  // ------------------------
 
-  //Address Attributes
+  // Address Attributes
   private String address;
   private String city;
   private String province;
   private String country;
   private String postalCode;
+  @Id
+  @GeneratedValue
   private int id;
 
-  //Address Associations
+  // Address Associations
+  @OneToMany(mappedBy = "address", cascade = CascadeType.ALL)
   private List<Order> orders;
+  @ManyToOne
+  @JoinColumn(name = "customer account id")
   private CustomerAccount customerAccount;
 
-  //------------------------
+  // ------------------------
   // CONSTRUCTOR
-  //------------------------
+  // ------------------------
 
-  public Address(String aAddress, String aCity, String aProvince, String aCountry, String aPostalCode, int aId, CustomerAccount aCustomerAccount)
-  {
+  public Address(String aAddress, String aCity, String aProvince, String aCountry, String aPostalCode,
+      CustomerAccount aCustomerAccount) {
     address = aAddress;
     city = aCity;
     province = aProvince;
     country = aCountry;
     postalCode = aPostalCode;
-    id = aId;
     orders = new ArrayList<Order>();
     boolean didAddCustomerAccount = setCustomerAccount(aCustomerAccount);
-    if (!didAddCustomerAccount)
-    {
-      throw new RuntimeException("Unable to create address due to customerAccount. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+    if (!didAddCustomerAccount) {
+      throw new RuntimeException(
+          "Unable to create address due to customerAccount. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
   }
 
-  //------------------------
+  // ------------------------
   // INTERFACE
-  //------------------------
+  // ------------------------
 
-  public boolean setAddress(String aAddress)
-  {
+  public boolean setAddress(String aAddress) {
     boolean wasSet = false;
     address = aAddress;
     wasSet = true;
     return wasSet;
   }
 
-  public boolean setCity(String aCity)
-  {
+  public boolean setCity(String aCity) {
     boolean wasSet = false;
     city = aCity;
     wasSet = true;
     return wasSet;
   }
 
-  public boolean setProvince(String aProvince)
-  {
+  public boolean setProvince(String aProvince) {
     boolean wasSet = false;
     province = aProvince;
     wasSet = true;
     return wasSet;
   }
 
-  public boolean setCountry(String aCountry)
-  {
+  public boolean setCountry(String aCountry) {
     boolean wasSet = false;
     country = aCountry;
     wasSet = true;
     return wasSet;
   }
 
-  public boolean setPostalCode(String aPostalCode)
-  {
+  public boolean setPostalCode(String aPostalCode) {
     boolean wasSet = false;
     postalCode = aPostalCode;
     wasSet = true;
     return wasSet;
   }
 
-  public boolean setId(int aId)
-  {
+  public boolean setId(int aId) {
     boolean wasSet = false;
     id = aId;
     wasSet = true;
     return wasSet;
   }
 
-  public String getAddress()
-  {
+  public String getAddress() {
     return address;
   }
 
-  public String getCity()
-  {
+  public String getCity() {
     return city;
   }
 
-  public String getProvince()
-  {
+  public String getProvince() {
     return province;
   }
 
-  public String getCountry()
-  {
+  public String getCountry() {
     return country;
   }
 
-  public String getPostalCode()
-  {
+  public String getPostalCode() {
     return postalCode;
   }
 
-  public int getId()
-  {
+  public int getId() {
     return id;
   }
+
   /* Code from template association_GetMany */
-  public Order getOrder(int index)
-  {
+  public Order getOrder(int index) {
     Order aOrder = orders.get(index);
     return aOrder;
   }
 
-  public List<Order> getOrders()
-  {
+  public List<Order> getOrders() {
     List<Order> newOrders = Collections.unmodifiableList(orders);
     return newOrders;
   }
 
-  public int numberOfOrders()
-  {
+  public int numberOfOrders() {
     int number = orders.size();
     return number;
   }
 
-  public boolean hasOrders()
-  {
+  public boolean hasOrders() {
     boolean has = orders.size() > 0;
     return has;
   }
 
-  public int indexOfOrder(Order aOrder)
-  {
+  public int indexOfOrder(Order aOrder) {
     int index = orders.indexOf(aOrder);
     return index;
   }
+
   /* Code from template association_GetOne */
-  public CustomerAccount getCustomerAccount()
-  {
+  public CustomerAccount getCustomerAccount() {
     return customerAccount;
   }
+
   /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfOrders()
-  {
+  public static int minimumNumberOfOrders() {
     return 0;
   }
+
   /* Code from template association_AddManyToOne */
-  public Order addOrder(int aOrderId, double aTotalPrice, boolean aIsPaid, boolean aDeliveryStatus, String aPromotionCode, boolean aUserAgreementCheck, PaymentInformation aPaymentInformation, CustomerAccount aCustomerAccount, Cart aCart)
-  {
-    return new Order(aOrderId, aTotalPrice, aIsPaid, aDeliveryStatus, aPromotionCode, aUserAgreementCheck, aPaymentInformation, aCustomerAccount, aCart, this);
+  public Order addOrder(double aTotalPrice, boolean aIsPaid, boolean aDeliveryStatus, String aPromotionCode,
+      boolean aUserAgreementCheck, PaymentInformation aPaymentInformation, CustomerAccount aCustomerAccount,
+      Cart aCart) {
+    return new Order(aTotalPrice, aIsPaid, aDeliveryStatus, aPromotionCode, aUserAgreementCheck, aPaymentInformation,
+        aCustomerAccount, aCart, this);
   }
 
-  public boolean addOrder(Order aOrder)
-  {
+  public boolean addOrder(Order aOrder) {
     boolean wasAdded = false;
-    if (orders.contains(aOrder)) { return false; }
+    if (orders.contains(aOrder)) {
+      return false;
+    }
     Address existingAddress = aOrder.getAddress();
     boolean isNewAddress = existingAddress != null && !this.equals(existingAddress);
-    if (isNewAddress)
-    {
+    if (isNewAddress) {
       aOrder.setAddress(this);
-    }
-    else
-    {
+    } else {
       orders.add(aOrder);
     }
     wasAdded = true;
     return wasAdded;
   }
 
-  public boolean removeOrder(Order aOrder)
-  {
+  public boolean removeOrder(Order aOrder) {
     boolean wasRemoved = false;
-    //Unable to remove aOrder, as it must always have a address
-    if (!this.equals(aOrder.getAddress()))
-    {
+    // Unable to remove aOrder, as it must always have a address
+    if (!this.equals(aOrder.getAddress())) {
       orders.remove(aOrder);
       wasRemoved = true;
     }
     return wasRemoved;
   }
+
   /* Code from template association_AddIndexControlFunctions */
-  public boolean addOrderAt(Order aOrder, int index)
-  {  
+  public boolean addOrderAt(Order aOrder, int index) {
     boolean wasAdded = false;
-    if(addOrder(aOrder))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfOrders()) { index = numberOfOrders() - 1; }
+    if (addOrder(aOrder)) {
+      if (index < 0) {
+        index = 0;
+      }
+      if (index > numberOfOrders()) {
+        index = numberOfOrders() - 1;
+      }
       orders.remove(aOrder);
       orders.add(index, aOrder);
       wasAdded = true;
@@ -216,36 +212,34 @@ public class Address
     return wasAdded;
   }
 
-  public boolean addOrMoveOrderAt(Order aOrder, int index)
-  {
+  public boolean addOrMoveOrderAt(Order aOrder, int index) {
     boolean wasAdded = false;
-    if(orders.contains(aOrder))
-    {
-      if(index < 0 ) { index = 0; }
-      if(index > numberOfOrders()) { index = numberOfOrders() - 1; }
+    if (orders.contains(aOrder)) {
+      if (index < 0) {
+        index = 0;
+      }
+      if (index > numberOfOrders()) {
+        index = numberOfOrders() - 1;
+      }
       orders.remove(aOrder);
       orders.add(index, aOrder);
       wasAdded = true;
-    } 
-    else 
-    {
+    } else {
       wasAdded = addOrderAt(aOrder, index);
     }
     return wasAdded;
   }
+
   /* Code from template association_SetOneToMany */
-  public boolean setCustomerAccount(CustomerAccount aCustomerAccount)
-  {
+  public boolean setCustomerAccount(CustomerAccount aCustomerAccount) {
     boolean wasSet = false;
-    if (aCustomerAccount == null)
-    {
+    if (aCustomerAccount == null) {
       return wasSet;
     }
 
     CustomerAccount existingCustomerAccount = customerAccount;
     customerAccount = aCustomerAccount;
-    if (existingCustomerAccount != null && !existingCustomerAccount.equals(aCustomerAccount))
-    {
+    if (existingCustomerAccount != null && !existingCustomerAccount.equals(aCustomerAccount)) {
       existingCustomerAccount.removeAddress(this);
     }
     customerAccount.addAddress(this);
@@ -253,31 +247,27 @@ public class Address
     return wasSet;
   }
 
-  public void delete()
-  {
-    for(int i=orders.size(); i > 0; i--)
-    {
+  public void delete() {
+    for (int i = orders.size(); i > 0; i--) {
       Order aOrder = orders.get(i - 1);
       aOrder.delete();
     }
     CustomerAccount placeholderCustomerAccount = customerAccount;
     this.customerAccount = null;
-    if(placeholderCustomerAccount != null)
-    {
+    if (placeholderCustomerAccount != null) {
       placeholderCustomerAccount.removeAddress(this);
     }
   }
 
-
-  public String toString()
-  {
-    return super.toString() + "["+
-            "address" + ":" + getAddress()+ "," +
-            "city" + ":" + getCity()+ "," +
-            "province" + ":" + getProvince()+ "," +
-            "country" + ":" + getCountry()+ "," +
-            "postalCode" + ":" + getPostalCode()+ "," +
-            "id" + ":" + getId()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "customerAccount = "+(getCustomerAccount()!=null?Integer.toHexString(System.identityHashCode(getCustomerAccount())):"null");
+  public String toString() {
+    return super.toString() + "[" +
+        "address" + ":" + getAddress() + "," +
+        "city" + ":" + getCity() + "," +
+        "province" + ":" + getProvince() + "," +
+        "country" + ":" + getCountry() + "," +
+        "postalCode" + ":" + getPostalCode() + "," +
+        "id" + ":" + getId() + "]" + System.getProperties().getProperty("line.separator") +
+        "  " + "customerAccount = "
+        + (getCustomerAccount() != null ? Integer.toHexString(System.identityHashCode(getCustomerAccount())) : "null");
   }
 }
