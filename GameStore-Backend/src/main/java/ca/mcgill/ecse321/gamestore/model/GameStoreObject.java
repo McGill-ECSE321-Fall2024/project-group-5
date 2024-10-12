@@ -23,6 +23,8 @@ public class GameStoreObject {
   // ------------------------
   // CONSTRUCTOR
   // ------------------------
+  public GameStoreObject() {
+  }
 
   public GameStoreObject(String aPolicy, int aId) {
     policy = aPolicy;

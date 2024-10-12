@@ -47,6 +47,8 @@ public class Review {
   // ------------------------
   // CONSTRUCTOR
   // ------------------------
+  public Review() {
+  }
 
   public Review(Date aDate, String aDescription, int aLikeCount, int aDislikeCount, float aRating,
       boolean aEmployeeReviewed, CustomerAccount aCustomerAccount, Game aGame) {

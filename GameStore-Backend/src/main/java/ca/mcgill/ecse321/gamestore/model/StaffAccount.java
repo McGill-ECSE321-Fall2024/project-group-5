@@ -17,6 +17,8 @@ public abstract class StaffAccount extends Account {
   // ------------------------
   // CONSTRUCTOR
   // ------------------------
+  public StaffAccount() {
+  }
 
   public StaffAccount(String aUsername, String aPasswordHash, String aRandomPassword) {
     super(aUsername, aPasswordHash, aRandomPassword);

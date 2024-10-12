@@ -56,6 +56,8 @@ public class Game {
   // ------------------------
   // CONSTRUCTOR
   // ------------------------
+  public Game() {
+  }
 
   public Game(String aName, int aPrice, String aDescription, Category aCategory, GameConsole aGameConsole,
       Catalog aCatalog) {

@@ -42,6 +42,8 @@ public class Order {
   // ------------------------
   // CONSTRUCTOR
   // ------------------------
+  public Order() {
+  }
 
   public Order(double aTotalPrice, boolean aIsPaid, boolean aDeliveryStatus, String aPromotionCode,
       boolean aUserAgreementCheck, PaymentInformation aPaymentInformation, CustomerAccount aCustomerAccount, Cart aCart,

@@ -39,6 +39,8 @@ public class Address {
   // ------------------------
   // CONSTRUCTOR
   // ------------------------
+  public Address() {
+  }
 
   public Address(String aAddress, String aCity, String aProvince, String aCountry, String aPostalCode,
       CustomerAccount aCustomerAccount) {

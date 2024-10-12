@@ -32,6 +32,8 @@ public class GameQty {
   // ------------------------
   // CONSTRUCTOR
   // ------------------------
+  public GameQty() {
+  }
 
   public GameQty(int aQty, int aId, Cart aCart, Game aGame) {
     qty = aQty;

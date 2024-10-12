@@ -48,6 +48,8 @@ public class PaymentInformation {
   // ------------------------
   // CONSTRUCTOR
   // ------------------------
+  public PaymentInformation() {
+  }
 
   public PaymentInformation(String aCardholderName, int aCardNumber, Date aExpirationDate, int aCvc, CardType aCardType,
       CustomerAccount aCustomerAccount) {

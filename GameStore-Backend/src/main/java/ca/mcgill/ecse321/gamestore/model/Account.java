@@ -18,7 +18,7 @@ public abstract class Account {
   // STATIC VARIABLES
   // ------------------------
 
-  private static Map<String, Account> accountsByUsername = new HashMap<String, Account>();
+  public static Map<String, Account> accountsByUsername = new HashMap<String, Account>();
 
   // ------------------------
   // MEMBER VARIABLES

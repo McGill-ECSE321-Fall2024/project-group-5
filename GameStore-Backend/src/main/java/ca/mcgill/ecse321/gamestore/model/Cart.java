@@ -38,6 +38,10 @@ public class Cart {
   // ------------------------
   // CONSTRUCTOR
   // ------------------------
+
+  public Cart() {
+  }
+
   public Cart(int aId, CustomerAccount aCustomerAccount) {
     id = aId;
     boolean didAddCustomerAccount = setCustomerAccount(aCustomerAccount);

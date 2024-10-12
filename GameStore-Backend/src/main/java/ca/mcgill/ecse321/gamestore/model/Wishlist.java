@@ -28,6 +28,8 @@ public class Wishlist {
   // ------------------------
   // CONSTRUCTOR
   // ------------------------
+  public Wishlist() {
+  }
 
   public Wishlist(CustomerAccount aCustomerAccount) {
     if (aCustomerAccount == null || aCustomerAccount.getWishlist() != null) {

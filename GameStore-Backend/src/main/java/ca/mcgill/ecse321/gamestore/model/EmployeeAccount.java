@@ -14,6 +14,8 @@ public class EmployeeAccount extends StaffAccount {
   // ------------------------
   // CONSTRUCTOR
   // ------------------------
+  public EmployeeAccount() {
+  }
 
   public EmployeeAccount(String aUsername, String aPasswordHash, String aRandomPassword) {
     super(aUsername, aPasswordHash, aRandomPassword);
