@@ -1,9 +1,22 @@
 package ca.mcgill.ecse321.gamestore.dao;
 
-import ca.mcgill.ecse321.gamestore.model.Account;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import ca.mcgill.ecse321.gamestore.model.Review;
+import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
+import ca.mcgill.ecse321.gamestore.model.Game;
 
-import org.springframework.data.repository.CrudRepository;
+import java.util.List;
 
-public interface AccountRepository extends CrudRepository<Account, Long> {
+@Repository
+public interface ReviewRepository extends JpaRepository<Review, Integer> {
 
+    // Find all reviews for a specific customer account
+    List<Review> findByCustomerAccount(CustomerAccount customerAccount);
+
+    // Find all reviews for a specific game
+    List<Review> findByGame(Game game);
+
+    // Find all reviews that are replies to a specific review
+    List<Review> findByReview(Review review);
 }
