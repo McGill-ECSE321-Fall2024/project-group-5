@@ -59,7 +59,7 @@ class CartRepositoryTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setUsername("john_doe");
         customerAccount.setEmail("john.doe@example.com");
-        customerAccount.setPassword("password123");
+        customerAccount.setPasswordHash("password123");
         customerAccountRepository.save(customerAccount);
 
         // Create a new cart and associate it with the customer account
@@ -80,7 +80,7 @@ class CartRepositoryTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setUsername("jane_doe");
         customerAccount.setEmail("jane.doe@example.com");
-        customerAccount.setPassword("password456");
+        customerAccount.setPasswordHash("password456");
         customerAccountRepository.save(customerAccount);
 
         // Create a new cart and associate it with the customer account
@@ -100,7 +100,7 @@ class CartRepositoryTest {
         CustomerAccount customerAccount = new CustomerAccount();
         customerAccount.setUsername("james_bond");
         customerAccount.setEmail("james.bond@example.com");
-        customerAccount.setPassword("agent007");
+        customerAccount.setPasswordHash("agent007");
         customerAccountRepository.save(customerAccount);
 
         // Create a new cart

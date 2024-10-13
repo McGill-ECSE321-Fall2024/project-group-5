@@ -92,6 +92,10 @@ public class CustomerAccount extends Account {
     return wasSet;
   }
 
+  public void setEmail (String email){
+    this.emailAddress=email;
+  }
+
   public String getEmailAddress() {
     return emailAddress;
   }
