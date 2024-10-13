@@ -34,14 +34,14 @@ class AddressRepositoryTest {
 
     @Test
     void testPersistAddress() {
-        // Create a new customer account
+        //create customer account
         CustomerAccount someCustomer = new CustomerAccount();
         someCustomer.setUsername("someCustomer");
         someCustomer.setEmail("someCustomer@example.com");
         someCustomer.setPasswordHash("password123");
         customerAccountRepository.save(someCustomer);
 
-        // Create a new address and associate it with the customer account
+        // create a new address for customer account
         Address address = new Address();
         address.setAddress("123 Main St");
         address.setCity("Montreal");
@@ -51,7 +51,7 @@ class AddressRepositoryTest {
         address.setCustomerAccount(someCustomer);
         address = addressRepository.save(address);
 
-        // Verify that the address was saved correctly
+        // make sure address was saved correctly
         assertNotNull(address);
         assertEquals("123 Main St", address.getAddress());
         assertEquals("Montreal", address.getCity());
@@ -60,7 +60,7 @@ class AddressRepositoryTest {
         assertEquals("H3A1B2", address.getPostalCode());
         assertEquals(someCustomer.getUsername(), address.getCustomerAccount().getUsername());
 
-        // Read the address from the database using the ID
+        // read the address from the database using the ID
         Optional<Address> retrievedAddress = addressRepository.findById(address.getId());
         assertTrue(retrievedAddress.isPresent());
         assertEquals("123 Main St", retrievedAddress.get().getAddress());
@@ -72,14 +72,14 @@ class AddressRepositoryTest {
 
     @Test
     void testFindAddressByCustomerAccountId() {
-        // Create a new customer account
+        // create new customer account
         CustomerAccount someCustomer = new CustomerAccount();
         someCustomer.setUsername("someCustomer");
         someCustomer.setEmail("someCustomer@example.com");
         someCustomer.setPasswordHash("password456");
         customerAccountRepository.save(someCustomer);
 
-        // Create a new address and associate it with the customer account
+        // create new address for customer account
         Address address = new Address();
         address.setAddress("456 Another St");
         address.setCity("Montreal");
@@ -89,7 +89,7 @@ class AddressRepositoryTest {
         address.setCustomerAccount(someCustomer);
         addressRepository.save(address);
 
-        // Find addresses by customer account ID
+        // find addresses by customer account id
         Iterable<Address> addresses = addressRepository.findByCustomerAccount_CustomerAccountId(someCustomer.getId());
         assertTrue(addresses.iterator().hasNext());
 
@@ -100,14 +100,14 @@ class AddressRepositoryTest {
 
     @Test
     void testUpdateAddress() {
-        // Create a new customer account
+        // create customer account
         CustomerAccount someCustomer = new CustomerAccount();
         someCustomer.setUsername("someCustomer");
         someCustomer.setEmail("someCustomer@example.com");
         someCustomer.setPasswordHash("agent007");
         customerAccountRepository.save(someCustomer);
 
-        // Create a new address and associate it with the customer account
+        // create a new address for the customer account
         Address address = new Address();
         address.setAddress("789 Spy St");
         address.setCity("London");
@@ -117,7 +117,7 @@ class AddressRepositoryTest {
         address.setCustomerAccount(someCustomer);
         addressRepository.save(address);
 
-        // Retrieve the address and update some fields
+        // retrieve the address and updating fields
         Optional<Address> retrievedAddress = addressRepository.findById(address.getId());
         assertTrue(retrievedAddress.isPresent());
         Address addressToUpdate = retrievedAddress.get();
@@ -125,7 +125,7 @@ class AddressRepositoryTest {
         addressToUpdate.setPostalCode("EH1 1BB");
         addressRepository.save(addressToUpdate);
 
-        // Verify the address was updated
+        //verify the address was updated
         Optional<Address> updatedAddress = addressRepository.findById(addressToUpdate.getId());
         assertTrue(updatedAddress.isPresent());
         assertEquals("Edinburgh", updatedAddress.get().getCity());
@@ -134,14 +134,14 @@ class AddressRepositoryTest {
 
     @Test
     void testDeleteAddress() {
-        // Create a new customer account
+        // create customer account
         CustomerAccount someCustomer = new CustomerAccount();
         someCustomer.setUsername("someCustomer");
         someCustomer.setEmail("someCustomer@example.com");
         someCustomer.setPasswordHash("delete123");
         customerAccountRepository.save(someCustomer);
 
-        // Create a new address and associate it with the customer account
+        // create a new address and for the customer account
         Address address = new Address();
         address.setAddress("123 Deletion St");
         address.setCity("Montreal");
@@ -151,21 +151,21 @@ class AddressRepositoryTest {
         address.setCustomerAccount(someCustomer);
         addressRepository.save(address);
 
-        // Verify the address exists
+        // verify the address exists
         Optional<Address> retrievedAddress = addressRepository.findById(address.getId());
         assertTrue(retrievedAddress.isPresent());
 
-        // Delete the address
+        // delete address
         addressRepository.deleteById(address.getId());
 
-        // Verify the address was deleted
+        // verify address was deleted
         Optional<Address> deletedAddress = addressRepository.findById(address.getId());
         assertTrue(deletedAddress.isEmpty());
     }
 
     @Test
     void testFindByInvalidId() {
-        // Attempt to retrieve an address with a non-existent ID
+        // attempt to retrieve an address with a non-existent ID
         Optional<Address> nonExistentAddress = addressRepository.findById(999);
         assertTrue(nonExistentAddress.isEmpty());
     }
