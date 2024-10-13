@@ -7,8 +7,8 @@ import org.springframework.data.repository.CrudRepository;
 public interface CartRepository extends CrudRepository<Cart, Integer> {
 
     // find all carts for a specific customer account by ID
-    Iterable<Cart> findByCustomerAccount_CustomerAccountId(int customerAccountId);
+    Iterable<Cart> findByCustomerAccount_Id(int id);
 
-    // find the cart for a specific order ID
-    Cart findByOrder_OrderId(int orderId);
+    // find the cart for a specific transaction ID
+    Cart findByTransaction_TransactionId(int transactionId);
 }

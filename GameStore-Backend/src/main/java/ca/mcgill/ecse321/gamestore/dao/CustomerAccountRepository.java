@@ -4,6 +4,7 @@ import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
 import org.springframework.data.repository.CrudRepository;
 
 public interface CustomerAccountRepository extends CrudRepository<CustomerAccount, Long> {
+    CustomerAccount findById(int id);
 
     // Custom query to find a CustomerAccount by email
     CustomerAccount findByEmailAddress(String emailAddress);

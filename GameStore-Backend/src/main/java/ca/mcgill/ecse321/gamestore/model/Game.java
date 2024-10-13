@@ -46,9 +46,9 @@ public class Game {
 
   // Game Associations
   @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
-  private List<GameQty> gameQties;
+  private List<GameQty> gameQties = new ArrayList<>();
   @OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
-  private List<Review> reviews;
+  private List<Review> reviews = new ArrayList<>();
   @ManyToOne
   @JoinColumn(name = "catalog id")
   private Catalog catalog;

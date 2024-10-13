@@ -12,12 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import ca.mcgill.ecse321.gamestore.dao.OrderRepository;
+import ca.mcgill.ecse321.gamestore.dao.TransactionRepository;
 import ca.mcgill.ecse321.gamestore.dao.CustomerAccountRepository;
 import ca.mcgill.ecse321.gamestore.dao.PaymentInformationRepository;
 import ca.mcgill.ecse321.gamestore.dao.CartRepository;
 import ca.mcgill.ecse321.gamestore.dao.AddressRepository;
-import ca.mcgill.ecse321.gamestore.model.Order;
+import ca.mcgill.ecse321.gamestore.model.Transaction;
 import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
 import ca.mcgill.ecse321.gamestore.model.PaymentInformation;
 import ca.mcgill.ecse321.gamestore.model.Cart;
@@ -25,10 +25,10 @@ import ca.mcgill.ecse321.gamestore.model.Address;
 import ca.mcgill.ecse321.gamestore.model.PaymentInformation.CardType;
 
 @SpringBootTest
-class OrderRepositoryTest {
+class TransactionRepositoryTest {
 
     @Autowired
-    private OrderRepository orderRepository;
+    private TransactionRepository transactionRepository;
 
     @Autowired
     private CustomerAccountRepository customerAccountRepository;
@@ -45,7 +45,7 @@ class OrderRepositoryTest {
     @AfterEach
     public void clearDatabase() {
         // clear everything after each test
-        orderRepository.deleteAll();
+        transactionRepository.deleteAll();
         customerAccountRepository.deleteAll();
         paymentInformationRepository.deleteAll();
         cartRepository.deleteAll();
@@ -53,7 +53,7 @@ class OrderRepositoryTest {
     }
 
     @Test
-    void testPersistOrder() {
+    void testPersistTransaction() {
         // set up customer
         CustomerAccount someCustomer = new CustomerAccount();
         someCustomer.setUsername("someCustomer");
@@ -86,36 +86,36 @@ class OrderRepositoryTest {
         address.setCustomerAccount(someCustomer);
         addressRepository.save(address);
 
-        // create order and link it with customer, payment info, cart, and address
-        Order order = new Order();
-        order.setTotalPrice(100.0);
-        order.setIsPaid(true);
-        order.setDeliveryStatus(false);
-        order.setPromotionCode("PROMO123");
-        order.setUserAgreementCheck(true);
-        order.setCustomerAccount(someCustomer);
-        order.setPaymentInformation(paymentInfo);
-        order.setCart(cart);
-        order.setAddress(address);
-        order = orderRepository.save(order);
+        // create transaction and link it with customer, payment info, cart, and address
+        Transaction transaction = new Transaction();
+        transaction.setTotalPrice(100.0);
+        transaction.setIsPaid(true);
+        transaction.setDeliveryStatus(false);
+        transaction.setPromotionCode("PROMO123");
+        transaction.setUserAgreementCheck(true);
+        transaction.setCustomerAccount(someCustomer);
+        transaction.setPaymentInformation(paymentInfo);
+        transaction.setCart(cart);
+        transaction.setAddress(address);
+        transaction = transactionRepository.save(transaction);
 
-        // make sure the order was saved correctly
-        assertNotNull(order);
-        assertEquals(100.0, order.getTotalPrice());
-        assertEquals(true, order.getIsPaid());
-        assertEquals(false, order.getDeliveryStatus());
-        assertEquals("PROMO123", order.getPromotionCode());
-        assertEquals(someCustomer.getUsername(), order.getCustomerAccount().getUsername());
+        // make sure the transaction was saved correctly
+        assertNotNull(transaction);
+        assertEquals(100.0, transaction.getTotalPrice());
+        assertEquals(true, transaction.getIsPaid());
+        assertEquals(false, transaction.getDeliveryStatus());
+        assertEquals("PROMO123", transaction.getPromotionCode());
+        assertEquals(someCustomer.getUsername(), transaction.getCustomerAccount().getUsername());
 
-        // get the order from the database and make sure it matches
-        Optional<Order> retrievedOrder = orderRepository.findById(order.getOrderId());
-        assertTrue(retrievedOrder.isPresent());
-        assertEquals(100.0, retrievedOrder.get().getTotalPrice());
-        assertEquals(someCustomer.getUsername(), retrievedOrder.get().getCustomerAccount().getUsername());
+        // get the transaction from the database and make sure it matches
+        Optional<Transaction> retrievedTransaction = transactionRepository.findById(transaction.getTransactionId());
+        assertTrue(retrievedTransaction.isPresent());
+        assertEquals(100.0, retrievedTransaction.get().getTotalPrice());
+        assertEquals(someCustomer.getUsername(), retrievedTransaction.get().getCustomerAccount().getUsername());
     }
 
     @Test
-    void testFindOrderByCustomerAccountId() {
+    void testFindTransactionByCustomerAccountId() {
         // create a customer
         CustomerAccount someCustomer = new CustomerAccount();
         someCustomer.setUsername("someCustomer");
@@ -148,30 +148,31 @@ class OrderRepositoryTest {
         address.setCustomerAccount(someCustomer);
         addressRepository.save(address);
 
-        // create an order
-        Order order = new Order();
-        order.setTotalPrice(150.0);
-        order.setIsPaid(true);
-        order.setDeliveryStatus(false);
-        order.setPromotionCode("DISCOUNT123");
-        order.setUserAgreementCheck(true);
-        order.setCustomerAccount(someCustomer);
-        order.setPaymentInformation(paymentInfo);
-        order.setCart(cart);
-        order.setAddress(address);
-        orderRepository.save(order);
+        // create an transaction
+        Transaction transaction = new Transaction();
+        transaction.setTotalPrice(150.0);
+        transaction.setIsPaid(true);
+        transaction.setDeliveryStatus(false);
+        transaction.setPromotionCode("DISCOUNT123");
+        transaction.setUserAgreementCheck(true);
+        transaction.setCustomerAccount(someCustomer);
+        transaction.setPaymentInformation(paymentInfo);
+        transaction.setCart(cart);
+        transaction.setAddress(address);
+        transactionRepository.save(transaction);
 
-        // find the order by customer account ID
-        Iterable<Order> orders = orderRepository.findByCustomerAccount_CustomerAccountId(someCustomer.getId());
-        assertTrue(orders.iterator().hasNext());
+        // find the transaction by customer account ID
+        Iterable<Transaction> transactions = transactionRepository
+                .findByCustomerAccount_Id(someCustomer.getId());
+        assertTrue(transactions.iterator().hasNext());
 
-        Order retrievedOrder = orders.iterator().next();
-        assertEquals(150.0, retrievedOrder.getTotalPrice());
-        assertEquals(someCustomer.getUsername(), retrievedOrder.getCustomerAccount().getUsername());
+        Transaction retrievedTransaction = transactions.iterator().next();
+        assertEquals(150.0, retrievedTransaction.getTotalPrice());
+        assertEquals(someCustomer.getUsername(), retrievedTransaction.getCustomerAccount().getUsername());
     }
 
     @Test
-    void testUpdateOrder() {
+    void testUpdateTransaction() {
         // create a customer
         CustomerAccount someCustomer = new CustomerAccount();
         someCustomer.setUsername("someCustomer");
@@ -204,33 +205,34 @@ class OrderRepositoryTest {
         address.setCustomerAccount(someCustomer);
         addressRepository.save(address);
 
-        // create order
-        Order order = new Order();
-        order.setTotalPrice(200.0);
-        order.setIsPaid(true);
-        order.setDeliveryStatus(true);
-        order.setPromotionCode("TOPSECRET123");
-        order.setUserAgreementCheck(true);
-        order.setCustomerAccount(someCustomer);
-        order.setPaymentInformation(paymentInfo);
-        order.setCart(cart);
-        order.setAddress(address);
-        orderRepository.save(order);
+        // create transaction
+        Transaction transaction = new Transaction();
+        transaction.setTotalPrice(200.0);
+        transaction.setIsPaid(true);
+        transaction.setDeliveryStatus(true);
+        transaction.setPromotionCode("TOPSECRET123");
+        transaction.setUserAgreementCheck(true);
+        transaction.setCustomerAccount(someCustomer);
+        transaction.setPaymentInformation(paymentInfo);
+        transaction.setCart(cart);
+        transaction.setAddress(address);
+        transactionRepository.save(transaction);
 
-        // update the order's total price
-        Optional<Order> retrievedOrder = orderRepository.findById(order.getOrderId());
-        assertTrue(retrievedOrder.isPresent());
-        retrievedOrder.get().setTotalPrice(250.0);
-        orderRepository.save(retrievedOrder.get());
+        // update the transaction's total price
+        Optional<Transaction> retrievedTransaction = transactionRepository.findById(transaction.getTransactionId());
+        assertTrue(retrievedTransaction.isPresent());
+        retrievedTransaction.get().setTotalPrice(250.0);
+        transactionRepository.save(retrievedTransaction.get());
 
-        // verify the order was updated
-        Optional<Order> updatedOrder = orderRepository.findById(retrievedOrder.get().getOrderId());
-        assertTrue(updatedOrder.isPresent());
-        assertEquals(250.0, updatedOrder.get().getTotalPrice());
+        // verify the transaction was updated
+        Optional<Transaction> updatedTransaction = transactionRepository
+                .findById(retrievedTransaction.get().getTransactionId());
+        assertTrue(updatedTransaction.isPresent());
+        assertEquals(250.0, updatedTransaction.get().getTotalPrice());
     }
 
     @Test
-    void testDeleteOrder() {
+    void testDeleteTransaction() {
         // create a customer
         CustomerAccount someCustomer = new CustomerAccount();
         someCustomer.setUsername("someCustomer");
@@ -263,28 +265,28 @@ class OrderRepositoryTest {
         address.setCustomerAccount(someCustomer);
         addressRepository.save(address);
 
-        // create order
-        Order order = new Order();
-        order.setTotalPrice(175.0);
-        order.setIsPaid(true);
-        order.setDeliveryStatus(false);
-        order.setPromotionCode("DELETE123");
-        order.setUserAgreementCheck(true);
-        order.setCustomerAccount(someCustomer);
-        order.setPaymentInformation(paymentInfo);
-        order.setCart(cart);
-        order.setAddress(address);
-        orderRepository.save(order);
+        // create transaction
+        Transaction transaction = new Transaction();
+        transaction.setTotalPrice(175.0);
+        transaction.setIsPaid(true);
+        transaction.setDeliveryStatus(false);
+        transaction.setPromotionCode("DELETE123");
+        transaction.setUserAgreementCheck(true);
+        transaction.setCustomerAccount(someCustomer);
+        transaction.setPaymentInformation(paymentInfo);
+        transaction.setCart(cart);
+        transaction.setAddress(address);
+        transactionRepository.save(transaction);
 
-        // verify the order exists
-        Optional<Order> retrievedOrder = orderRepository.findById(order.getOrderId());
-        assertTrue(retrievedOrder.isPresent());
+        // verify the transaction exists
+        Optional<Transaction> retrievedTransaction = transactionRepository.findById(transaction.getTransactionId());
+        assertTrue(retrievedTransaction.isPresent());
 
-        // delete the order
-        orderRepository.deleteById(order.getOrderId());
+        // delete the transaction
+        transactionRepository.deleteById(transaction.getTransactionId());
 
-        // verify the order was deleted
-        Optional<Order> deletedOrder = orderRepository.findById(order.getOrderId());
-        assertTrue(deletedOrder.isEmpty());
+        // verify the transaction was deleted
+        Optional<Transaction> deletedTransaction = transactionRepository.findById(transaction.getTransactionId());
+        assertTrue(deletedTransaction.isEmpty());
     }
 }

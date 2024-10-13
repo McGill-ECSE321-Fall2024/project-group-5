@@ -36,15 +36,15 @@ public class CustomerAccount extends Account {
   @JoinColumn(name = "wishlist d", referencedColumnName = "id")
   private Wishlist wishlist;
   @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
-  private List<PaymentInformation> paymentInformations;
+  private List<PaymentInformation> paymentInformations = new ArrayList<>();
   @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
-  private List<Review> reviews;
+  private List<Review> reviews = new ArrayList<>();
   @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
-  private List<Transaction> transactions;
+  private List<Transaction> transactions = new ArrayList<>();
   @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
-  private List<Cart> carts;
+  private List<Cart> carts = new ArrayList<>();
   @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
-  private List<Address> addresses;
+  private List<Address> addresses = new ArrayList<>();
 
   // ------------------------
   // CONSTRUCTOR
@@ -92,8 +92,8 @@ public class CustomerAccount extends Account {
     return wasSet;
   }
 
-  public void setEmail (String email){
-    this.emailAddress=email;
+  public void setEmail(String email) {
+    this.emailAddress = email;
   }
 
   public String getEmailAddress() {

@@ -88,8 +88,9 @@ class PaymentInformationRepositoryTest {
         paymentInfo.setCustomerAccount(someCustomer);
         paymentInformationRepository.save(paymentInfo);
 
-        // find payment information by customer account ID
-        Iterable<PaymentInformation> paymentInfos = paymentInformationRepository.findByCustomerAccount_CustomerAccountId(someCustomer.getId());
+        // Find payment information by customer account ID
+        Iterable<PaymentInformation> paymentInfos = paymentInformationRepository
+                .findByCustomerAccount_Id(someCustomer.getId());
         assertTrue(paymentInfos.iterator().hasNext());
 
         // verify the retrieved payment information
@@ -126,7 +127,8 @@ class PaymentInformationRepositoryTest {
         paymentInformationRepository.save(paymentInfoToUpdate);
 
         // check if the update was successful
-        Optional<PaymentInformation> updatedPaymentInfo = paymentInformationRepository.findById(paymentInfoToUpdate.getId());
+        Optional<PaymentInformation> updatedPaymentInfo = paymentInformationRepository
+                .findById(paymentInfoToUpdate.getId());
         assertTrue(updatedPaymentInfo.isPresent());
         assertEquals(123123123, updatedPaymentInfo.get().getCardNumber());
     }

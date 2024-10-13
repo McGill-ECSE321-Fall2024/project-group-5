@@ -31,7 +31,7 @@ public class Address {
 
   // Address Associations
   @OneToMany(mappedBy = "address", cascade = CascadeType.ALL)
-  private List<Transaction> transactions;
+  private List<Transaction> transactions = new ArrayList<>();
   @ManyToOne
   @JoinColumn(name = "customer account id")
   private CustomerAccount customerAccount;

@@ -9,6 +9,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.mcgill.ecse321.gamestore.model.Wishlist;
+import ca.mcgill.ecse321.gamestore.dao.CustomerAccountRepository;
+import ca.mcgill.ecse321.gamestore.dao.WishlistRepository;
 import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
 
 @SpringBootTest
@@ -31,7 +33,7 @@ public class WishlistRepositoryTest {
 	public void testSaveAndFindById() {
 		// Create a new CustomerAccount and save it
 		CustomerAccount customerAccount = new CustomerAccount();
-		customerAccount.setEmailAddress("testuser@example.com");
+		customerAccount.setEmail("testuser@example.com");
 		customerAccount.setName("Test User");
 		customerAccountRepository.save(customerAccount);
 
@@ -51,7 +53,7 @@ public class WishlistRepositoryTest {
 	public void testFindByCustomerAccount() {
 		// Create and save a CustomerAccount
 		CustomerAccount customerAccount = new CustomerAccount();
-		customerAccount.setEmailAddress("findme@example.com");
+		customerAccount.setEmail("findme@example.com");
 		customerAccount.setName("Find Me");
 		customerAccountRepository.save(customerAccount);
 
@@ -71,7 +73,7 @@ public class WishlistRepositoryTest {
 	public void testUpdateWishlist() {
 		// Create and save a CustomerAccount
 		CustomerAccount customerAccount = new CustomerAccount();
-		customerAccount.setEmailAddress("update@example.com");
+		customerAccount.setEmail("update@example.com");
 		customerAccount.setName("Update Me");
 		customerAccountRepository.save(customerAccount);
 
@@ -95,7 +97,7 @@ public class WishlistRepositoryTest {
 	public void testDeleteWishlist() {
 		// Create and save a CustomerAccount
 		CustomerAccount customerAccount = new CustomerAccount();
-		customerAccount.setEmailAddress("delete@example.com");
+		customerAccount.setEmail("delete@example.com");
 		customerAccount.setName("Delete Me");
 		customerAccountRepository.save(customerAccount);
 

@@ -10,6 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ca.mcgill.ecse321.gamestore.model.Game;
 import ca.mcgill.ecse321.gamestore.model.GameQty;
+import ca.mcgill.ecse321.gamestore.dao.CartRepository;
+import ca.mcgill.ecse321.gamestore.dao.GameQtyRepository;
+import ca.mcgill.ecse321.gamestore.dao.GameRepository;
 import ca.mcgill.ecse321.gamestore.model.Cart;
 
 import java.util.List;
@@ -37,15 +40,22 @@ public class GameQtyRepositoryTest {
 	@Test
 	public void testSaveAndFindById() {
 		// Create a Game and save it
-		Game game = new Game("Test Game", 60, "Test Description", Game.Category.Action, Game.GameConsole.PS5, null);
+		Game game = new Game();
+		game.setName("Test Game");
+		game.setPrice(60);
+		game.setDescription("Test Description");
+		game.setCategory(Game.Category.Action);
+		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
 
 		// Create a Cart and save it
-		Cart cart = new Cart(1234); // assuming Cart has an id constructor
+		Cart cart = new Cart(); // assuming Cart has an id constructor
 		cartRepository.save(cart);
 
 		// Create a GameQty and save it
-		GameQty gameQty = new GameQty(5, 0, cart, game); // qty = 5
+		GameQty gameQty = new GameQty();
+		gameQty.setQty(5);
+		gameQty.setGame(game);
 		gameQtyRepository.save(gameQty);
 
 		// Retrieve the GameQty by its ID
@@ -61,15 +71,22 @@ public class GameQtyRepositoryTest {
 	@Test
 	public void testFindByCart() {
 		// Create a Game and save it
-		Game game = new Game("Cart Game", 45, "Cart Game Description", Game.Category.Sports, Game.GameConsole.PC, null);
+		Game game = new Game();
+		game.setName("Test Game");
+		game.setPrice(60);
+		game.setDescription("Test Description");
+		game.setCategory(Game.Category.Action);
+		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
 
 		// Create a Cart and save it
-		Cart cart = new Cart(4567);
+		Cart cart = new Cart(); // assuming Cart has an id constructor
 		cartRepository.save(cart);
 
-		// Create a GameQty and associate it with the Cart
-		GameQty gameQty = new GameQty(3, 0, cart, game); // qty = 3
+		// Create a GameQty and save it
+		GameQty gameQty = new GameQty();
+		gameQty.setQty(5);
+		gameQty.setGame(game);
 		gameQtyRepository.save(gameQty);
 
 		// Find GameQtys by Cart
@@ -84,15 +101,22 @@ public class GameQtyRepositoryTest {
 	@Test
 	public void testFindByGame() {
 		// Create a Game and save it
-		Game game = new Game("Find Game", 70, "Game Description", Game.Category.RPG, Game.GameConsole.XBoxSeriesX, null);
+		Game game = new Game();
+		game.setName("Test Game");
+		game.setPrice(60);
+		game.setDescription("Test Description");
+		game.setCategory(Game.Category.Action);
+		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
 
 		// Create a Cart and save it
-		Cart cart = new Cart(7890);
+		Cart cart = new Cart(); // assuming Cart has an id constructor
 		cartRepository.save(cart);
 
-		// Create a GameQty and associate it with the Game
-		GameQty gameQty = new GameQty(2, 0, cart, game); // qty = 2
+		// Create a GameQty and save it
+		GameQty gameQty = new GameQty();
+		gameQty.setQty(5);
+		gameQty.setGame(game);
 		gameQtyRepository.save(gameQty);
 
 		// Find GameQtys by Game
@@ -107,15 +131,22 @@ public class GameQtyRepositoryTest {
 	@Test
 	public void testUpdateGameQty() {
 		// Create a Game and save it
-		Game game = new Game("Update Game", 50, "Update Test Description", Game.Category.Strategy, Game.GameConsole.WiiU, null);
+		Game game = new Game();
+		game.setName("Test Game");
+		game.setPrice(60);
+		game.setDescription("Test Description");
+		game.setCategory(Game.Category.Action);
+		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
 
 		// Create a Cart and save it
-		Cart cart = new Cart(1122);
+		Cart cart = new Cart(); // assuming Cart has an id constructor
 		cartRepository.save(cart);
 
 		// Create a GameQty and save it
-		GameQty gameQty = new GameQty(4, 0, cart, game); // qty = 4
+		GameQty gameQty = new GameQty();
+		gameQty.setQty(5);
+		gameQty.setGame(game);
 		gameQtyRepository.save(gameQty);
 
 		// Update the quantity of the GameQty and save it again
@@ -133,15 +164,22 @@ public class GameQtyRepositoryTest {
 	@Test
 	public void testDeleteGameQty() {
 		// Create a Game and save it
-		Game game = new Game("Delete Game", 80, "Delete Test Description", Game.Category.Multiplayer, Game.GameConsole.Mac, null);
+		Game game = new Game();
+		game.setName("Test Game");
+		game.setPrice(60);
+		game.setDescription("Test Description");
+		game.setCategory(Game.Category.Action);
+		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
 
 		// Create a Cart and save it
-		Cart cart = new Cart(3344);
+		Cart cart = new Cart(); // assuming Cart has an id constructor
 		cartRepository.save(cart);
 
 		// Create a GameQty and save it
-		GameQty gameQty = new GameQty(7, 0, cart, game); // qty = 7
+		GameQty gameQty = new GameQty();
+		gameQty.setQty(5);
+		gameQty.setGame(game);
 		gameQtyRepository.save(gameQty);
 
 		// Delete the GameQty

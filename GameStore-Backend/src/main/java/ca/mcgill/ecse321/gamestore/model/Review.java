@@ -33,7 +33,7 @@ public class Review {
 
   // Review Associations
   @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
-  private List<Review> reply;
+  private List<Review> reply = new ArrayList<>();
   @ManyToOne
   @JoinColumn(name = "customer account")
   private CustomerAccount customerAccount;

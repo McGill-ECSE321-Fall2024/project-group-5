@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.transaction.annotation.Transactional;
 
+import ca.mcgill.ecse321.gamestore.dao.GameRepository;
 import ca.mcgill.ecse321.gamestore.model.Game;
 
 import java.util.List;
@@ -26,8 +27,14 @@ public class GameRepositoryTest {
 
 	@Test
 	public void testSaveAndFindById() {
-		// Create a new Game
-		Game game = new Game("Test Game", 60, "Test Description", Game.Category.Action, Game.GameConsole.PS5, null);
+		// Create a Game and save it
+		Game game = new Game();
+		game.setName("Test Game");
+		game.setPrice(60);
+		game.setDescription("Test Description");
+		game.setCategory(Game.Category.Action);
+		game.setGameConsole(Game.GameConsole.PS5);
+		gameRepository.save(game);
 
 		// Save the game to the repository
 		gameRepository.save(game);
@@ -43,8 +50,13 @@ public class GameRepositoryTest {
 
 	@Test
 	public void testFindByCategory() {
-		// Create and save a Game
-		Game game = new Game("Action Game", 50, "Action Game Description", Game.Category.Action, Game.GameConsole.PS4, null);
+		// Create a Game and save it
+		Game game = new Game();
+		game.setName("Test Game");
+		game.setPrice(60);
+		game.setDescription("Test Description");
+		game.setCategory(Game.Category.Action);
+		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
 
 		// Find games by category
@@ -58,8 +70,13 @@ public class GameRepositoryTest {
 
 	@Test
 	public void testFindByGameConsole() {
-		// Create and save a Game
-		Game game = new Game("Console Game", 70, "Console Game Description", Game.GameConsole.NintendoSwitch, Game.Category.Puzzle, null);
+		// Create a Game and save it
+		Game game = new Game();
+		game.setName("Test Game");
+		game.setPrice(60);
+		game.setDescription("Test Description");
+		game.setCategory(Game.Category.Action);
+		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
 
 		// Find games by console
@@ -73,8 +90,13 @@ public class GameRepositoryTest {
 
 	@Test
 	public void testFindByName() {
-		// Create and save a Game
-		Game game = new Game("Unique Game", 80, "Unique Description", Game.Category.RPG, Game.GameConsole.XBoxSeriesX, null);
+		// Create a Game and save it
+		Game game = new Game();
+		game.setName("Test Game");
+		game.setPrice(60);
+		game.setDescription("Test Description");
+		game.setCategory(Game.Category.Action);
+		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
 
 		// Find games by name
@@ -88,8 +110,13 @@ public class GameRepositoryTest {
 
 	@Test
 	public void testUpdateGame() {
-		// Create and save a Game
-		Game game = new Game("Game to Update", 65, "Update Test Description", Game.Category.Sports, Game.GameConsole.WiiU, null);
+		// Create a Game and save it
+		Game game = new Game();
+		game.setName("Test Game");
+		game.setPrice(60);
+		game.setDescription("Test Description");
+		game.setCategory(Game.Category.Action);
+		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
 
 		// Retrieve the game, update its description and price, and save it again
@@ -108,8 +135,13 @@ public class GameRepositoryTest {
 
 	@Test
 	public void testDeleteGame() {
-		// Create and save a Game
-		Game game = new Game("Game to Delete", 90, "Delete Test Description", Game.Category.Strategy, Game.GameConsole.PC, null);
+		// Create a Game and save it
+		Game game = new Game();
+		game.setName("Test Game");
+		game.setPrice(60);
+		game.setDescription("Test Description");
+		game.setCategory(Game.Category.Action);
+		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
 
 		// Delete the game

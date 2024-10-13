@@ -43,7 +43,7 @@ public class PaymentInformation {
   @JoinColumn(name = "customer account")
   private CustomerAccount customerAccount;
   @OneToMany(mappedBy = "paymentInformation", cascade = CascadeType.ALL)
-  private List<Transaction> transactions;
+  private List<Transaction> transactions = new ArrayList<>();
 
   // ------------------------
   // CONSTRUCTOR

@@ -12,6 +12,6 @@ public interface PaymentInformationRepository extends CrudRepository<PaymentInfo
     Iterable<PaymentInformation> findByCardType(PaymentInformation.CardType cardType);
 
     // find PaymentInformation by customer account ID
-    Iterable<PaymentInformation> findByCustomerAccount_CustomerAccountId(int customerAccountId);
+    Iterable<PaymentInformation> findByCustomerAccount_Id(int id);
 
 }

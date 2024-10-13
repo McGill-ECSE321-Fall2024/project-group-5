@@ -34,7 +34,7 @@ class AddressRepositoryTest {
 
     @Test
     void testPersistAddress() {
-        //create customer account
+        // create customer account
         CustomerAccount someCustomer = new CustomerAccount();
         someCustomer.setUsername("someCustomer");
         someCustomer.setEmail("someCustomer@example.com");
@@ -90,7 +90,7 @@ class AddressRepositoryTest {
         addressRepository.save(address);
 
         // find addresses by customer account id
-        Iterable<Address> addresses = addressRepository.findByCustomerAccount_CustomerAccountId(someCustomer.getId());
+        Iterable<Address> addresses = addressRepository.findByCustomerAccount_Id(someCustomer.getId());
         assertTrue(addresses.iterator().hasNext());
 
         Address retrievedAddress = addresses.iterator().next();
@@ -125,7 +125,7 @@ class AddressRepositoryTest {
         addressToUpdate.setPostalCode("EH1 1BB");
         addressRepository.save(addressToUpdate);
 
-        //verify the address was updated
+        // verify the address was updated
         Optional<Address> updatedAddress = addressRepository.findById(addressToUpdate.getId());
         assertTrue(updatedAddress.isPresent());
         assertEquals("Edinburgh", updatedAddress.get().getCity());

@@ -9,6 +9,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.mcgill.ecse321.gamestore.model.Review;
+import ca.mcgill.ecse321.gamestore.dao.CustomerAccountRepository;
+import ca.mcgill.ecse321.gamestore.dao.GameRepository;
+import ca.mcgill.ecse321.gamestore.dao.ReviewRepository;
 import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
 import ca.mcgill.ecse321.gamestore.model.Game;
 
@@ -39,16 +42,22 @@ public class ReviewRepositoryTest {
 	public void testSaveAndFindById() {
 		// Create a CustomerAccount and save it
 		CustomerAccount customerAccount = new CustomerAccount();
-		customerAccount.setEmailAddress("testuser@example.com");
+		customerAccount.setEmail("testuser@example.com");
 		customerAccount.setName("Test User");
 		customerAccountRepository.save(customerAccount);
 
 		// Create a Game and save it
-		Game game = new Game("Test Game", 50, "Test Description", Game.Category.Action, Game.GameConsole.PS5, null);
+		Game game = new Game();
+		game.setName("Test Game");
+		game.setPrice(60);
+		game.setDescription("Test Description");
+		game.setCategory(Game.Category.Action);
+		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
 
 		// Create a Review
-		Review review = new Review(Date.valueOf("2024-01-01"), "Great game!", 10, 2, 4.5f, false, customerAccount, game);
+		Review review = new Review(Date.valueOf("2024-01-01"), "Great game!", 10, 2, 4.5f, false, customerAccount,
+				game);
 		reviewRepository.save(review);
 
 		// Retrieve the review by its ID
@@ -65,16 +74,22 @@ public class ReviewRepositoryTest {
 	public void testFindByCustomerAccount() {
 		// Create a CustomerAccount and save it
 		CustomerAccount customerAccount = new CustomerAccount();
-		customerAccount.setEmailAddress("findme@example.com");
+		customerAccount.setEmail("findme@example.com");
 		customerAccount.setName("Find Me");
 		customerAccountRepository.save(customerAccount);
 
 		// Create a Game and save it
-		Game game = new Game("Another Test Game", 40, "Another Test Description", Game.Category.Action, Game.GameConsole.PS5, null);
+		Game game = new Game();
+		game.setName("Test Game");
+		game.setPrice(60);
+		game.setDescription("Test Description");
+		game.setCategory(Game.Category.Action);
+		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
 
 		// Create a Review and associate it with the CustomerAccount and Game
-		Review review = new Review(Date.valueOf("2024-01-01"), "Awesome game!", 12, 0, 5.0f, false, customerAccount, game);
+		Review review = new Review(Date.valueOf("2024-01-01"), "Awesome game!", 12, 0, 5.0f, false, customerAccount,
+				game);
 		reviewRepository.save(review);
 
 		// Find reviews by the CustomerAccount
@@ -90,16 +105,22 @@ public class ReviewRepositoryTest {
 	public void testFindByGame() {
 		// Create a CustomerAccount and save it
 		CustomerAccount customerAccount = new CustomerAccount();
-		customerAccount.setEmailAddress("gameuser@example.com");
+		customerAccount.setEmail("gameuser@example.com");
 		customerAccount.setName("Game User");
 		customerAccountRepository.save(customerAccount);
 
 		// Create a Game and save it
-		Game game = new Game("Find Game", 60, "Description of Find Game", Game.Category.Shooter, Game.GameConsole.PC, null);
+		Game game = new Game();
+		game.setName("Test Game");
+		game.setPrice(60);
+		game.setDescription("Test Description");
+		game.setCategory(Game.Category.Action);
+		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
 
 		// Create a Review associated with the Game
-		Review review = new Review(Date.valueOf("2024-02-01"), "Great game!", 15, 1, 4.8f, false, customerAccount, game);
+		Review review = new Review(Date.valueOf("2024-02-01"), "Great game!", 15, 1, 4.8f, false, customerAccount,
+				game);
 		reviewRepository.save(review);
 
 		// Find reviews by the Game
@@ -115,16 +136,22 @@ public class ReviewRepositoryTest {
 	public void testUpdateReview() {
 		// Create a CustomerAccount and save it
 		CustomerAccount customerAccount = new CustomerAccount();
-		customerAccount.setEmailAddress("updateme@example.com");
+		customerAccount.setEmail("updateme@example.com");
 		customerAccount.setName("Update Me");
 		customerAccountRepository.save(customerAccount);
 
 		// Create a Game and save it
-		Game game = new Game("Game to Update", 70, "Update Test Description", Game.Category.RPG, Game.GameConsole.NintendoSwitch, null);
+		Game game = new Game();
+		game.setName("Test Game");
+		game.setPrice(60);
+		game.setDescription("Test Description");
+		game.setCategory(Game.Category.Action);
+		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
 
 		// Create a Review
-		Review review = new Review(Date.valueOf("2024-03-01"), "Needs improvement.", 3, 10, 2.0f, false, customerAccount, game);
+		Review review = new Review(Date.valueOf("2024-03-01"), "Needs improvement.", 3, 10, 2.0f, false,
+				customerAccount, game);
 		reviewRepository.save(review);
 
 		// Update the review description and rating
@@ -145,16 +172,21 @@ public class ReviewRepositoryTest {
 	public void testDeleteReview() {
 		// Create a CustomerAccount and save it
 		CustomerAccount customerAccount = new CustomerAccount();
-		customerAccount.setEmailAddress("deleteme@example.com");
+		customerAccount.setEmail("deleteme@example.com");
 		customerAccount.setName("Delete Me");
 		customerAccountRepository.save(customerAccount);
 
 		// Create a Game and save it
-		Game game = new Game("Game to Delete", 80, "Delete Test Description", Game.Category.Strategy, Game.GameConsole.XBoxSeriesX, null);
+		Game game = new Game();
+		game.setName("Test Game");
+		game.setPrice(60);
+		game.setDescription("Test Description");
+		game.setCategory(Game.Category.Action);
+		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
-
 		// Create a Review
-		Review review = new Review(Date.valueOf("2024-04-01"), "Decent strategy game.", 5, 2, 3.5f, false, customerAccount, game);
+		Review review = new Review(Date.valueOf("2024-04-01"), "Decent strategy game.", 5, 2, 3.5f, false,
+				customerAccount, game);
 		reviewRepository.save(review);
 
 		// Delete the review

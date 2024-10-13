@@ -19,5 +19,5 @@ public interface AddressRepository extends CrudRepository<Address, Integer> {
     Iterable<Address> findByPostalCode(String postalCode);
 
     // find all addresses for a specific customer account by ID
-    Iterable<Address> findByCustomerAccount_CustomerAccountId(int customerAccountId);
+    Iterable<Address> findByCustomerAccount_Id(int id);
 }

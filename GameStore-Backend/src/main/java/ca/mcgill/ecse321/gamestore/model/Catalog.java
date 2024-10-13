@@ -24,7 +24,7 @@ public class Catalog {
 
   // Catalog Associations
   @OneToMany(mappedBy = "catalog", cascade = CascadeType.ALL)
-  private List<Game> games;
+  private List<Game> games = new ArrayList<>();
 
   // ------------------------
   // CONSTRUCTOR
