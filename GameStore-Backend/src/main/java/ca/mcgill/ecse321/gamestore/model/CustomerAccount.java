@@ -40,7 +40,7 @@ public class CustomerAccount extends Account {
   @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
   private List<Review> reviews;
   @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
-  private List<Order> orders;
+  private List<Transaction> transactions;
   @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
   private List<Cart> carts;
   @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
@@ -64,7 +64,7 @@ public class CustomerAccount extends Account {
     wishlist = aWishlist;
     paymentInformations = new ArrayList<PaymentInformation>();
     reviews = new ArrayList<Review>();
-    orders = new ArrayList<Order>();
+    transactions = new ArrayList<Transaction>();
     carts = new ArrayList<Cart>();
     addresses = new ArrayList<Address>();
   }
@@ -76,7 +76,7 @@ public class CustomerAccount extends Account {
     wishlist = new Wishlist(this);
     paymentInformations = new ArrayList<PaymentInformation>();
     reviews = new ArrayList<Review>();
-    orders = new ArrayList<Order>();
+    transactions = new ArrayList<Transaction>();
     carts = new ArrayList<Cart>();
     addresses = new ArrayList<Address>();
   }
@@ -158,28 +158,28 @@ public class CustomerAccount extends Account {
   }
 
   /* Code from template association_GetMany */
-  public Order getOrder(int index) {
-    Order aOrder = orders.get(index);
-    return aOrder;
+  public Transaction getTransaction(int index) {
+    Transaction aTransaction = transactions.get(index);
+    return aTransaction;
   }
 
-  public List<Order> getOrders() {
-    List<Order> newOrders = Collections.unmodifiableList(orders);
-    return newOrders;
+  public List<Transaction> getTransactions() {
+    List<Transaction> newTransactions = Collections.unmodifiableList(transactions);
+    return newTransactions;
   }
 
-  public int numberOfOrders() {
-    int number = orders.size();
+  public int numberOfTransactions() {
+    int number = transactions.size();
     return number;
   }
 
-  public boolean hasOrders() {
-    boolean has = orders.size() > 0;
+  public boolean hasTransactions() {
+    boolean has = transactions.size() > 0;
     return has;
   }
 
-  public int indexOfOrder(Order aOrder) {
-    int index = orders.indexOf(aOrder);
+  public int indexOfTransaction(Transaction aTransaction) {
+    int index = transactions.indexOf(aTransaction);
     return index;
   }
 
@@ -381,74 +381,75 @@ public class CustomerAccount extends Account {
   }
 
   /* Code from template association_MinimumNumberOfMethod */
-  public static int minimumNumberOfOrders() {
+  public static int minimumNumberOfTransactions() {
     return 0;
   }
 
   /* Code from template association_AddManyToOne */
-  public Order addOrder(double aTotalPrice, boolean aIsPaid, boolean aDeliveryStatus, String aPromotionCode,
+  public Transaction addTransaction(double aTotalPrice, boolean aIsPaid, boolean aDeliveryStatus, String aPromotionCode,
       boolean aUserAgreementCheck, PaymentInformation aPaymentInformation, Cart aCart, Address aAddress) {
-    return new Order(aTotalPrice, aIsPaid, aDeliveryStatus, aPromotionCode, aUserAgreementCheck, aPaymentInformation,
+    return new Transaction(aTotalPrice, aIsPaid, aDeliveryStatus, aPromotionCode, aUserAgreementCheck,
+        aPaymentInformation,
         this, aCart, aAddress);
   }
 
-  public boolean addOrder(Order aOrder) {
+  public boolean addTransaction(Transaction aTransaction) {
     boolean wasAdded = false;
-    if (orders.contains(aOrder)) {
+    if (transactions.contains(aTransaction)) {
       return false;
     }
-    CustomerAccount existingCustomerAccount = aOrder.getCustomerAccount();
+    CustomerAccount existingCustomerAccount = aTransaction.getCustomerAccount();
     boolean isNewCustomerAccount = existingCustomerAccount != null && !this.equals(existingCustomerAccount);
     if (isNewCustomerAccount) {
-      aOrder.setCustomerAccount(this);
+      aTransaction.setCustomerAccount(this);
     } else {
-      orders.add(aOrder);
+      transactions.add(aTransaction);
     }
     wasAdded = true;
     return wasAdded;
   }
 
-  public boolean removeOrder(Order aOrder) {
+  public boolean removeTransaction(Transaction aTransaction) {
     boolean wasRemoved = false;
-    // Unable to remove aOrder, as it must always have a customerAccount
-    if (!this.equals(aOrder.getCustomerAccount())) {
-      orders.remove(aOrder);
+    // Unable to remove aTransaction, as it must always have a customerAccount
+    if (!this.equals(aTransaction.getCustomerAccount())) {
+      transactions.remove(aTransaction);
       wasRemoved = true;
     }
     return wasRemoved;
   }
 
   /* Code from template association_AddIndexControlFunctions */
-  public boolean addOrderAt(Order aOrder, int index) {
+  public boolean addTransactionAt(Transaction aTransaction, int index) {
     boolean wasAdded = false;
-    if (addOrder(aOrder)) {
+    if (addTransaction(aTransaction)) {
       if (index < 0) {
         index = 0;
       }
-      if (index > numberOfOrders()) {
-        index = numberOfOrders() - 1;
+      if (index > numberOfTransactions()) {
+        index = numberOfTransactions() - 1;
       }
-      orders.remove(aOrder);
-      orders.add(index, aOrder);
+      transactions.remove(aTransaction);
+      transactions.add(index, aTransaction);
       wasAdded = true;
     }
     return wasAdded;
   }
 
-  public boolean addOrMoveOrderAt(Order aOrder, int index) {
+  public boolean addOrMoveTransactionAt(Transaction aTransaction, int index) {
     boolean wasAdded = false;
-    if (orders.contains(aOrder)) {
+    if (transactions.contains(aTransaction)) {
       if (index < 0) {
         index = 0;
       }
-      if (index > numberOfOrders()) {
-        index = numberOfOrders() - 1;
+      if (index > numberOfTransactions()) {
+        index = numberOfTransactions() - 1;
       }
-      orders.remove(aOrder);
-      orders.add(index, aOrder);
+      transactions.remove(aTransaction);
+      transactions.add(index, aTransaction);
       wasAdded = true;
     } else {
-      wasAdded = addOrderAt(aOrder, index);
+      wasAdded = addTransactionAt(aTransaction, index);
     }
     return wasAdded;
   }
@@ -609,9 +610,9 @@ public class CustomerAccount extends Account {
       Review aReview = reviews.get(i - 1);
       aReview.delete();
     }
-    for (int i = orders.size(); i > 0; i--) {
-      Order aOrder = orders.get(i - 1);
-      aOrder.delete();
+    for (int i = transactions.size(); i > 0; i--) {
+      Transaction aTransaction = transactions.get(i - 1);
+      aTransaction.delete();
     }
     for (int i = carts.size(); i > 0; i--) {
       Cart aCart = carts.get(i - 1);

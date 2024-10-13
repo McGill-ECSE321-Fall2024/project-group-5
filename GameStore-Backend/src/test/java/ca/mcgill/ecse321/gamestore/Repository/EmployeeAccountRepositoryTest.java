@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 
 import ca.mcgill.ecse321.gamestore.dao.EmployeeAccountRepository;
 import ca.mcgill.ecse321.gamestore.model.*;
@@ -41,6 +40,12 @@ class EmployeeAccountRepositoryTest {
 
 		// Save Object
 		employee = employeeRepository.save(employee);
+
+		// tests
+		assertNotNull(employee);
+		assertEquals(username, employee.getUsername());
+		assertEquals(passwordHash, employee.getPasswordHash());
+		assertEquals(randomPassword, employee.getRandomPassword());
 
 		// Read object from database using ID
 		employee = employeeRepository.getEmployeeAccountById(employee.getId());
@@ -104,16 +109,19 @@ class EmployeeAccountRepositoryTest {
 		// Save Object
 		employee = employeeRepository.save(employee);
 
-		// Delete object from database
+		// modify attribute
 		String newPasswordHash = "newHash";
 
 		employee.setPasswordHash(newPasswordHash);
 		employeeRepository.save(employee);
 
+		// read object from database using username
+		employee = employeeRepository.getEmployeeAccountById(employee.getId());
+
 		// Assert that the modified attribute is changed
 		assertNotNull(employee);
 		assertEquals(username, employee.getUsername());
-		assertEquals(passwordHash, employee.getPasswordHash());
+		assertEquals(newPasswordHash, employee.getPasswordHash());
 		assertEquals(randomPassword, employee.getRandomPassword());
 
 	}

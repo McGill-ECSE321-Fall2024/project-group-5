@@ -8,48 +8,18 @@ import jakarta.persistence.Entity;
 public class ManagerAccount extends StaffAccount {
 
   // ------------------------
-  // STATIC VARIABLES
-  // ------------------------
-
-  private static ManagerAccount theInstance = null;
-
-  // ------------------------
-  // MEMBER VARIABLES
-  // ------------------------
-
-  // ManagerAccount Attributes
-  private String username;
-
-  // ------------------------
   // CONSTRUCTOR
   // ------------------------
-
-  private ManagerAccount(String aUsername, String aPasswordHash, String aRandomPassword) {
-    super(aUsername, aPasswordHash, aRandomPassword);
-    username = "admin";
+  public ManagerAccount() {
   }
 
-  public static ManagerAccount getInstance() {
-    if (theInstance == null) {
-      return null;
-    }
-    return theInstance;
+  public ManagerAccount(String aUsername, String aPasswordHash, String aRandomPassword) {
+    super(aUsername, aPasswordHash, aRandomPassword);
   }
 
   // ------------------------
   // INTERFACE
   // ------------------------
-
-  public boolean setUsername(String aUsername) {
-    boolean wasSet = false;
-    username = aUsername;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public String getUsername() {
-    return username;
-  }
 
   public void delete() {
     super.delete();

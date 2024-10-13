@@ -9,23 +9,23 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-public class Order {
+public class Transaction {
 
   // ------------------------
   // MEMBER VARIABLES
   // ------------------------
 
-  // Order Attributes
+  // Transaction Attributes
   @Id
   @GeneratedValue
-  private int orderId;
+  private int transactionId;
   private double totalPrice;
   private boolean isPaid;
   private boolean deliveryStatus;
   private String promotionCode;
   private boolean userAgreementCheck;
 
-  // Order Associations
+  // Transaction Associations
   @ManyToOne
   @JoinColumn(name = "payment information id")
   private PaymentInformation paymentInformation;
@@ -42,10 +42,10 @@ public class Order {
   // ------------------------
   // CONSTRUCTOR
   // ------------------------
-  public Order() {
+  public Transaction() {
   }
 
-  public Order(double aTotalPrice, boolean aIsPaid, boolean aDeliveryStatus, String aPromotionCode,
+  public Transaction(double aTotalPrice, boolean aIsPaid, boolean aDeliveryStatus, String aPromotionCode,
       boolean aUserAgreementCheck, PaymentInformation aPaymentInformation, CustomerAccount aCustomerAccount, Cart aCart,
       Address aAddress) {
     totalPrice = aTotalPrice;
@@ -56,22 +56,22 @@ public class Order {
     boolean didAddPaymentInformation = setPaymentInformation(aPaymentInformation);
     if (!didAddPaymentInformation) {
       throw new RuntimeException(
-          "Unable to create order due to paymentInformation. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+          "Unable to create transaction due to paymentInformation. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
     boolean didAddCustomerAccount = setCustomerAccount(aCustomerAccount);
     if (!didAddCustomerAccount) {
       throw new RuntimeException(
-          "Unable to create order due to customerAccount. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+          "Unable to create transaction due to customerAccount. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
     boolean didAddCart = setCart(aCart);
     if (!didAddCart) {
       throw new RuntimeException(
-          "Unable to create order due to cart. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+          "Unable to create transaction due to cart. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
     boolean didAddAddress = setAddress(aAddress);
     if (!didAddAddress) {
       throw new RuntimeException(
-          "Unable to create order due to address. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+          "Unable to create transaction due to address. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
   }
 
@@ -114,8 +114,8 @@ public class Order {
     return wasSet;
   }
 
-  public int getOrderId() {
-    return orderId;
+  public int getTransactionId() {
+    return transactionId;
   }
 
   public double getTotalPrice() {
@@ -168,9 +168,9 @@ public class Order {
     PaymentInformation existingPaymentInformation = paymentInformation;
     paymentInformation = aPaymentInformation;
     if (existingPaymentInformation != null && !existingPaymentInformation.equals(aPaymentInformation)) {
-      existingPaymentInformation.removeOrder(this);
+      existingPaymentInformation.removeTransaction(this);
     }
-    paymentInformation.addOrder(this);
+    paymentInformation.addTransaction(this);
     wasSet = true;
     return wasSet;
   }
@@ -185,9 +185,9 @@ public class Order {
     CustomerAccount existingCustomerAccount = customerAccount;
     customerAccount = aCustomerAccount;
     if (existingCustomerAccount != null && !existingCustomerAccount.equals(aCustomerAccount)) {
-      existingCustomerAccount.removeOrder(this);
+      existingCustomerAccount.removeTransaction(this);
     }
-    customerAccount.addOrder(this);
+    customerAccount.addTransaction(this);
     wasSet = true;
     return wasSet;
   }
@@ -196,23 +196,23 @@ public class Order {
   public boolean setCart(Cart aNewCart) {
     boolean wasSet = false;
     if (aNewCart == null) {
-      // Unable to setCart to null, as order must always be associated to a cart
+      // Unable to setCart to null, as transaction must always be associated to a cart
       return wasSet;
     }
 
-    Order existingOrder = aNewCart.getOrder();
-    if (existingOrder != null && !equals(existingOrder)) {
-      // Unable to setCart, the current cart already has a order, which would be
+    Transaction existingTransaction = aNewCart.getTransaction();
+    if (existingTransaction != null && !equals(existingTransaction)) {
+      // Unable to setCart, the current cart already has a transaction, which would be
       // orphaned if it were re-assigned
       return wasSet;
     }
 
     Cart anOldCart = cart;
     cart = aNewCart;
-    cart.setOrder(this);
+    cart.setTransaction(this);
 
     if (anOldCart != null) {
-      anOldCart.setOrder(null);
+      anOldCart.setTransaction(null);
     }
     wasSet = true;
     return wasSet;
@@ -228,9 +228,9 @@ public class Order {
     Address existingAddress = address;
     address = aAddress;
     if (existingAddress != null && !existingAddress.equals(aAddress)) {
-      existingAddress.removeOrder(this);
+      existingAddress.removeTransaction(this);
     }
-    address.addOrder(this);
+    address.addTransaction(this);
     wasSet = true;
     return wasSet;
   }
@@ -239,28 +239,28 @@ public class Order {
     PaymentInformation placeholderPaymentInformation = paymentInformation;
     this.paymentInformation = null;
     if (placeholderPaymentInformation != null) {
-      placeholderPaymentInformation.removeOrder(this);
+      placeholderPaymentInformation.removeTransaction(this);
     }
     CustomerAccount placeholderCustomerAccount = customerAccount;
     this.customerAccount = null;
     if (placeholderCustomerAccount != null) {
-      placeholderCustomerAccount.removeOrder(this);
+      placeholderCustomerAccount.removeTransaction(this);
     }
     Cart existingCart = cart;
     cart = null;
     if (existingCart != null) {
-      existingCart.setOrder(null);
+      existingCart.setTransaction(null);
     }
     Address placeholderAddress = address;
     this.address = null;
     if (placeholderAddress != null) {
-      placeholderAddress.removeOrder(this);
+      placeholderAddress.removeTransaction(this);
     }
   }
 
   public String toString() {
     return super.toString() + "[" +
-        "orderId" + ":" + getOrderId() + "," +
+        "transactionId" + ":" + getTransactionId() + "," +
         "totalPrice" + ":" + getTotalPrice() + "," +
         "isPaid" + ":" + getIsPaid() + "," +
         "deliveryStatus" + ":" + getDeliveryStatus() + "," +

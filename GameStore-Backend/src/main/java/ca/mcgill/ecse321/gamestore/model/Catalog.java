@@ -14,12 +14,6 @@ import jakarta.persistence.OneToMany;
 public class Catalog {
 
   // ------------------------
-  // STATIC VARIABLES
-  // ------------------------
-
-  private static Catalog theInstance = null;
-
-  // ------------------------
   // MEMBER VARIABLES
   // ------------------------
 
@@ -35,16 +29,8 @@ public class Catalog {
   // ------------------------
   // CONSTRUCTOR
   // ------------------------
-
-  private Catalog() {
+  public Catalog() {
     games = new ArrayList<Game>();
-  }
-
-  public static Catalog getInstance() {
-    if (theInstance == null) {
-      theInstance = new Catalog();
-    }
-    return theInstance;
   }
 
   // ------------------------
@@ -84,12 +70,6 @@ public class Catalog {
   /* Code from template association_MinimumNumberOfMethod */
   public static int minimumNumberOfGames() {
     return 0;
-  }
-
-  /* Code from template association_AddManyToOne */
-  public Game addGame(String aName, int aPrice, String aDescription, Game.Category aCategory,
-      Game.GameConsole aGameConsole) {
-    return new Game(aName, aPrice, aDescription, aCategory, aGameConsole, this);
   }
 
   public boolean addGame(Game aGame) {
