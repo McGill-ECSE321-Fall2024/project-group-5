@@ -32,8 +32,8 @@ public class Cart {
   @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
   private List<GameQty> gameQties;
   @ManyToOne
-  @JoinColumn(name = "order id")
-  private Order order;
+  @JoinColumn(name = "transaction id")
+  private Transaction transaction;
 
   // ------------------------
   // CONSTRUCTOR
@@ -99,12 +99,12 @@ public class Cart {
   }
 
   /* Code from template association_GetOne */
-  public Order getOrder() {
-    return order;
+  public Transaction getTransaction() {
+    return transaction;
   }
 
-  public boolean hasOrder() {
-    boolean has = order != null;
+  public boolean hasTransaction() {
+    boolean has = transaction != null;
     return has;
   }
 
@@ -197,22 +197,22 @@ public class Cart {
   }
 
   /* Code from template association_SetOptionalOneToOne */
-  public boolean setOrder(Order aNewOrder) {
+  public boolean setTransaction(Transaction aNewTransaction) {
     boolean wasSet = false;
-    if (order != null && !order.equals(aNewOrder) && equals(order.getCart())) {
-      // Unable to setOrder, as existing order would become an orphan
+    if (transaction != null && !transaction.equals(aNewTransaction) && equals(transaction.getCart())) {
+      // Unable to setTransaction, as existing transaction would become an orphan
       return wasSet;
     }
 
-    order = aNewOrder;
-    Cart anOldCart = aNewOrder != null ? aNewOrder.getCart() : null;
+    transaction = aNewTransaction;
+    Cart anOldCart = aNewTransaction != null ? aNewTransaction.getCart() : null;
 
     if (!this.equals(anOldCart)) {
       if (anOldCart != null) {
-        anOldCart.order = null;
+        anOldCart.transaction = null;
       }
-      if (order != null) {
-        order.setCart(this);
+      if (transaction != null) {
+        transaction.setCart(this);
       }
     }
     wasSet = true;
@@ -229,10 +229,10 @@ public class Cart {
       GameQty aGameQty = gameQties.get(i - 1);
       aGameQty.delete();
     }
-    Order existingOrder = order;
-    order = null;
-    if (existingOrder != null) {
-      existingOrder.delete();
+    Transaction existingTransaction = transaction;
+    transaction = null;
+    if (existingTransaction != null) {
+      existingTransaction.delete();
     }
   }
 
@@ -242,6 +242,7 @@ public class Cart {
         "  " + "customerAccount = "
         + (getCustomerAccount() != null ? Integer.toHexString(System.identityHashCode(getCustomerAccount())) : "null")
         + System.getProperties().getProperty("line.separator") +
-        "  " + "order = " + (getOrder() != null ? Integer.toHexString(System.identityHashCode(getOrder())) : "null");
+        "  " + "transaction = "
+        + (getTransaction() != null ? Integer.toHexString(System.identityHashCode(getTransaction())) : "null");
   }
 }

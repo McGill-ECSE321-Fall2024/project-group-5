@@ -12,7 +12,7 @@ import org.junit.jupiter.api.AfterEach;
 import ca.mcgill.ecse321.gamestore.model.*;
 
 @SpringBootTest
-class OrderRepositoryRepositoryTest {
+class TransactionRepositoryRepositoryTest {
 
 	@Test
 	void contextLoads() {

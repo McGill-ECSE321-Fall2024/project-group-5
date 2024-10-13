@@ -59,8 +59,7 @@ public class Game {
   public Game() {
   }
 
-  public Game(String aName, int aPrice, String aDescription, Category aCategory, GameConsole aGameConsole,
-      Catalog aCatalog) {
+  public Game(String aName, int aPrice, String aDescription, Category aCategory, GameConsole aGameConsole) {
     name = aName;
     price = aPrice;
     description = aDescription;
@@ -68,11 +67,6 @@ public class Game {
     gameConsole = aGameConsole;
     gameQties = new ArrayList<GameQty>();
     reviews = new ArrayList<Review>();
-    boolean didAddCatalog = setCatalog(aCatalog);
-    if (!didAddCatalog) {
-      throw new RuntimeException(
-          "Unable to create game due to catalog. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
   }
 
   // ------------------------
