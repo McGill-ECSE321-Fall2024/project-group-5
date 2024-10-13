@@ -1,4 +1,4 @@
-package ca.mcgill.ecse321.gamestore.repository;
+package ca.mcgill.ecse321.gamestore.Repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -56,6 +56,7 @@ public class GameQtyRepositoryTest {
 		GameQty gameQty = new GameQty();
 		gameQty.setQty(5);
 		gameQty.setGame(game);
+		gameQty.setCart(cart);
 		gameQtyRepository.save(gameQty);
 
 		// Retrieve the GameQty by its ID
@@ -87,10 +88,11 @@ public class GameQtyRepositoryTest {
 		GameQty gameQty = new GameQty();
 		gameQty.setQty(5);
 		gameQty.setGame(game);
+		gameQty.setCart(cart);
 		gameQtyRepository.save(gameQty);
 
 		// Find GameQtys by Cart
-		List<GameQty> foundGameQtys = gameQtyRepository.findByCart(cart);
+		List<GameQty> foundGameQtys = gameQtyRepository.findByCart_Id(cart.getId());
 
 		// Ensure the GameQty was found and associated with the correct cart
 		assertNotNull(foundGameQtys);
@@ -120,7 +122,7 @@ public class GameQtyRepositoryTest {
 		gameQtyRepository.save(gameQty);
 
 		// Find GameQtys by Game
-		List<GameQty> foundGameQtys = gameQtyRepository.findByGame(game);
+		List<GameQty> foundGameQtys = gameQtyRepository.findByGame_Id(game.getId());
 
 		// Ensure the GameQty was found and associated with the correct game
 		assertNotNull(foundGameQtys);

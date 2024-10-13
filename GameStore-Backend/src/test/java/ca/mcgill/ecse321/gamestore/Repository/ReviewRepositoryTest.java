@@ -1,4 +1,4 @@
-package ca.mcgill.ecse321.gamestore.repository;
+package ca.mcgill.ecse321.gamestore.Repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -93,7 +93,7 @@ public class ReviewRepositoryTest {
 		reviewRepository.save(review);
 
 		// Find reviews by the CustomerAccount
-		List<Review> foundReviews = reviewRepository.findByCustomerAccount(customerAccount);
+		List<Review> foundReviews = reviewRepository.findByCustomerAccount_Id(customerAccount.getId());
 
 		// Ensure the review was found and is associated with the correct customer
 		assertNotNull(foundReviews);
@@ -124,7 +124,7 @@ public class ReviewRepositoryTest {
 		reviewRepository.save(review);
 
 		// Find reviews by the Game
-		List<Review> foundReviews = reviewRepository.findByGame(game);
+		List<Review> foundReviews = reviewRepository.findByGame_Id(game.getId());
 
 		// Ensure the review was found and is associated with the correct game
 		assertNotNull(foundReviews);

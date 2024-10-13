@@ -1,4 +1,4 @@
-package ca.mcgill.ecse321.gamestore.repository;
+package ca.mcgill.ecse321.gamestore.Repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,7 +40,7 @@ public class GameRepositoryTest {
 		gameRepository.save(game);
 
 		// Retrieve the game by its ID
-		Game foundGame = gameRepository.findById(game.getId()).orElse(null);
+		Game foundGame = gameRepository.findById(game.getId());
 
 		// Ensure the game was saved and retrieved successfully
 		assertNotNull(foundGame);
@@ -76,7 +76,7 @@ public class GameRepositoryTest {
 		game.setPrice(60);
 		game.setDescription("Test Description");
 		game.setCategory(Game.Category.Action);
-		game.setGameConsole(Game.GameConsole.PS5);
+		game.setGameConsole(Game.GameConsole.NintendoSwitch);
 		gameRepository.save(game);
 
 		// Find games by console
@@ -89,10 +89,10 @@ public class GameRepositoryTest {
 	}
 
 	@Test
-	public void testFindByName() {
+	public void testFindById() {
 		// Create a Game and save it
 		Game game = new Game();
-		game.setName("Test Game");
+		game.setName("Unique Game");
 		game.setPrice(60);
 		game.setDescription("Test Description");
 		game.setCategory(Game.Category.Action);
@@ -100,12 +100,11 @@ public class GameRepositoryTest {
 		gameRepository.save(game);
 
 		// Find games by name
-		List<Game> foundGames = gameRepository.findByName("Unique Game");
+		Game foundGame = gameRepository.findById(game.getId());
 
 		// Ensure the game was found by its name
-		assertNotNull(foundGames);
-		assertFalse(foundGames.isEmpty());
-		assertEquals("Unique Game", foundGames.get(0).getName());
+		assertNotNull(foundGame);
+		assertEquals("Unique Game", foundGame.getName());
 	}
 
 	@Test
@@ -120,14 +119,14 @@ public class GameRepositoryTest {
 		gameRepository.save(game);
 
 		// Retrieve the game, update its description and price, and save it again
-		Game foundGame = gameRepository.findById(game.getId()).orElse(null);
+		Game foundGame = gameRepository.findById(game.getId());
 		assertNotNull(foundGame);
 		foundGame.setDescription("Updated Description");
 		foundGame.setPrice(75);
 		gameRepository.save(foundGame);
 
 		// Retrieve the updated game and verify the changes
-		Game updatedGame = gameRepository.findById(foundGame.getId()).orElse(null);
+		Game updatedGame = gameRepository.findById(foundGame.getId());
 		assertNotNull(updatedGame);
 		assertEquals("Updated Description", updatedGame.getDescription());
 		assertEquals(75, updatedGame.getPrice());
@@ -148,7 +147,7 @@ public class GameRepositoryTest {
 		gameRepository.delete(game);
 
 		// Ensure the game is no longer in the repository
-		Game deletedGame = gameRepository.findById(game.getId()).orElse(null);
+		Game deletedGame = gameRepository.findById(game.getId());
 		assertNull(deletedGame);
 	}
 }

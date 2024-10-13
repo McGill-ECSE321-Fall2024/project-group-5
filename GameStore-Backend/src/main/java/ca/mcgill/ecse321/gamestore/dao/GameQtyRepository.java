@@ -9,15 +9,9 @@ import java.util.List;
 @Repository
 public interface GameQtyRepository extends CrudRepository<GameQty, Integer> {
 
-
-    List<GameQty> findAll();
-
-
     List<GameQty> findByGame_Id(int gameId);
 
-
     List<GameQty> findByCart_Id(int cartId);
-
 
     void deleteById(int id);
 }

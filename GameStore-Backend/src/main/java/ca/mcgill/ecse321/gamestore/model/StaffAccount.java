@@ -28,8 +28,10 @@ public abstract class StaffAccount extends Account {
   // INTERFACE
   // ------------------------
 
-  public void delete() {
-    super.delete();
-  }
+  /*
+   * public void delete() {
+   * super.delete();
+   * }
+   */
 
 }

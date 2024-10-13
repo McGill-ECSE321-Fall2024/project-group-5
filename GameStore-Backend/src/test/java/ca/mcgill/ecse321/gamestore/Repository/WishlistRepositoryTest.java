@@ -1,4 +1,4 @@
-package ca.mcgill.ecse321.gamestore.repository;
+package ca.mcgill.ecse321.gamestore.Repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -62,7 +62,7 @@ public class WishlistRepositoryTest {
 		wishlistRepository.save(wishlist);
 
 		// Find the wishlist by the CustomerAccount
-		Wishlist foundWishlist = wishlistRepository.findByCustomerAccount(customerAccount);
+		Wishlist foundWishlist = wishlistRepository.findByCustomerAccount_Id(customerAccount.getId());
 
 		// Ensure the wishlist is found and linked to the correct customer
 		assertNotNull(foundWishlist);

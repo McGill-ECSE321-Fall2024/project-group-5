@@ -9,18 +9,11 @@ import java.util.List;
 @Repository
 public interface GameRepository extends CrudRepository<Game, Integer> {
 
-
-    List<Game> findAll();
-
-
-    Game findByName(String name);
-
+    Game findById(int id);
 
     List<Game> findByCategory(Game.Category category);
 
-
     List<Game> findByGameConsole(Game.GameConsole gameConsole);
-
 
     void deleteById(int id);
 }
