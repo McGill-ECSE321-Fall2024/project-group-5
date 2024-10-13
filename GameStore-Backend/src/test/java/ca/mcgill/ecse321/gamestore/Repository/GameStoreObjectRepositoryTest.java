@@ -9,14 +9,95 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.junit.jupiter.api.AfterEach;
 
+import ca.mcgill.ecse321.gamestore.dao.GameStoreObjectRepository;
 import ca.mcgill.ecse321.gamestore.model.*;
 
 @SpringBootTest
 class GameStoreObjectRepositoryTest {
 
+	@Autowired
+	private GameStoreObjectRepository gameStoreObjectRepository;
+
+	@AfterEach
+	public void clearDatabase() {
+		gameStoreObjectRepository.deleteAll();
+	}
+
 	@Test
-	void contextLoads() {
-		assertEquals(1, 2);
-		assertEquals(1, 1);
+	public void testPersistGameStoreObject() {
+
+		// Create object
+		GameStoreObject gameStore = new GameStoreObject();
+
+		String policy = "stuff that the customer agrees to";
+
+		gameStore.setPolicy(policy);
+
+		// Save Object
+		gameStore = gameStoreObjectRepository.save(gameStore);
+
+		// tests
+		assertNotNull(gameStore);
+		assertEquals(policy, gameStore.getPolicy());
+
+		// Read object from database using ID
+		gameStore = gameStoreObjectRepository.getGameStoreObjectByIdIsNotNull();
+
+		// tests
+		assertNotNull(gameStore);
+		assertEquals(policy, gameStore.getPolicy());
+	}
+
+	@Test
+	void testDeleteGameStoreObject() {
+
+		// Create object
+		GameStoreObject gameStore = new GameStoreObject();
+
+		String policy = "stuff that the customer agrees to";
+
+		gameStore.setPolicy(policy);
+
+		// Save Object
+		gameStore = gameStoreObjectRepository.save(gameStore);
+
+		// tests
+		assertNotNull(gameStore);
+		assertEquals(policy, gameStore.getPolicy());
+
+		// Delete object from database
+		gameStoreObjectRepository.deleteGameStoreObjectByIdNotNull();
+
+		// Assert that database doesn't have object
+		assertNull(gameStoreObjectRepository.getGameStoreObjectByIdIsNotNull());
+
+	}
+
+	@Test
+	void testModifyGameStoreObjectAttributes() {
+
+		// Create object
+		GameStoreObject gameStore = new GameStoreObject();
+
+		String policy = "stuff that the customer agrees to";
+
+		gameStore.setPolicy(policy);
+
+		// Save Object
+		gameStore = gameStoreObjectRepository.save(gameStore);
+
+		// modifiy attribute
+		String newPolicy = "new stuff";
+
+		gameStore.setPolicy(newPolicy);
+		gameStoreObjectRepository.save(gameStore);
+
+		// read object from database using username
+		gameStore = gameStoreObjectRepository.getGameStoreObjectByIdIsNotNull();
+
+		// tests
+		assertNotNull(gameStore);
+		assertEquals(newPolicy, gameStore.getPolicy());
+
 	}
 }

@@ -1,9 +1,9 @@
 package ca.mcgill.ecse321.gamestore.dao;
 
-import ca.mcgill.ecse321.gamestore.model.Account;
+import ca.mcgill.ecse321.gamestore.model.PaymentInformation;
 
 import org.springframework.data.repository.CrudRepository;
 
-public interface AccountRepository extends CrudRepository<Account, Long> {
+public interface PaymentInformationRepository extends CrudRepository<PaymentInformation, Integer> {
 
 }

@@ -26,9 +26,8 @@ public class GameStoreObject {
   public GameStoreObject() {
   }
 
-  public GameStoreObject(String aPolicy, int aId) {
+  public GameStoreObject(String aPolicy) {
     policy = aPolicy;
-    id = aId;
   }
 
   // ------------------------
