@@ -44,6 +44,7 @@ class OrderRepositoryTest {
 
     @AfterEach
     public void clearDatabase() {
+        // clear everything after each test
         orderRepository.deleteAll();
         customerAccountRepository.deleteAll();
         paymentInformationRepository.deleteAll();
@@ -53,14 +54,14 @@ class OrderRepositoryTest {
 
     @Test
     void testPersistOrder() {
-        // Create a new customer account
+        // set up customer
         CustomerAccount someCustomer = new CustomerAccount();
         someCustomer.setUsername("someCustomer");
         someCustomer.setEmail("someCustomer@example.com");
         someCustomer.setPasswordHash("password123");
         customerAccountRepository.save(someCustomer);
 
-        // Create a new payment information
+        // set up payment info
         PaymentInformation paymentInfo = new PaymentInformation();
         paymentInfo.setCardholderName("someCustomer");
         paymentInfo.setCardNumber(123456789);
@@ -70,12 +71,12 @@ class OrderRepositoryTest {
         paymentInfo.setCustomerAccount(someCustomer);
         paymentInformationRepository.save(paymentInfo);
 
-        // Create a new cart
+        // create a cart
         Cart cart = new Cart();
         cart.setCustomerAccount(someCustomer);
         cartRepository.save(cart);
 
-        // Create a new address
+        // create an address
         Address address = new Address();
         address.setAddress("123 Main St");
         address.setCity("Montreal");
@@ -85,7 +86,7 @@ class OrderRepositoryTest {
         address.setCustomerAccount(someCustomer);
         addressRepository.save(address);
 
-        // Create a new order and associate it with the customer account, payment info, cart, and address
+        // create order and link it with customer, payment info, cart, and address
         Order order = new Order();
         order.setTotalPrice(100.0);
         order.setIsPaid(true);
@@ -98,7 +99,7 @@ class OrderRepositoryTest {
         order.setAddress(address);
         order = orderRepository.save(order);
 
-        // Verify that the order was saved correctly
+        // make sure the order was saved correctly
         assertNotNull(order);
         assertEquals(100.0, order.getTotalPrice());
         assertEquals(true, order.getIsPaid());
@@ -106,7 +107,7 @@ class OrderRepositoryTest {
         assertEquals("PROMO123", order.getPromotionCode());
         assertEquals(someCustomer.getUsername(), order.getCustomerAccount().getUsername());
 
-        // Read the order from the database using the ID
+        // get the order from the database and make sure it matches
         Optional<Order> retrievedOrder = orderRepository.findById(order.getOrderId());
         assertTrue(retrievedOrder.isPresent());
         assertEquals(100.0, retrievedOrder.get().getTotalPrice());
@@ -115,14 +116,14 @@ class OrderRepositoryTest {
 
     @Test
     void testFindOrderByCustomerAccountId() {
-        // Create a new customer account
+        // create a customer
         CustomerAccount someCustomer = new CustomerAccount();
         someCustomer.setUsername("someCustomer");
         someCustomer.setEmail("someCustomer@example.com");
         someCustomer.setPasswordHash("password456");
         customerAccountRepository.save(someCustomer);
 
-        // Create a new payment information
+        // create payment info
         PaymentInformation paymentInfo = new PaymentInformation();
         paymentInfo.setCardholderName("someCustomer");
         paymentInfo.setCardNumber(987654321);
@@ -132,12 +133,12 @@ class OrderRepositoryTest {
         paymentInfo.setCustomerAccount(someCustomer);
         paymentInformationRepository.save(paymentInfo);
 
-        // Create a new cart
+        // create a cart
         Cart cart = new Cart();
         cart.setCustomerAccount(someCustomer);
         cartRepository.save(cart);
 
-        // Create a new address
+        // create an address
         Address address = new Address();
         address.setAddress("456 Another St");
         address.setCity("Montreal");
@@ -147,7 +148,7 @@ class OrderRepositoryTest {
         address.setCustomerAccount(someCustomer);
         addressRepository.save(address);
 
-        // Create a new order and associate it with the customer account, payment info, cart, and address
+        // create an order
         Order order = new Order();
         order.setTotalPrice(150.0);
         order.setIsPaid(true);
@@ -160,7 +161,7 @@ class OrderRepositoryTest {
         order.setAddress(address);
         orderRepository.save(order);
 
-        // Find orders by customer account ID
+        // find the order by customer account ID
         Iterable<Order> orders = orderRepository.findByCustomerAccount_CustomerAccountId(someCustomer.getId());
         assertTrue(orders.iterator().hasNext());
 
@@ -171,14 +172,14 @@ class OrderRepositoryTest {
 
     @Test
     void testUpdateOrder() {
-        // Create a new customer account
+        // create a customer
         CustomerAccount someCustomer = new CustomerAccount();
         someCustomer.setUsername("someCustomer");
         someCustomer.setEmail("someCustomer@example.com");
         someCustomer.setPasswordHash("agent007");
         customerAccountRepository.save(someCustomer);
 
-        // Create a new payment information
+        // create payment info
         PaymentInformation paymentInfo = new PaymentInformation();
         paymentInfo.setCardholderName("someCustomer");
         paymentInfo.setCardNumber(700007);
@@ -188,12 +189,12 @@ class OrderRepositoryTest {
         paymentInfo.setCustomerAccount(someCustomer);
         paymentInformationRepository.save(paymentInfo);
 
-        // Create a new cart
+        // create a cart
         Cart cart = new Cart();
         cart.setCustomerAccount(someCustomer);
         cartRepository.save(cart);
 
-        // Create a new address
+        // create an address
         Address address = new Address();
         address.setAddress("789 Spy St");
         address.setCity("London");
@@ -203,7 +204,7 @@ class OrderRepositoryTest {
         address.setCustomerAccount(someCustomer);
         addressRepository.save(address);
 
-        // Create a new order and associate it with the customer account, payment info, cart, and address
+        // create order
         Order order = new Order();
         order.setTotalPrice(200.0);
         order.setIsPaid(true);
@@ -216,13 +217,13 @@ class OrderRepositoryTest {
         order.setAddress(address);
         orderRepository.save(order);
 
-        // Retrieve the order and update the total price
+        // update the order's total price
         Optional<Order> retrievedOrder = orderRepository.findById(order.getOrderId());
         assertTrue(retrievedOrder.isPresent());
         retrievedOrder.get().setTotalPrice(250.0);
         orderRepository.save(retrievedOrder.get());
 
-        // Verify the order was updated
+        // verify the order was updated
         Optional<Order> updatedOrder = orderRepository.findById(retrievedOrder.get().getOrderId());
         assertTrue(updatedOrder.isPresent());
         assertEquals(250.0, updatedOrder.get().getTotalPrice());
@@ -230,14 +231,14 @@ class OrderRepositoryTest {
 
     @Test
     void testDeleteOrder() {
-        // Create a new customer account
+        // create a customer
         CustomerAccount someCustomer = new CustomerAccount();
         someCustomer.setUsername("someCustomer");
         someCustomer.setEmail("someCustomer@example.com");
         someCustomer.setPasswordHash("delete123");
         customerAccountRepository.save(someCustomer);
 
-        // Create a new payment information
+        // create payment info
         PaymentInformation paymentInfo = new PaymentInformation();
         paymentInfo.setCardholderName("someCustomer");
         paymentInfo.setCardNumber(101010101);
@@ -247,12 +248,12 @@ class OrderRepositoryTest {
         paymentInfo.setCustomerAccount(someCustomer);
         paymentInformationRepository.save(paymentInfo);
 
-        // Create a new cart
+        // create a cart
         Cart cart = new Cart();
         cart.setCustomerAccount(someCustomer);
         cartRepository.save(cart);
 
-        // Create a new address
+        // create an address
         Address address = new Address();
         address.setAddress("123 Deletion St");
         address.setCity("Montreal");
@@ -262,7 +263,7 @@ class OrderRepositoryTest {
         address.setCustomerAccount(someCustomer);
         addressRepository.save(address);
 
-        // Create a new order and associate it with the customer account, payment info, cart, and address
+        // create order
         Order order = new Order();
         order.setTotalPrice(175.0);
         order.setIsPaid(true);
@@ -275,14 +276,14 @@ class OrderRepositoryTest {
         order.setAddress(address);
         orderRepository.save(order);
 
-        // Verify the order exists
+        // verify the order exists
         Optional<Order> retrievedOrder = orderRepository.findById(order.getOrderId());
         assertTrue(retrievedOrder.isPresent());
 
-        // Delete the order
+        // delete the order
         orderRepository.deleteById(order.getOrderId());
 
-        // Verify the order was deleted
+        // verify the order was deleted
         Optional<Order> deletedOrder = orderRepository.findById(order.getOrderId());
         assertTrue(deletedOrder.isEmpty());
     }
