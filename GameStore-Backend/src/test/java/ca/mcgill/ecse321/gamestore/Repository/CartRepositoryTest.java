@@ -1,34 +1,12 @@
-/***package ca.mcgill.ecse321.gamestore.Repository;
+package ca.mcgill.ecse321.gamestore.Repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.junit.jupiter.api.AfterEach;
-
-import ca.mcgill.ecse321.gamestore.model.*;
-
-@SpringBootTest
-class CartRepositoryTest {
-
-	@Test
-	void contextLoads() {
-		assertEquals(1, 2);
-		assertEquals(1, 1);
-	}
-}
-***/
-package ca.mcgill.ecse321.gamestore.repository;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -54,85 +32,97 @@ class CartRepositoryTest {
     }
 
     @Test
-    void testCreateCart() {
+    void testPersistCart() {
         // Create a new customer account
-        CustomerAccount customerAccount = new CustomerAccount();
-        customerAccount.setUsername("john_doe");
-        customerAccount.setEmail("john.doe@example.com");
-        customerAccount.setPasswordHash("password123");
-        customerAccountRepository.save(customerAccount);
+        CustomerAccount someCustomer = new CustomerAccount();
+        someCustomer.setUsername("someCustomer");
+        someCustomer.setEmail("someCustomer@example.com");
+        someCustomer.setPasswordHash("password123");
+        customerAccountRepository.save(someCustomer);
 
         // Create a new cart and associate it with the customer account
         Cart cart = new Cart();
-        cart.setCustomerAccount(customerAccount);
-        cartRepository.save(cart);
+        cart.setCustomerAccount(someCustomer);
+        cart = cartRepository.save(cart);
 
-        // Retrieve the cart and verify it was saved correctly
+        // Verify that the cart was saved correctly
+        assertNotNull(cart);
+        assertEquals(someCustomer.getUsername(), cart.getCustomerAccount().getUsername());
+
+        // Read the cart from the database using the ID
         Optional<Cart> retrievedCart = cartRepository.findById(cart.getId());
         assertTrue(retrievedCart.isPresent());
-        assertNotNull(retrievedCart.get().getCustomerAccount());
-        assertEquals(customerAccount.getUsername(), retrievedCart.get().getCustomerAccount().getUsername());
+        assertEquals(someCustomer.getUsername(), retrievedCart.get().getCustomerAccount().getUsername());
     }
 
     @Test
     void testFindCartByCustomerAccountId() {
         // Create a new customer account
-        CustomerAccount customerAccount = new CustomerAccount();
-        customerAccount.setUsername("jane_doe");
-        customerAccount.setEmail("jane.doe@example.com");
-        customerAccount.setPasswordHash("password456");
-        customerAccountRepository.save(customerAccount);
+        CustomerAccount someCustomer = new CustomerAccount();
+        someCustomer.setUsername("someCustomer");
+        someCustomer.setEmail("someCustomer@example.com");
+        someCustomer.setPasswordHash("password456");
+        customerAccountRepository.save(someCustomer);
 
         // Create a new cart and associate it with the customer account
         Cart cart = new Cart();
-        cart.setCustomerAccount(customerAccount);
+        cart.setCustomerAccount(someCustomer);
         cartRepository.save(cart);
 
-        // Find the cart by customer account ID
-        Iterable<Cart> carts = cartRepository.findByCustomerAccount_CustomerAccountId(customerAccount.getId());
+        // Find carts by customer account ID
+        Iterable<Cart> carts = cartRepository.findByCustomerAccount_CustomerAccountId(someCustomer.getId());
         assertTrue(carts.iterator().hasNext());
-        assertEquals(customerAccount.getUsername(), carts.iterator().next().getCustomerAccount().getUsername());
+
+        Cart retrievedCart = carts.iterator().next();
+        assertEquals(someCustomer.getUsername(), retrievedCart.getCustomerAccount().getUsername());
     }
 
     @Test
     void testUpdateCart() {
         // Create a new customer account
-        CustomerAccount customerAccount = new CustomerAccount();
-        customerAccount.setUsername("james_bond");
-        customerAccount.setEmail("james.bond@example.com");
-        customerAccount.setPasswordHash("agent007");
-        customerAccountRepository.save(customerAccount);
+        CustomerAccount someCustomer = new CustomerAccount();
+        someCustomer.setUsername("someCustomer");
+        someCustomer.setEmail("someCustomer@example.com");
+        someCustomer.setPasswordHash("agent007");
+        customerAccountRepository.save(someCustomer);
 
-        // Create a new cart
+        // Create a new cart and associate it with the customer account
         Cart cart = new Cart();
-        cart.setCustomerAccount(customerAccount);
+        cart.setCustomerAccount(someCustomer);
         cartRepository.save(cart);
 
-        // Retrieve the cart and update some details
+        // Retrieve the cart and update the customer account association (if needed)
         Optional<Cart> retrievedCart = cartRepository.findById(cart.getId());
         assertTrue(retrievedCart.isPresent());
+
+        CustomerAccount anotherCustomer = new CustomerAccount();
+        anotherCustomer.setUsername("anotherCustomer");
+        anotherCustomer.setEmail("anotherCustomer@example.com");
+        anotherCustomer.setPasswordHash("newpass123");
+        customerAccountRepository.save(anotherCustomer);
+
         Cart cartToUpdate = retrievedCart.get();
-        cartToUpdate.setId(12345); // Example of setting the ID to a new value
+        cartToUpdate.setCustomerAccount(anotherCustomer);
         cartRepository.save(cartToUpdate);
 
         // Verify the cart was updated
         Optional<Cart> updatedCart = cartRepository.findById(cartToUpdate.getId());
         assertTrue(updatedCart.isPresent());
-        assertEquals(12345, updatedCart.get().getId());
+        assertEquals(anotherCustomer.getUsername(), updatedCart.get().getCustomerAccount().getUsername());
     }
 
     @Test
     void testDeleteCart() {
         // Create a new customer account
-        CustomerAccount customerAccount = new CustomerAccount();
-        customerAccount.setUsername("deletion_test_user");
-        customerAccount.setEmail("deletion_test@example.com");
-        customerAccount.setPasswordHash("deletethis");
-        customerAccountRepository.save(customerAccount);
+        CustomerAccount someCustomer = new CustomerAccount();
+        someCustomer.setUsername("someCustomer");
+        someCustomer.setEmail("someCustomer@example.com");
+        someCustomer.setPasswordHash("delete123");
+        customerAccountRepository.save(someCustomer);
 
         // Create a new cart and associate it with the customer account
         Cart cart = new Cart();
-        cart.setCustomerAccount(customerAccount);
+        cart.setCustomerAccount(someCustomer);
         cartRepository.save(cart);
 
         // Verify the cart exists
@@ -142,21 +132,15 @@ class CartRepositoryTest {
         // Delete the cart
         cartRepository.deleteById(cart.getId());
 
-        // Verify the cart no longer exists
+        // Verify the cart was deleted
         Optional<Cart> deletedCart = cartRepository.findById(cart.getId());
         assertTrue(deletedCart.isEmpty());
     }
 
     @Test
     void testFindByInvalidId() {
-        // Try to find a cart that does not exist
+        // Attempt to retrieve a cart with a non-existent ID
         Optional<Cart> nonExistentCart = cartRepository.findById(999);
         assertTrue(nonExistentCart.isEmpty());
-    }
-
-    @Test
-    void testFindByOrderId() {
-        // Assuming you have an Order repository and you are associating an order with a cart in your application
-        // This is a placeholder test for finding by order ID if it exists
     }
 }
