@@ -1,14 +1,10 @@
 package ca.mcgill.ecse321.gamestore.model;
 
-import java.util.*;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 
 // line 61 "model.ump"
 // line 190 "model.ump"
@@ -30,8 +26,6 @@ public class Address {
   private int id;
 
   // Address Associations
-  @OneToMany(mappedBy = "address", cascade = CascadeType.ALL)
-  private List<Transaction> transactions = new ArrayList<>();
   @ManyToOne
   @JoinColumn(name = "customer account id")
   private CustomerAccount customerAccount;
@@ -49,7 +43,6 @@ public class Address {
     province = aProvince;
     country = aCountry;
     postalCode = aPostalCode;
-    transactions = new ArrayList<Transaction>();
     boolean didAddCustomerAccount = setCustomerAccount(aCustomerAccount);
     if (!didAddCustomerAccount) {
       throw new RuntimeException(
@@ -128,30 +121,6 @@ public class Address {
   }
 
   /* Code from template association_GetMany */
-  public Transaction getTransaction(int index) {
-    Transaction aTransaction = transactions.get(index);
-    return aTransaction;
-  }
-
-  public List<Transaction> getTransactions() {
-    List<Transaction> newTransactions = Collections.unmodifiableList(transactions);
-    return newTransactions;
-  }
-
-  public int numberOfTransactions() {
-    int number = transactions.size();
-    return number;
-  }
-
-  public boolean hasTransactions() {
-    boolean has = transactions.size() > 0;
-    return has;
-  }
-
-  public int indexOfTransaction(Transaction aTransaction) {
-    int index = transactions.indexOf(aTransaction);
-    return index;
-  }
 
   /* Code from template association_GetOne */
   public CustomerAccount getCustomerAccount() {
@@ -165,72 +134,10 @@ public class Address {
 
   /* Code from template association_AddManyToOne */
   public Transaction addTransaction(double aTotalPrice, boolean aIsPaid, boolean aDeliveryStatus, String aPromotionCode,
-      boolean aUserAgreementCheck, PaymentInformation aPaymentInformation, CustomerAccount aCustomerAccount,
-      Cart aCart) {
+      boolean aUserAgreementCheck, PaymentInformation aPaymentInformation, CustomerAccount aCustomerAccount) {
     return new Transaction(aTotalPrice, aIsPaid, aDeliveryStatus, aPromotionCode, aUserAgreementCheck,
         aPaymentInformation,
-        aCustomerAccount, aCart, this);
-  }
-
-  public boolean addTransaction(Transaction aTransaction) {
-    boolean wasAdded = false;
-    if (transactions.contains(aTransaction)) {
-      return false;
-    }
-    Address existingAddress = aTransaction.getAddress();
-    boolean isNewAddress = existingAddress != null && !this.equals(existingAddress);
-    if (isNewAddress) {
-      aTransaction.setAddress(this);
-    } else {
-      transactions.add(aTransaction);
-    }
-    wasAdded = true;
-    return wasAdded;
-  }
-
-  public boolean removeTransaction(Transaction aTransaction) {
-    boolean wasRemoved = false;
-    // Unable to remove aTransaction, as it must always have a address
-    if (!this.equals(aTransaction.getAddress())) {
-      transactions.remove(aTransaction);
-      wasRemoved = true;
-    }
-    return wasRemoved;
-  }
-
-  /* Code from template association_AddIndexControlFunctions */
-  public boolean addTransactionAt(Transaction aTransaction, int index) {
-    boolean wasAdded = false;
-    if (addTransaction(aTransaction)) {
-      if (index < 0) {
-        index = 0;
-      }
-      if (index > numberOfTransactions()) {
-        index = numberOfTransactions() - 1;
-      }
-      transactions.remove(aTransaction);
-      transactions.add(index, aTransaction);
-      wasAdded = true;
-    }
-    return wasAdded;
-  }
-
-  public boolean addOrMoveTransactionAt(Transaction aTransaction, int index) {
-    boolean wasAdded = false;
-    if (transactions.contains(aTransaction)) {
-      if (index < 0) {
-        index = 0;
-      }
-      if (index > numberOfTransactions()) {
-        index = numberOfTransactions() - 1;
-      }
-      transactions.remove(aTransaction);
-      transactions.add(index, aTransaction);
-      wasAdded = true;
-    } else {
-      wasAdded = addTransactionAt(aTransaction, index);
-    }
-    return wasAdded;
+        aCustomerAccount, this);
   }
 
   /* Code from template association_SetOneToMany */
@@ -239,27 +146,13 @@ public class Address {
     if (aCustomerAccount == null) {
       return wasSet;
     }
-
-    CustomerAccount existingCustomerAccount = customerAccount;
     customerAccount = aCustomerAccount;
-    if (existingCustomerAccount != null && !existingCustomerAccount.equals(aCustomerAccount)) {
-      existingCustomerAccount.removeAddress(this);
-    }
-    customerAccount.addAddress(this);
     wasSet = true;
     return wasSet;
   }
 
   public void delete() {
-    for (int i = transactions.size(); i > 0; i--) {
-      Transaction aTransaction = transactions.get(i - 1);
-      aTransaction.delete();
-    }
-    CustomerAccount placeholderCustomerAccount = customerAccount;
     this.customerAccount = null;
-    if (placeholderCustomerAccount != null) {
-      placeholderCustomerAccount.removeAddress(this);
-    }
   }
 
   public String toString() {

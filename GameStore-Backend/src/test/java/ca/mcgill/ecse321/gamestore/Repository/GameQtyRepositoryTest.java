@@ -10,10 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ca.mcgill.ecse321.gamestore.model.Game;
 import ca.mcgill.ecse321.gamestore.model.GameQty;
-import ca.mcgill.ecse321.gamestore.dao.CartRepository;
 import ca.mcgill.ecse321.gamestore.dao.GameQtyRepository;
 import ca.mcgill.ecse321.gamestore.dao.GameRepository;
-import ca.mcgill.ecse321.gamestore.model.Cart;
+import ca.mcgill.ecse321.gamestore.dao.TransactionRepository;
+import ca.mcgill.ecse321.gamestore.model.Transaction;
 
 import java.util.List;
 
@@ -28,13 +28,13 @@ public class GameQtyRepositoryTest {
 	private GameRepository gameRepository;
 
 	@Autowired
-	private CartRepository cartRepository;
+	private TransactionRepository transactionRepository;
 
 	@AfterEach
 	public void clearDatabase() {
 		gameQtyRepository.deleteAll();
 		gameRepository.deleteAll();
-		cartRepository.deleteAll();
+		transactionRepository.deleteAll();
 	}
 
 	@Test
@@ -48,15 +48,16 @@ public class GameQtyRepositoryTest {
 		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
 
-		// Create a Cart and save it
-		Cart cart = new Cart(); // assuming Cart has an id constructor
-		cartRepository.save(cart);
+		// Create a Transaction and save it
+		Transaction transaction = new Transaction(); // assuming Transaction has an id constructor
+		transactionRepository.save(transaction);
 
 		// Create a GameQty and save it
 		GameQty gameQty = new GameQty();
 		gameQty.setQty(5);
 		gameQty.setGame(game);
-		gameQty.setCart(cart);
+		gameQty.setTransaction(transaction);
+
 		gameQtyRepository.save(gameQty);
 
 		// Retrieve the GameQty by its ID
@@ -66,11 +67,11 @@ public class GameQtyRepositoryTest {
 		assertNotNull(foundGameQty);
 		assertEquals(5, foundGameQty.getQty());
 		assertEquals(game.getId(), foundGameQty.getGame().getId());
-		assertEquals(cart.getId(), foundGameQty.getCart().getId());
+		assertEquals(transaction.getTransactionId(), foundGameQty.getTransaction().getTransactionId());
 	}
 
 	@Test
-	public void testFindByCart() {
+	public void testFindByTransaction() {
 		// Create a Game and save it
 		Game game = new Game();
 		game.setName("Test Game");
@@ -80,24 +81,24 @@ public class GameQtyRepositoryTest {
 		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
 
-		// Create a Cart and save it
-		Cart cart = new Cart(); // assuming Cart has an id constructor
-		cartRepository.save(cart);
+		// Create a Transaction and save it
+		Transaction transaction = new Transaction(); // assuming Transaction has an id constructor
+		transactionRepository.save(transaction);
 
 		// Create a GameQty and save it
 		GameQty gameQty = new GameQty();
 		gameQty.setQty(5);
 		gameQty.setGame(game);
-		gameQty.setCart(cart);
+		gameQty.setTransaction(transaction);
 		gameQtyRepository.save(gameQty);
 
-		// Find GameQtys by Cart
-		List<GameQty> foundGameQtys = gameQtyRepository.findByCart_Id(cart.getId());
+		// Find GameQtys by Transaction
+		List<GameQty> foundGameQtys = gameQtyRepository.findByTransaction_TransactionId(transaction.getTransactionId());
 
-		// Ensure the GameQty was found and associated with the correct cart
+		// Ensure the GameQty was found and associated with the correct transaction
 		assertNotNull(foundGameQtys);
 		assertFalse(foundGameQtys.isEmpty());
-		assertEquals(cart.getId(), foundGameQtys.get(0).getCart().getId());
+		assertEquals(transaction.getTransactionId(), foundGameQtys.get(0).getTransaction().getTransactionId());
 	}
 
 	@Test
@@ -111,9 +112,9 @@ public class GameQtyRepositoryTest {
 		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
 
-		// Create a Cart and save it
-		Cart cart = new Cart(); // assuming Cart has an id constructor
-		cartRepository.save(cart);
+		// Create a Transaction and save it
+		Transaction transaction = new Transaction(); // assuming Transaction has an id constructor
+		transactionRepository.save(transaction);
 
 		// Create a GameQty and save it
 		GameQty gameQty = new GameQty();
@@ -141,9 +142,9 @@ public class GameQtyRepositoryTest {
 		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
 
-		// Create a Cart and save it
-		Cart cart = new Cart(); // assuming Cart has an id constructor
-		cartRepository.save(cart);
+		// Create a Transaction and save it
+		Transaction transaction = new Transaction(); // assuming Transaction has an id constructor
+		transactionRepository.save(transaction);
 
 		// Create a GameQty and save it
 		GameQty gameQty = new GameQty();
@@ -174,9 +175,9 @@ public class GameQtyRepositoryTest {
 		game.setGameConsole(Game.GameConsole.PS5);
 		gameRepository.save(game);
 
-		// Create a Cart and save it
-		Cart cart = new Cart(); // assuming Cart has an id constructor
-		cartRepository.save(cart);
+		// Create a Transaction and save it
+		Transaction transaction = new Transaction(); // assuming Transaction has an id constructor
+		transactionRepository.save(transaction);
 
 		// Create a GameQty and save it
 		GameQty gameQty = new GameQty();

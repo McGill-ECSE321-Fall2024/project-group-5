@@ -1,14 +1,11 @@
 package ca.mcgill.ecse321.gamestore.model;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 
 // line 11 "model.ump"
 // line 147 "model.ump"
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class StaffAccount extends Account {
+public class StaffAccount extends Account {
 
   // ------------------------
   // MEMBER VARIABLES
@@ -28,10 +25,8 @@ public abstract class StaffAccount extends Account {
   // INTERFACE
   // ------------------------
 
-  /*
-   * public void delete() {
-   * super.delete();
-   * }
-   */
+  public void delete() {
+    super.delete();
+  }
 
 }

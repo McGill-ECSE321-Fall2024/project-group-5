@@ -272,12 +272,7 @@ public class Review {
       return wasSet;
     }
 
-    CustomerAccount existingCustomerAccount = customerAccount;
     customerAccount = aCustomerAccount;
-    if (existingCustomerAccount != null && !existingCustomerAccount.equals(aCustomerAccount)) {
-      existingCustomerAccount.removeReview(this);
-    }
-    customerAccount.addReview(this);
     wasSet = true;
     return wasSet;
   }
@@ -304,12 +299,7 @@ public class Review {
       return wasSet;
     }
 
-    Game existingGame = game;
     game = aGame;
-    if (existingGame != null && !existingGame.equals(aGame)) {
-      existingGame.removeReview(this);
-    }
-    game.addReview(this);
     wasSet = true;
     return wasSet;
   }
@@ -318,21 +308,13 @@ public class Review {
     while (!reply.isEmpty()) {
       reply.get(0).setReview(null);
     }
-    CustomerAccount placeholderCustomerAccount = customerAccount;
     this.customerAccount = null;
-    if (placeholderCustomerAccount != null) {
-      placeholderCustomerAccount.removeReview(this);
-    }
     if (review != null) {
       Review placeholderReview = review;
       this.review = null;
       placeholderReview.removeReply(this);
     }
-    Game placeholderGame = game;
     this.game = null;
-    if (placeholderGame != null) {
-      placeholderGame.removeReview(this);
-    }
   }
 
   public String toString() {

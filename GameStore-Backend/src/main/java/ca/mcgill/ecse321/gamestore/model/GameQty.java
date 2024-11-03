@@ -23,8 +23,8 @@ public class GameQty {
 
   // GameQty Associations
   @ManyToOne
-  @JoinColumn(name = "cart id")
-  private Cart cart;
+  @JoinColumn(name = "transaction id")
+  private Transaction transaction;
   @ManyToOne
   @JoinColumn(name = "game id")
   private Game game;
@@ -35,13 +35,13 @@ public class GameQty {
   public GameQty() {
   }
 
-  public GameQty(int aQty, int aId, Cart aCart, Game aGame) {
+  public GameQty(int aQty, int aId, Transaction aTransaction, Game aGame) {
     qty = aQty;
     id = aId;
-    boolean didAddCart = setCart(aCart);
-    if (!didAddCart) {
+    boolean didAddTransaction = setTransaction(aTransaction);
+    if (!didAddTransaction) {
       throw new RuntimeException(
-          "Unable to create gameQty due to cart. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
+          "Unable to create gameQty due to transaction. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
     boolean didAddGame = setGame(aGame);
     if (!didAddGame) {
@@ -77,8 +77,8 @@ public class GameQty {
   }
 
   /* Code from template association_GetOne */
-  public Cart getCart() {
-    return cart;
+  public Transaction getTransaction() {
+    return transaction;
   }
 
   /* Code from template association_GetOne */
@@ -87,18 +87,13 @@ public class GameQty {
   }
 
   /* Code from template association_SetOneToMany */
-  public boolean setCart(Cart aCart) {
+  public boolean setTransaction(Transaction aTransaction) {
     boolean wasSet = false;
-    if (aCart == null) {
+    if (aTransaction == null) {
       return wasSet;
     }
 
-    Cart existingCart = cart;
-    cart = aCart;
-    if (existingCart != null && !existingCart.equals(aCart)) {
-      existingCart.removeGameQty(this);
-    }
-    cart.addGameQty(this);
+    transaction = aTransaction;
     wasSet = true;
     return wasSet;
   }
@@ -110,34 +105,22 @@ public class GameQty {
       return wasSet;
     }
 
-    Game existingGame = game;
     game = aGame;
-    if (existingGame != null && !existingGame.equals(aGame)) {
-      existingGame.removeGameQty(this);
-    }
-    game.addGameQty(this);
     wasSet = true;
     return wasSet;
   }
 
   public void delete() {
-    Cart placeholderCart = cart;
-    this.cart = null;
-    if (placeholderCart != null) {
-      placeholderCart.removeGameQty(this);
-    }
-    Game placeholderGame = game;
+    this.transaction = null;
     this.game = null;
-    if (placeholderGame != null) {
-      placeholderGame.removeGameQty(this);
-    }
   }
 
   public String toString() {
     return super.toString() + "[" +
         "qty" + ":" + getQty() + "," +
         "id" + ":" + getId() + "]" + System.getProperties().getProperty("line.separator") +
-        "  " + "cart = " + (getCart() != null ? Integer.toHexString(System.identityHashCode(getCart())) : "null")
+        "  " + "transaction = "
+        + (getTransaction() != null ? Integer.toHexString(System.identityHashCode(getTransaction())) : "null")
         + System.getProperties().getProperty("line.separator") +
         "  " + "game = " + (getGame() != null ? Integer.toHexString(System.identityHashCode(getGame())) : "null");
   }

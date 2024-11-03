@@ -14,4 +14,8 @@ public interface StaffAccountRepository extends CrudRepository<StaffAccount, Int
     boolean existsStaffAccountByUsername(String username);
 
     StaffAccount findStaffAccountByUsername(String username);
+
+    // delete by id
+
+    Integer deleteStaffAccountById(int id);
 }

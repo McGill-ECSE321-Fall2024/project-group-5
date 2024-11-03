@@ -5,6 +5,10 @@ import ca.mcgill.ecse321.gamestore.model.Transaction;
 import org.springframework.data.repository.CrudRepository;
 
 public interface TransactionRepository extends CrudRepository<Transaction, Integer> {
+    // find transaction by TransactionId
+
+    Transaction findTransactiontByTransactionId(int transactionId);
+
     // find transactions by payment status
     Iterable<Transaction> findByIsPaid(boolean isPaid);
 

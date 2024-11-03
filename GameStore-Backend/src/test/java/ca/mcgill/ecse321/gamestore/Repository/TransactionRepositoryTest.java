@@ -15,12 +15,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ca.mcgill.ecse321.gamestore.dao.TransactionRepository;
 import ca.mcgill.ecse321.gamestore.dao.CustomerAccountRepository;
 import ca.mcgill.ecse321.gamestore.dao.PaymentInformationRepository;
-import ca.mcgill.ecse321.gamestore.dao.CartRepository;
 import ca.mcgill.ecse321.gamestore.dao.AddressRepository;
 import ca.mcgill.ecse321.gamestore.model.Transaction;
 import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
 import ca.mcgill.ecse321.gamestore.model.PaymentInformation;
-import ca.mcgill.ecse321.gamestore.model.Cart;
 import ca.mcgill.ecse321.gamestore.model.Address;
 import ca.mcgill.ecse321.gamestore.model.PaymentInformation.CardType;
 
@@ -37,9 +35,6 @@ class TransactionRepositoryTest {
     private PaymentInformationRepository paymentInformationRepository;
 
     @Autowired
-    private CartRepository cartRepository;
-
-    @Autowired
     private AddressRepository addressRepository;
 
     @AfterEach
@@ -48,7 +43,6 @@ class TransactionRepositoryTest {
         transactionRepository.deleteAll();
         customerAccountRepository.deleteAll();
         paymentInformationRepository.deleteAll();
-        cartRepository.deleteAll();
         addressRepository.deleteAll();
     }
 
@@ -71,11 +65,6 @@ class TransactionRepositoryTest {
         paymentInfo.setCustomerAccount(someCustomer);
         paymentInformationRepository.save(paymentInfo);
 
-        // create a cart
-        Cart cart = new Cart();
-        cart.setCustomerAccount(someCustomer);
-        cartRepository.save(cart);
-
         // create an address
         Address address = new Address();
         address.setAddress("123 Main St");
@@ -95,7 +84,6 @@ class TransactionRepositoryTest {
         transaction.setUserAgreementCheck(true);
         transaction.setCustomerAccount(someCustomer);
         transaction.setPaymentInformation(paymentInfo);
-        transaction.setCart(cart);
         transaction.setAddress(address);
         transaction = transactionRepository.save(transaction);
 
@@ -133,11 +121,6 @@ class TransactionRepositoryTest {
         paymentInfo.setCustomerAccount(someCustomer);
         paymentInformationRepository.save(paymentInfo);
 
-        // create a cart
-        Cart cart = new Cart();
-        cart.setCustomerAccount(someCustomer);
-        cartRepository.save(cart);
-
         // create an address
         Address address = new Address();
         address.setAddress("456 Another St");
@@ -157,7 +140,6 @@ class TransactionRepositoryTest {
         transaction.setUserAgreementCheck(true);
         transaction.setCustomerAccount(someCustomer);
         transaction.setPaymentInformation(paymentInfo);
-        transaction.setCart(cart);
         transaction.setAddress(address);
         transactionRepository.save(transaction);
 
@@ -190,11 +172,6 @@ class TransactionRepositoryTest {
         paymentInfo.setCustomerAccount(someCustomer);
         paymentInformationRepository.save(paymentInfo);
 
-        // create a cart
-        Cart cart = new Cart();
-        cart.setCustomerAccount(someCustomer);
-        cartRepository.save(cart);
-
         // create an address
         Address address = new Address();
         address.setAddress("789 Spy St");
@@ -214,7 +191,6 @@ class TransactionRepositoryTest {
         transaction.setUserAgreementCheck(true);
         transaction.setCustomerAccount(someCustomer);
         transaction.setPaymentInformation(paymentInfo);
-        transaction.setCart(cart);
         transaction.setAddress(address);
         transactionRepository.save(transaction);
 
@@ -250,11 +226,6 @@ class TransactionRepositoryTest {
         paymentInfo.setCustomerAccount(someCustomer);
         paymentInformationRepository.save(paymentInfo);
 
-        // create a cart
-        Cart cart = new Cart();
-        cart.setCustomerAccount(someCustomer);
-        cartRepository.save(cart);
-
         // create an address
         Address address = new Address();
         address.setAddress("123 Deletion St");
@@ -274,7 +245,6 @@ class TransactionRepositoryTest {
         transaction.setUserAgreementCheck(true);
         transaction.setCustomerAccount(someCustomer);
         transaction.setPaymentInformation(paymentInfo);
-        transaction.setCart(cart);
         transaction.setAddress(address);
         transactionRepository.save(transaction);
 

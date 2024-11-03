@@ -93,23 +93,13 @@ public class PromotionCode {
     if (aGameStoreObject == null) {
       return wasSet;
     }
-
-    GameStoreObject existingGameStoreObject = gameStoreObject;
     gameStoreObject = aGameStoreObject;
-    if (existingGameStoreObject != null && !existingGameStoreObject.equals(aGameStoreObject)) {
-      existingGameStoreObject.removePromotionCode(this);
-    }
-    gameStoreObject.addPromotionCode(this);
     wasSet = true;
     return wasSet;
   }
 
   public void delete() {
-    GameStoreObject placeholderGameStoreObject = gameStoreObject;
     this.gameStoreObject = null;
-    if (placeholderGameStoreObject != null) {
-      placeholderGameStoreObject.removePromotionCode(this);
-    }
   }
 
   public String toString() {

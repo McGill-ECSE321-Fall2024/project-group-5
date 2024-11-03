@@ -33,9 +33,6 @@ public class Transaction {
   @JoinColumn(name = "customer account id")
   private CustomerAccount customerAccount;
   @ManyToOne
-  @JoinColumn(name = "cart id")
-  private Cart cart;
-  @ManyToOne
   @JoinColumn(name = "address id")
   private Address address;
 
@@ -46,7 +43,7 @@ public class Transaction {
   }
 
   public Transaction(double aTotalPrice, boolean aIsPaid, boolean aDeliveryStatus, String aPromotionCode,
-      boolean aUserAgreementCheck, PaymentInformation aPaymentInformation, CustomerAccount aCustomerAccount, Cart aCart,
+      boolean aUserAgreementCheck, PaymentInformation aPaymentInformation, CustomerAccount aCustomerAccount,
       Address aAddress) {
     totalPrice = aTotalPrice;
     isPaid = aIsPaid;
@@ -62,11 +59,6 @@ public class Transaction {
     if (!didAddCustomerAccount) {
       throw new RuntimeException(
           "Unable to create transaction due to customerAccount. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
-    }
-    boolean didAddCart = setCart(aCart);
-    if (!didAddCart) {
-      throw new RuntimeException(
-          "Unable to create transaction due to cart. See https://manual.umple.org?RE002ViolationofAssociationMultiplicity.html");
     }
     boolean didAddAddress = setAddress(aAddress);
     if (!didAddAddress) {
@@ -149,13 +141,12 @@ public class Transaction {
   }
 
   /* Code from template association_GetOne */
-  public Cart getCart() {
-    return cart;
-  }
-
-  /* Code from template association_GetOne */
   public Address getAddress() {
     return address;
+  }
+
+  public static int minimumNumberOfGameQties() {
+    return 0;
   }
 
   /* Code from template association_SetOneToMany */
@@ -165,12 +156,7 @@ public class Transaction {
       return wasSet;
     }
 
-    PaymentInformation existingPaymentInformation = paymentInformation;
     paymentInformation = aPaymentInformation;
-    if (existingPaymentInformation != null && !existingPaymentInformation.equals(aPaymentInformation)) {
-      existingPaymentInformation.removeTransaction(this);
-    }
-    paymentInformation.addTransaction(this);
     wasSet = true;
     return wasSet;
   }
@@ -181,39 +167,7 @@ public class Transaction {
     if (aCustomerAccount == null) {
       return wasSet;
     }
-
-    CustomerAccount existingCustomerAccount = customerAccount;
     customerAccount = aCustomerAccount;
-    if (existingCustomerAccount != null && !existingCustomerAccount.equals(aCustomerAccount)) {
-      existingCustomerAccount.removeTransaction(this);
-    }
-    customerAccount.addTransaction(this);
-    wasSet = true;
-    return wasSet;
-  }
-
-  /* Code from template association_SetOneToOptionalOne */
-  public boolean setCart(Cart aNewCart) {
-    boolean wasSet = false;
-    if (aNewCart == null) {
-      // Unable to setCart to null, as transaction must always be associated to a cart
-      return wasSet;
-    }
-
-    Transaction existingTransaction = aNewCart.getTransaction();
-    if (existingTransaction != null && !equals(existingTransaction)) {
-      // Unable to setCart, the current cart already has a transaction, which would be
-      // orphaned if it were re-assigned
-      return wasSet;
-    }
-
-    Cart anOldCart = cart;
-    cart = aNewCart;
-    cart.setTransaction(this);
-
-    if (anOldCart != null) {
-      anOldCart.setTransaction(null);
-    }
     wasSet = true;
     return wasSet;
   }
@@ -225,37 +179,15 @@ public class Transaction {
       return wasSet;
     }
 
-    Address existingAddress = address;
     address = aAddress;
-    if (existingAddress != null && !existingAddress.equals(aAddress)) {
-      existingAddress.removeTransaction(this);
-    }
-    address.addTransaction(this);
     wasSet = true;
     return wasSet;
   }
 
   public void delete() {
-    PaymentInformation placeholderPaymentInformation = paymentInformation;
     this.paymentInformation = null;
-    if (placeholderPaymentInformation != null) {
-      placeholderPaymentInformation.removeTransaction(this);
-    }
-    CustomerAccount placeholderCustomerAccount = customerAccount;
     this.customerAccount = null;
-    if (placeholderCustomerAccount != null) {
-      placeholderCustomerAccount.removeTransaction(this);
-    }
-    Cart existingCart = cart;
-    cart = null;
-    if (existingCart != null) {
-      existingCart.setTransaction(null);
-    }
-    Address placeholderAddress = address;
     this.address = null;
-    if (placeholderAddress != null) {
-      placeholderAddress.removeTransaction(this);
-    }
   }
 
   public String toString() {
@@ -273,8 +205,6 @@ public class Transaction {
         + System.getProperties().getProperty("line.separator") +
         "  " + "customerAccount = "
         + (getCustomerAccount() != null ? Integer.toHexString(System.identityHashCode(getCustomerAccount())) : "null")
-        + System.getProperties().getProperty("line.separator") +
-        "  " + "cart = " + (getCart() != null ? Integer.toHexString(System.identityHashCode(getCart())) : "null")
         + System.getProperties().getProperty("line.separator") +
         "  " + "address = "
         + (getAddress() != null ? Integer.toHexString(System.identityHashCode(getAddress())) : "null");

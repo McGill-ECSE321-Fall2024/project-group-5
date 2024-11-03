@@ -11,7 +11,7 @@ public interface GameQtyRepository extends CrudRepository<GameQty, Integer> {
 
     List<GameQty> findByGame_Id(int gameId);
 
-    List<GameQty> findByCart_Id(int cartId);
+    List<GameQty> findByTransaction_TransactionId(int transactionId);
 
     void deleteById(int id);
 }
