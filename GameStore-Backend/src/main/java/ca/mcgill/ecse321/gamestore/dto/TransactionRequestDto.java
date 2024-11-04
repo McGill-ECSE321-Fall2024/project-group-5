@@ -2,16 +2,16 @@ package ca.mcgill.ecse321.gamestore.dto;
 
 import ca.mcgill.ecse321.gamestore.model.Transaction;
 
-public class TransactionResponseDto {
+public class TransactionRequestDto {
     private int id;
     private String name;
 
     // Jackson needs a default constructor, but it doesn't need to be public
     @SuppressWarnings("unused")
-    private TransactionResponseDto() {
+    private TransactionRequestDto() {
     }
 
-    public TransactionResponseDto(Transaction model) {
+    public TransactionRequestDto(Transaction model) {
     }
 
     public int getId() {

@@ -2,16 +2,16 @@ package ca.mcgill.ecse321.gamestore.dto;
 
 import ca.mcgill.ecse321.gamestore.model.Address;
 
-public class AddressResponseDto {
+public class AddressRequestDto {
     private int id;
     private String name;
 
     // Jackson needs a default constructor, but it doesn't need to be public
     @SuppressWarnings("unused")
-    private AddressResponseDto() {
+    private AddressRequestDto() {
     }
 
-    public AddressResponseDto(Address model) {
+    public AddressRequestDto(Address model) {
         this.id = model.getId();
     }
 

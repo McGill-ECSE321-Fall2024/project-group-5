@@ -2,16 +2,16 @@ package ca.mcgill.ecse321.gamestore.dto;
 
 import ca.mcgill.ecse321.gamestore.model.GameStoreObject;
 
-public class GameStoreObjectResponseDto {
+public class GameStoreObjectRequestDto {
     private int id;
     private String name;
 
     // Jackson needs a default constructor, but it doesn't need to be public
     @SuppressWarnings("unused")
-    private GameStoreObjectResponseDto() {
+    private GameStoreObjectRequestDto() {
     }
 
-    public GameStoreObjectResponseDto(GameStoreObject model) {
+    public GameStoreObjectRequestDto(GameStoreObject model) {
         this.id = model.getId();
     }
 

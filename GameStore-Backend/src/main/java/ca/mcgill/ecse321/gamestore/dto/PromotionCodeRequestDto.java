@@ -2,16 +2,16 @@ package ca.mcgill.ecse321.gamestore.dto;
 
 import ca.mcgill.ecse321.gamestore.model.PromotionCode;
 
-public class PromotionCodeResponseDto {
+public class PromotionCodeRequestDto {
     private int id;
     private String name;
 
     // Jackson needs a default constructor, but it doesn't need to be public
     @SuppressWarnings("unused")
-    private PromotionCodeResponseDto() {
+    private PromotionCodeRequestDto() {
     }
 
-    public PromotionCodeResponseDto(PromotionCode model) {
+    public PromotionCodeRequestDto(PromotionCode model) {
         this.id = model.getId();
     }
 

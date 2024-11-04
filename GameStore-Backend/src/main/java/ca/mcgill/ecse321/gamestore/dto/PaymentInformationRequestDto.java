@@ -2,16 +2,16 @@ package ca.mcgill.ecse321.gamestore.dto;
 
 import ca.mcgill.ecse321.gamestore.model.PaymentInformation;
 
-public class PaymentInformationResponseDto {
+public class PaymentInformationRequestDto {
     private int id;
     private String name;
 
     // Jackson needs a default constructor, but it doesn't need to be public
     @SuppressWarnings("unused")
-    private PaymentInformationResponseDto() {
+    private PaymentInformationRequestDto() {
     }
 
-    public PaymentInformationResponseDto(PaymentInformation model) {
+    public PaymentInformationRequestDto(PaymentInformation model) {
         this.id = model.getId();
     }
 

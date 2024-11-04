@@ -2,16 +2,16 @@ package ca.mcgill.ecse321.gamestore.dto;
 
 import ca.mcgill.ecse321.gamestore.model.StaffAccount;
 
-public class StaffAccountResponseDto {
+public class StaffAccountRequestDto {
     private int id;
     private String name;
 
     // Jackson needs a default constructor, but it doesn't need to be public
     @SuppressWarnings("unused")
-    private StaffAccountResponseDto() {
+    private StaffAccountRequestDto() {
     }
 
-    public StaffAccountResponseDto(StaffAccount model) {
+    public StaffAccountRequestDto(StaffAccount model) {
         this.id = model.getId();
     }
 
