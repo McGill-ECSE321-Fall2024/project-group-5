@@ -41,9 +41,9 @@ class TransactionRepositoryTest {
     public void clearDatabase() {
         // clear everything after each test
         transactionRepository.deleteAll();
-        customerAccountRepository.deleteAll();
         paymentInformationRepository.deleteAll();
         addressRepository.deleteAll();
+        customerAccountRepository.deleteAll();
     }
 
     @Test
