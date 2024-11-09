@@ -85,7 +85,7 @@ class PromotionCodeRepositoryTest {
 		promotionCode = promotionCodeRepository.save(promotionCode);
 
 		// Delete object from database
-		promotionCodeRepository.deletePromotionCodeById(promotionCode.getId());
+		promotionCodeRepository.delete(promotionCode);
 
 		// Assert that database doesn't have object
 		assertNull(promotionCodeRepository.getPromotionCodeById(promotionCode.getId()));

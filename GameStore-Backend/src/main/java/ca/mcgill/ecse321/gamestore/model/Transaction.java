@@ -41,7 +41,7 @@ public class Transaction {
   public Transaction() {
   }
 
-  public Transaction(double aTotalPrice, boolean aIsPaid, boolean aDeliveryStatus, String aPromotionCode,
+  public Transaction(double aTotalPrice, boolean aIsPaid, boolean aDeliveryStatus,
       boolean aUserAgreementCheck, PaymentInformation aPaymentInformation, CustomerAccount aCustomerAccount,
       Address aAddress) {
     totalPrice = aTotalPrice;

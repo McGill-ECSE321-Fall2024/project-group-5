@@ -66,7 +66,7 @@ class GameStoreObjectRepositoryTest {
 		assertEquals(policy, gameStore.getPolicy());
 
 		// Delete object from database
-		gameStoreObjectRepository.deleteGameStoreObjectByIdNotNull();
+		gameStoreObjectRepository.deleteById(gameStore.getId());
 
 		// Assert that database doesn't have object
 		assertNull(gameStoreObjectRepository.getGameStoreObjectByIdIsNotNull());
