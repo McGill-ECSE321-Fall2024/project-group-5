@@ -22,7 +22,6 @@ public class Transaction {
   private double totalPrice;
   private boolean isPaid;
   private boolean deliveryStatus;
-  private String promotionCode;
   private boolean userAgreementCheck;
 
   // Transaction Associations
@@ -48,7 +47,6 @@ public class Transaction {
     totalPrice = aTotalPrice;
     isPaid = aIsPaid;
     deliveryStatus = aDeliveryStatus;
-    promotionCode = aPromotionCode;
     userAgreementCheck = aUserAgreementCheck;
     boolean didAddPaymentInformation = setPaymentInformation(aPaymentInformation);
     if (!didAddPaymentInformation) {
@@ -92,13 +90,6 @@ public class Transaction {
     return wasSet;
   }
 
-  public boolean setPromotionCode(String aPromotionCode) {
-    boolean wasSet = false;
-    promotionCode = aPromotionCode;
-    wasSet = true;
-    return wasSet;
-  }
-
   public boolean setUserAgreementCheck(boolean aUserAgreementCheck) {
     boolean wasSet = false;
     userAgreementCheck = aUserAgreementCheck;
@@ -120,10 +111,6 @@ public class Transaction {
 
   public boolean getDeliveryStatus() {
     return deliveryStatus;
-  }
-
-  public String getPromotionCode() {
-    return promotionCode;
   }
 
   public boolean getUserAgreementCheck() {
@@ -196,7 +183,6 @@ public class Transaction {
         "totalPrice" + ":" + getTotalPrice() + "," +
         "isPaid" + ":" + getIsPaid() + "," +
         "deliveryStatus" + ":" + getDeliveryStatus() + "," +
-        "promotionCode" + ":" + getPromotionCode() + "," +
         "userAgreementCheck" + ":" + getUserAgreementCheck() + "]"
         + System.getProperties().getProperty("line.separator") +
         "  " + "paymentInformation = "
