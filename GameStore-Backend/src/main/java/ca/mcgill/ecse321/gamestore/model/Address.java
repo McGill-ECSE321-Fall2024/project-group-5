@@ -135,7 +135,7 @@ public class Address {
   /* Code from template association_AddManyToOne */
   public Transaction addTransaction(double aTotalPrice, boolean aIsPaid, boolean aDeliveryStatus, String aPromotionCode,
       boolean aUserAgreementCheck, PaymentInformation aPaymentInformation, CustomerAccount aCustomerAccount) {
-    return new Transaction(aTotalPrice, aIsPaid, aDeliveryStatus, aPromotionCode, aUserAgreementCheck,
+    return new Transaction(aTotalPrice, aIsPaid, aDeliveryStatus, aUserAgreementCheck,
         aPaymentInformation,
         aCustomerAccount, this);
   }

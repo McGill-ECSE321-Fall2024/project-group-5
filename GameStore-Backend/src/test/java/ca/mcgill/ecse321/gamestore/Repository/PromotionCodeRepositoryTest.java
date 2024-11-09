@@ -51,11 +51,6 @@ class PromotionCodeRepositoryTest {
 		gameStore = gameStoreObjectRepository.save(gameStore);
 		promotionCode = promotionCodeRepository.save(promotionCode);
 
-		// tests
-		assertNotNull(promotionCode);
-		assertEquals(code, promotionCode.getCode());
-		assertEquals(value, promotionCode.getPercentageValue());
-
 		// Read object from database using ID
 		promotionCode = promotionCodeRepository.getPromotionCodeById(promotionCode.getId());
 
@@ -90,7 +85,7 @@ class PromotionCodeRepositoryTest {
 		promotionCode = promotionCodeRepository.save(promotionCode);
 
 		// Delete object from database
-		promotionCodeRepository.deletePromotionCodeById(promotionCode.getId());
+		promotionCodeRepository.delete(promotionCode);
 
 		// Assert that database doesn't have object
 		assertNull(promotionCodeRepository.getPromotionCodeById(promotionCode.getId()));

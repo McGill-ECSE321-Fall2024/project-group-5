@@ -1,7 +1,6 @@
 package ca.mcgill.ecse321.gamestore.Repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Date;
@@ -53,20 +52,15 @@ class PaymentInformationRepositoryTest {
         paymentInfo.setCustomerAccount(someCustomer);
         paymentInfo = paymentInformationRepository.save(paymentInfo);
 
-        // check if the payment info was saved correctly
-        assertNotNull(paymentInfo);
-        assertEquals("John Doe", paymentInfo.getCardholderName());
-        assertEquals(123456789, paymentInfo.getCardNumber());
-        assertEquals("2025-12-31", paymentInfo.getExpirationDate().toString());
-        assertEquals(123, paymentInfo.getCvc());
-        assertEquals(CardType.Visa, paymentInfo.getCardType());
-        assertEquals(someCustomer.getUsername(), paymentInfo.getCustomerAccount().getUsername());
-
         // read the payment info from the database by its ID
         Optional<PaymentInformation> retrievedPaymentInfo = paymentInformationRepository.findById(paymentInfo.getId());
         assertTrue(retrievedPaymentInfo.isPresent());
-        assertEquals("John Doe", retrievedPaymentInfo.get().getCardholderName());
-        assertEquals(123456789, retrievedPaymentInfo.get().getCardNumber());
+        assertEquals(paymentInfo.getCardholderName(), retrievedPaymentInfo.get().getCardholderName());
+        assertEquals(paymentInfo.getCardNumber(), retrievedPaymentInfo.get().getCardNumber());
+        assertEquals(paymentInfo.getExpirationDate(), retrievedPaymentInfo.get().getExpirationDate());
+        assertEquals(paymentInfo.getCvc(), retrievedPaymentInfo.get().getCvc());
+        assertEquals(paymentInfo.getCardType(), retrievedPaymentInfo.get().getCardType());
+        assertEquals(paymentInfo.getCustomerAccount().getId(), retrievedPaymentInfo.get().getCustomerAccount().getId());
     }
 
     @Test
@@ -129,8 +123,14 @@ class PaymentInformationRepositoryTest {
         // check if the update was successful
         Optional<PaymentInformation> updatedPaymentInfo = paymentInformationRepository
                 .findById(paymentInfoToUpdate.getId());
-        assertTrue(updatedPaymentInfo.isPresent());
-        assertEquals(123123123, updatedPaymentInfo.get().getCardNumber());
+        assertTrue(retrievedPaymentInfo.isPresent());
+        assertEquals(paymentInfoToUpdate.getCardholderName(), updatedPaymentInfo.get().getCardholderName());
+        assertEquals(paymentInfoToUpdate.getCardNumber(), updatedPaymentInfo.get().getCardNumber());
+        assertEquals(paymentInfoToUpdate.getExpirationDate(), updatedPaymentInfo.get().getExpirationDate());
+        assertEquals(paymentInfoToUpdate.getCvc(), updatedPaymentInfo.get().getCvc());
+        assertEquals(paymentInfoToUpdate.getCardType(), updatedPaymentInfo.get().getCardType());
+        assertEquals(paymentInfoToUpdate.getCustomerAccount().getId(),
+                updatedPaymentInfo.get().getCustomerAccount().getId());
     }
 
     @Test

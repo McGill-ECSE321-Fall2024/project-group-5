@@ -1,13 +1,13 @@
 package ca.mcgill.ecse321.gamestore.dao;
 
 import ca.mcgill.ecse321.gamestore.model.GameStoreObject;
-import jakarta.transaction.Transactional;
 
 import org.springframework.data.repository.CrudRepository;
 
-@Transactional
 public interface GameStoreObjectRepository extends CrudRepository<GameStoreObject, Integer> {
+    // Find GameStoreObject instance
     GameStoreObject getGameStoreObjectByIdIsNotNull();
 
-    Integer deleteGameStoreObjectByIdNotNull();
+    // delete GameStoreObject by id
+    void deleteGameStoreObjectById(int Id);
 }

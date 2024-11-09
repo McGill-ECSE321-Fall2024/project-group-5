@@ -61,7 +61,7 @@ public class GameQtyRepositoryTest {
 		gameQtyRepository.save(gameQty);
 
 		// Retrieve the GameQty by its ID
-		GameQty foundGameQty = gameQtyRepository.findById(gameQty.getId()).orElse(null);
+		GameQty foundGameQty = gameQtyRepository.findById(gameQty.getId());
 
 		// Ensure the GameQty was saved and retrieved successfully
 		assertNotNull(foundGameQty);
@@ -120,6 +120,7 @@ public class GameQtyRepositoryTest {
 		GameQty gameQty = new GameQty();
 		gameQty.setQty(5);
 		gameQty.setGame(game);
+		gameQty.setTransaction(transaction);
 		gameQtyRepository.save(gameQty);
 
 		// Find GameQtys by Game
@@ -150,16 +151,17 @@ public class GameQtyRepositoryTest {
 		GameQty gameQty = new GameQty();
 		gameQty.setQty(5);
 		gameQty.setGame(game);
+		gameQty.setTransaction(transaction);
 		gameQtyRepository.save(gameQty);
 
 		// Update the quantity of the GameQty and save it again
-		GameQty foundGameQty = gameQtyRepository.findById(gameQty.getId()).orElse(null);
+		GameQty foundGameQty = gameQtyRepository.findById(gameQty.getId());
 		assertNotNull(foundGameQty);
 		foundGameQty.setQty(10);
 		gameQtyRepository.save(foundGameQty);
 
 		// Retrieve the updated GameQty and verify the change
-		GameQty updatedGameQty = gameQtyRepository.findById(foundGameQty.getId()).orElse(null);
+		GameQty updatedGameQty = gameQtyRepository.findById(foundGameQty.getId());
 		assertNotNull(updatedGameQty);
 		assertEquals(10, updatedGameQty.getQty());
 	}
@@ -183,13 +185,14 @@ public class GameQtyRepositoryTest {
 		GameQty gameQty = new GameQty();
 		gameQty.setQty(5);
 		gameQty.setGame(game);
+		gameQty.setTransaction(transaction);
 		gameQtyRepository.save(gameQty);
 
 		// Delete the GameQty
 		gameQtyRepository.delete(gameQty);
 
 		// Ensure the GameQty was deleted
-		GameQty deletedGameQty = gameQtyRepository.findById(gameQty.getId()).orElse(null);
+		GameQty deletedGameQty = gameQtyRepository.findById(gameQty.getId());
 		assertNull(deletedGameQty);
 	}
 }
