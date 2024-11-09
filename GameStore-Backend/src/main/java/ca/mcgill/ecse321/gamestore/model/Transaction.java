@@ -132,10 +132,6 @@ public class Transaction {
     return address;
   }
 
-  public static int minimumNumberOfGameQties() {
-    return 0;
-  }
-
   /* Code from template association_SetOneToMany */
   public boolean setPaymentInformation(PaymentInformation aPaymentInformation) {
     boolean wasSet = false;

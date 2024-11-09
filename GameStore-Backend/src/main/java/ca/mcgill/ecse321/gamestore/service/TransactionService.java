@@ -44,7 +44,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public List<Transaction> getTransactionByCustomerId(int customerId) {
+    public List<Transaction> getTransactionsByCustomerId(int customerId) {
         List<Transaction> transactions = new ArrayList<>();
         transactionRepository.findByCustomerAccount_Id(customerId).forEach(transactions::add);
         if (transactions == null || transactions.isEmpty()) {
@@ -54,7 +54,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public List<Transaction> getTransactionByIsPaid(boolean isPaid) {
+    public List<Transaction> getTransactionsByIsPaid(boolean isPaid) {
         List<Transaction> transactions = new ArrayList<>();
         transactionRepository.findByIsPaid(isPaid).forEach(transactions::add);
         if (transactions == null || transactions.isEmpty()) {
@@ -64,7 +64,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public List<Transaction> getTransactionByDeliveryStatus(boolean deliveryStatus) {
+    public List<Transaction> getTransactionsByDeliveryStatus(boolean deliveryStatus) {
         List<Transaction> transactions = new ArrayList<>();
         transactionRepository.findByDeliveryStatus(deliveryStatus).forEach(transactions::add);
         if (transactions == null || transactions.isEmpty()) {

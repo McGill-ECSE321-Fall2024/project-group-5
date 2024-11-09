@@ -120,6 +120,7 @@ public class GameQtyRepositoryTest {
 		GameQty gameQty = new GameQty();
 		gameQty.setQty(5);
 		gameQty.setGame(game);
+		gameQty.setTransaction(transaction);
 		gameQtyRepository.save(gameQty);
 
 		// Find GameQtys by Game
@@ -150,6 +151,7 @@ public class GameQtyRepositoryTest {
 		GameQty gameQty = new GameQty();
 		gameQty.setQty(5);
 		gameQty.setGame(game);
+		gameQty.setTransaction(transaction);
 		gameQtyRepository.save(gameQty);
 
 		// Update the quantity of the GameQty and save it again
@@ -183,6 +185,7 @@ public class GameQtyRepositoryTest {
 		GameQty gameQty = new GameQty();
 		gameQty.setQty(5);
 		gameQty.setGame(game);
+		gameQty.setTransaction(transaction);
 		gameQtyRepository.save(gameQty);
 
 		// Delete the GameQty
