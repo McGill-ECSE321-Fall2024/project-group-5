@@ -10,13 +10,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ca.mcgill.ecse321.gamestore.model.Account;
+import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
+import ca.mcgill.ecse321.gamestore.model.StaffAccount;
 import ca.mcgill.ecse321.gamestore.dao.AccountRepository;
+import ca.mcgill.ecse321.gamestore.dao.CustomerAccountRepository;
+import ca.mcgill.ecse321.gamestore.dao.StaffAccountRepository;
 import jakarta.transaction.Transactional;
 
 @Service
 public class AccountService {
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private CustomerAccountRepository customerAccountRepository;
+
+    @Autowired
+    private StaffAccountRepository staffAccountRepository;
 
     public static String generateSalt(int length) {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -30,10 +40,88 @@ public class AccountService {
         return salt.toString();
     }
 
+    public static String isValidPassword(String password) {
+        if (password == null) {
+            return "Password cannot be null";
+        }
+        if (password.isEmpty()) {
+            return "Password cannot be empty";
+        }
+        if (password.length() < 8) {
+            return "Password must be at least 8 characters long";
+        }
+        if (!containsNumber(password)) {
+            return "Password must contain at least one digit";
+        }
+        if (!containsSpecialCharacter(password)) {
+            return "Password must contain at least one special character";
+        }
+        if (!containsLetter(password)) {
+            return "Password must contain at least one letter";
+        }
+        if (!hasLowerCase(password)) {
+            return "Password must have at least one lower case letter";
+        }
+        if (!hasUpperCase(password)) {
+            return "Password must have at least one upper case letter";
+        }
+        if (password.trim().length() != password.length()) {
+            return "Password must not contain a space";
+        }
+        return "";
+    }
+
+    // checks if password contains a digit
+    public static boolean containsNumber(String password) {
+        for (int i = 0; i < password.length(); i++) {
+            if (Character.isDigit(password.charAt(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean containsSpecialCharacter(String password) {
+        for (int i = 0; i < password.length(); i++) {
+            if (!Character.isLetterOrDigit(password.charAt(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean containsLetter(String password) {
+        for (int i = 0; i < password.length(); i++) {
+            if (Character.isLetter(password.charAt(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasUpperCase(String password) {
+        for (int i = 0; i < password.length(); i++) {
+            if (Character.isUpperCase(password.charAt(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasLowerCase(String password) {
+        for (int i = 0; i < password.length(); i++) {
+            if (Character.isLowerCase(password.charAt(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // https://howtodoinjava.com/java/java-security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/
     public static String hashPassword(String passwordToHash, String salt) {
         String hashedPassword = null;
-        if (passwordToHash == null || passwordToHash.length() < 8) {
-            throw new IllegalArgumentException("Password too short.");
+        if (!isValidPassword(passwordToHash).isEmpty()) {
+            return isValidPassword(passwordToHash);
         }
         try {
             // Create MessageDigest instance for MD5
@@ -61,4 +149,45 @@ public class AccountService {
         }
         return hashedPassword;
     }
+
+    // check log in info is correct
+    @Transactional
+    public Account authenticate(String username, String password) throws Exception {
+        // Check input
+        if (username == null || username.trim().length() == 0 || password == null || password.trim().length() == 0) {
+            throw new Exception("Please enter an email and a password");
+        }
+        Account account = null;
+        CustomerAccount customerAccount = customerAccountRepository.findByUsername(username);
+        StaffAccount staffAccount = staffAccountRepository.findStaffAccountByUsername(username);
+
+        if (customerAccount != null && staffAccount == null) {
+            account = customerAccount;
+        }
+        if (customerAccount == null && staffAccount != null) {
+            account = staffAccount;
+        }
+        if (account == null) {
+            throw new Exception("There is no account associated with that usernanme");
+        }
+
+        String salt = account.getRandomPassword();
+        String hashedPassword = hashPassword(password, salt);
+        if (hashedPassword.equals(account.getPasswordHash())) {
+            return account;
+        } else {
+            throw new Exception("Password and username do not match");
+        }
+    }
+
+    public boolean checkUsernameAvailability(String username) {
+        CustomerAccount customerAccount = customerAccountRepository.findByUsername(username);
+        StaffAccount staffAccount = staffAccountRepository.findStaffAccountByUsername(username);
+        if (customerAccount == null && staffAccount == null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }

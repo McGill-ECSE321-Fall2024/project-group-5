@@ -11,4 +11,5 @@ public interface CustomerAccountRepository extends CrudRepository<CustomerAccoun
 
     // Custom query to find a CustomerAccount by name
     CustomerAccount findByUsername(String username);
+
 }
