@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDate;
-
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -29,61 +27,49 @@ public class AddressIntegrationTests {
     @Autowired
     private TestRestTemplate client;
 
-    private final String VALID_NAME = "Alice";
-    private final String VALID_EMAIL = "alice@mail.mcgill.ca";
-    private final String VALID_PASSWORD = "password123";
-    private final String INVALID_PASSWORD = "123";
-    private final int INVALID_ID = 0;
     private int validId;
 
     @Test
     @Order(1)
     public void testCreateValidAddress() {
-        /*
-         * // Arrange
-         * AddressRequestDto request = new AddressRequestDto(VALID_NAME, VALID_EMAIL,
-         * VALID_PASSWORD);
-         * 
-         * // Act
-         * ResponseEntity<AddressResponseDto> response = client.postForEntity("/people",
-         * request, AddressResponseDto.class);
-         * 
-         * // Assert
-         * assertNotNull(response);
-         * assertEquals(HttpStatus.CREATED, response.getStatusCode());
-         * AddressResponseDto createdAddress = response.getBody();
-         * assertNotNull(createdAddress);
-         * assertEquals(VALID_NAME, createdAddress.getName());
-         * assertEquals(VALID_EMAIL, createdAddress.getEmail());
-         * assertNotNull(createdAddress.getId());
-         * assertTrue(createdAddress.getId() > 0,
-         * "Response should have a positive ID.");
-         * assertEquals(LocalDate.now(), createdAddress.getCreationDate());
-         * 
-         * this.validId = createdAddress.getId();
-         */
+        // Arrange
+        AddressRequestDto request = new AddressRequestDto();
+        request.setAddress("1234 Elm Street");
+        request.setCity("Montreal");
+        request.setProvince("Quebec");
+        request.setCountry("Canada");
+        request.setPostalCode("H3A 1A1");
+        request.setCustomerName("Alice");
+
+        // Act
+        ResponseEntity<AddressResponseDto> response = client.postForEntity("/addresses", request, AddressResponseDto.class);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        AddressResponseDto createdAddress = response.getBody();
+        assertNotNull(createdAddress);
+        assertEquals("1234 Elm Street", createdAddress.getName()); // Adjust according to the response DTO
+        assertNotNull(createdAddress.getId());
+        assertTrue(createdAddress.getId() > 0, "Response should have a positive ID.");
+        this.validId = createdAddress.getId();
     }
 
     @Test
     @Order(2)
     public void testReadAddressByValidId() {
-        /*
-         * // Arrange
-         * String url = "/people/" + this.validId;
-         * 
-         * // Act
-         * ResponseEntity<AddressResponseDto> response = client.getForEntity(url,
-         * AddressResponseDto.class);
-         * 
-         * // Assert
-         * assertNotNull(response);
-         * assertEquals(HttpStatus.OK, response.getStatusCode());
-         * AddressResponseDto person = response.getBody();
-         * assertNotNull(person);
-         * assertEquals(VALID_NAME, person.getName());
-         * assertEquals(VALID_EMAIL, person.getEmail());
-         * assertEquals(this.validId, person.getId());
-         * assertEquals(LocalDate.now(), person.getCreationDate());
-         */
+        // Arrange
+        String url = "/addresses/" + this.validId;
+
+        // Act
+        ResponseEntity<AddressResponseDto> response = client.getForEntity(url, AddressResponseDto.class);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        AddressResponseDto address = response.getBody();
+        assertNotNull(address);
+        assertEquals(this.validId, address.getId());
+        assertEquals("1234 Elm Street", address.getName());  // Adjust according to the response DTO
     }
 }
