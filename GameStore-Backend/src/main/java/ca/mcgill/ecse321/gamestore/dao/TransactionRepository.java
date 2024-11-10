@@ -17,7 +17,4 @@ public interface TransactionRepository extends CrudRepository<Transaction, Integ
 
     // find transactions by customer account ID
     Iterable<Transaction> findByCustomerAccount_Id(int id);
-
-    // find transactions by promotion code
-    Iterable<Transaction> findByPromotionCode(String promotionCode);
 }

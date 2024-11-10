@@ -22,7 +22,6 @@ public class Transaction {
   private double totalPrice;
   private boolean isPaid;
   private boolean deliveryStatus;
-  private String promotionCode;
   private boolean userAgreementCheck;
 
   // Transaction Associations
@@ -42,13 +41,12 @@ public class Transaction {
   public Transaction() {
   }
 
-  public Transaction(double aTotalPrice, boolean aIsPaid, boolean aDeliveryStatus, String aPromotionCode,
+  public Transaction(double aTotalPrice, boolean aIsPaid, boolean aDeliveryStatus,
       boolean aUserAgreementCheck, PaymentInformation aPaymentInformation, CustomerAccount aCustomerAccount,
       Address aAddress) {
     totalPrice = aTotalPrice;
     isPaid = aIsPaid;
     deliveryStatus = aDeliveryStatus;
-    promotionCode = aPromotionCode;
     userAgreementCheck = aUserAgreementCheck;
     boolean didAddPaymentInformation = setPaymentInformation(aPaymentInformation);
     if (!didAddPaymentInformation) {
@@ -92,13 +90,6 @@ public class Transaction {
     return wasSet;
   }
 
-  public boolean setPromotionCode(String aPromotionCode) {
-    boolean wasSet = false;
-    promotionCode = aPromotionCode;
-    wasSet = true;
-    return wasSet;
-  }
-
   public boolean setUserAgreementCheck(boolean aUserAgreementCheck) {
     boolean wasSet = false;
     userAgreementCheck = aUserAgreementCheck;
@@ -122,10 +113,6 @@ public class Transaction {
     return deliveryStatus;
   }
 
-  public String getPromotionCode() {
-    return promotionCode;
-  }
-
   public boolean getUserAgreementCheck() {
     return userAgreementCheck;
   }
@@ -143,10 +130,6 @@ public class Transaction {
   /* Code from template association_GetOne */
   public Address getAddress() {
     return address;
-  }
-
-  public static int minimumNumberOfGameQties() {
-    return 0;
   }
 
   /* Code from template association_SetOneToMany */
@@ -196,7 +179,6 @@ public class Transaction {
         "totalPrice" + ":" + getTotalPrice() + "," +
         "isPaid" + ":" + getIsPaid() + "," +
         "deliveryStatus" + ":" + getDeliveryStatus() + "," +
-        "promotionCode" + ":" + getPromotionCode() + "," +
         "userAgreementCheck" + ":" + getUserAgreementCheck() + "]"
         + System.getProperties().getProperty("line.separator") +
         "  " + "paymentInformation = "

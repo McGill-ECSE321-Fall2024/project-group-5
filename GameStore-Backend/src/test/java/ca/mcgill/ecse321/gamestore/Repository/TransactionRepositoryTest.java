@@ -2,6 +2,7 @@ package ca.mcgill.ecse321.gamestore.Repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Date;
@@ -41,9 +42,9 @@ class TransactionRepositoryTest {
     public void clearDatabase() {
         // clear everything after each test
         transactionRepository.deleteAll();
-        customerAccountRepository.deleteAll();
         paymentInformationRepository.deleteAll();
         addressRepository.deleteAll();
+        customerAccountRepository.deleteAll();
     }
 
     @Test
@@ -80,26 +81,23 @@ class TransactionRepositoryTest {
         transaction.setTotalPrice(100.0);
         transaction.setIsPaid(true);
         transaction.setDeliveryStatus(false);
-        transaction.setPromotionCode("PROMO123");
         transaction.setUserAgreementCheck(true);
         transaction.setCustomerAccount(someCustomer);
         transaction.setPaymentInformation(paymentInfo);
         transaction.setAddress(address);
         transaction = transactionRepository.save(transaction);
 
-        // make sure the transaction was saved correctly
-        assertNotNull(transaction);
-        assertEquals(100.0, transaction.getTotalPrice());
-        assertEquals(true, transaction.getIsPaid());
-        assertEquals(false, transaction.getDeliveryStatus());
-        assertEquals("PROMO123", transaction.getPromotionCode());
-        assertEquals(someCustomer.getUsername(), transaction.getCustomerAccount().getUsername());
-
         // get the transaction from the database and make sure it matches
-        Optional<Transaction> retrievedTransaction = transactionRepository.findById(transaction.getTransactionId());
-        assertTrue(retrievedTransaction.isPresent());
-        assertEquals(100.0, retrievedTransaction.get().getTotalPrice());
-        assertEquals(someCustomer.getUsername(), retrievedTransaction.get().getCustomerAccount().getUsername());
+        Transaction retrievedTransaction = transactionRepository
+                .findTransactiontByTransactionId(transaction.getTransactionId());
+        assertNotNull(retrievedTransaction);
+        assertEquals(transaction.getTotalPrice(), retrievedTransaction.getTotalPrice());
+        assertEquals(transaction.getIsPaid(), retrievedTransaction.getIsPaid());
+        assertEquals(transaction.getAddress().getId(), retrievedTransaction.getAddress().getId());
+        assertEquals(transaction.getCustomerAccount().getId(), retrievedTransaction.getCustomerAccount().getId());
+        assertEquals(transaction.getUserAgreementCheck(), retrievedTransaction.getUserAgreementCheck());
+        assertEquals(transaction.getPaymentInformation().getId(), retrievedTransaction.getPaymentInformation().getId());
+        assertEquals(transaction.getTransactionId(), retrievedTransaction.getTransactionId());
     }
 
     @Test
@@ -136,7 +134,6 @@ class TransactionRepositoryTest {
         transaction.setTotalPrice(150.0);
         transaction.setIsPaid(true);
         transaction.setDeliveryStatus(false);
-        transaction.setPromotionCode("DISCOUNT123");
         transaction.setUserAgreementCheck(true);
         transaction.setCustomerAccount(someCustomer);
         transaction.setPaymentInformation(paymentInfo);
@@ -149,8 +146,14 @@ class TransactionRepositoryTest {
         assertTrue(transactions.iterator().hasNext());
 
         Transaction retrievedTransaction = transactions.iterator().next();
-        assertEquals(150.0, retrievedTransaction.getTotalPrice());
-        assertEquals(someCustomer.getUsername(), retrievedTransaction.getCustomerAccount().getUsername());
+        assertNotNull(retrievedTransaction);
+        assertEquals(transaction.getTotalPrice(), retrievedTransaction.getTotalPrice());
+        assertEquals(transaction.getIsPaid(), retrievedTransaction.getIsPaid());
+        assertEquals(transaction.getAddress().getId(), retrievedTransaction.getAddress().getId());
+        assertEquals(transaction.getCustomerAccount().getId(), retrievedTransaction.getCustomerAccount().getId());
+        assertEquals(transaction.getUserAgreementCheck(), retrievedTransaction.getUserAgreementCheck());
+        assertEquals(transaction.getPaymentInformation().getId(), retrievedTransaction.getPaymentInformation().getId());
+        assertEquals(transaction.getTransactionId(), retrievedTransaction.getTransactionId());
     }
 
     @Test
@@ -187,7 +190,6 @@ class TransactionRepositoryTest {
         transaction.setTotalPrice(200.0);
         transaction.setIsPaid(true);
         transaction.setDeliveryStatus(true);
-        transaction.setPromotionCode("TOPSECRET123");
         transaction.setUserAgreementCheck(true);
         transaction.setCustomerAccount(someCustomer);
         transaction.setPaymentInformation(paymentInfo);
@@ -195,16 +197,25 @@ class TransactionRepositoryTest {
         transactionRepository.save(transaction);
 
         // update the transaction's total price
-        Optional<Transaction> retrievedTransaction = transactionRepository.findById(transaction.getTransactionId());
-        assertTrue(retrievedTransaction.isPresent());
-        retrievedTransaction.get().setTotalPrice(250.0);
-        transactionRepository.save(retrievedTransaction.get());
+        Transaction retrievedTransaction = transactionRepository
+                .findTransactiontByTransactionId(transaction.getTransactionId());
+        assertNotNull(retrievedTransaction);
+        retrievedTransaction.setTotalPrice(250.0);
+        transactionRepository.save(retrievedTransaction);
 
         // verify the transaction was updated
-        Optional<Transaction> updatedTransaction = transactionRepository
-                .findById(retrievedTransaction.get().getTransactionId());
-        assertTrue(updatedTransaction.isPresent());
-        assertEquals(250.0, updatedTransaction.get().getTotalPrice());
+        Transaction updatedTransaction = transactionRepository
+                .findTransactiontByTransactionId(retrievedTransaction.getTransactionId());
+        assertNotNull(retrievedTransaction);
+        assertEquals(retrievedTransaction.getTotalPrice(), updatedTransaction.getTotalPrice());
+        assertEquals(retrievedTransaction.getIsPaid(), updatedTransaction.getIsPaid());
+        assertEquals(retrievedTransaction.getAddress().getId(), updatedTransaction.getAddress().getId());
+        assertEquals(retrievedTransaction.getCustomerAccount().getId(),
+                updatedTransaction.getCustomerAccount().getId());
+        assertEquals(retrievedTransaction.getUserAgreementCheck(), updatedTransaction.getUserAgreementCheck());
+        assertEquals(retrievedTransaction.getPaymentInformation().getId(),
+                updatedTransaction.getPaymentInformation().getId());
+        assertEquals(retrievedTransaction.getTransactionId(), updatedTransaction.getTransactionId());
     }
 
     @Test
@@ -241,7 +252,6 @@ class TransactionRepositoryTest {
         transaction.setTotalPrice(175.0);
         transaction.setIsPaid(true);
         transaction.setDeliveryStatus(false);
-        transaction.setPromotionCode("DELETE123");
         transaction.setUserAgreementCheck(true);
         transaction.setCustomerAccount(someCustomer);
         transaction.setPaymentInformation(paymentInfo);
@@ -256,7 +266,8 @@ class TransactionRepositoryTest {
         transactionRepository.deleteById(transaction.getTransactionId());
 
         // verify the transaction was deleted
-        Optional<Transaction> deletedTransaction = transactionRepository.findById(transaction.getTransactionId());
-        assertTrue(deletedTransaction.isEmpty());
+        Transaction deletedTransaction = transactionRepository
+                .findTransactiontByTransactionId(transaction.getTransactionId());
+        assertNull(deletedTransaction);
     }
 }

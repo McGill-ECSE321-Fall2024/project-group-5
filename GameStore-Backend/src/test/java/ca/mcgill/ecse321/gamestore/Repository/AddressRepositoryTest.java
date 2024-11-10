@@ -1,7 +1,6 @@
 package ca.mcgill.ecse321.gamestore.Repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
@@ -49,15 +48,6 @@ class AddressRepositoryTest {
         address.setPostalCode("H3A1B2");
         address.setCustomerAccount(someCustomer);
         address = addressRepository.save(address);
-
-        // make sure address was saved correctly
-        assertNotNull(address);
-        assertEquals("123 Main St", address.getAddress());
-        assertEquals("Montreal", address.getCity());
-        assertEquals("Quebec", address.getProvince());
-        assertEquals("Canada", address.getCountry());
-        assertEquals("H3A1B2", address.getPostalCode());
-        assertEquals(someCustomer.getUsername(), address.getCustomerAccount().getUsername());
 
         // read the address from the database using the ID
         Optional<Address> retrievedAddress = addressRepository.findById(address.getId());
