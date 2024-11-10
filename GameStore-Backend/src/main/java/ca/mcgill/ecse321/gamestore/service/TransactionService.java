@@ -74,7 +74,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public Transaction deletedTransaction(int id) {
+    public Transaction deleteTransaction(int id) {
         Transaction transaction = transactionRepository.findTransactiontByTransactionId(id);
         if (transaction == null) {
             throw new IllegalArgumentException("No transaction for this id.");
@@ -85,7 +85,7 @@ public class TransactionService {
     }
 
     @Transactional
-    public Transaction updateTransaction(int id, double setTotalPrice, boolean setIsPaid, boolean setDeliverStatus,
+    public Transaction updateTransaction(int id, double setTotalPrice, boolean setIsPaid, boolean setDeliveryStatus,
             boolean setUserAgreementCheck, Address setAddress, PaymentInformation setPaymentInformation) {
 
         Transaction transaction = transactionRepository.findTransactiontByTransactionId(id);
@@ -95,7 +95,7 @@ public class TransactionService {
 
         transaction.setTotalPrice(setTotalPrice);
         transaction.setIsPaid(setIsPaid);
-        transaction.setDeliveryStatus(setUserAgreementCheck);
+        transaction.setDeliveryStatus(setDeliveryStatus);
         transaction.setUserAgreementCheck(setUserAgreementCheck);
         if (setAddress != null) {
             transaction.setAddress(setAddress);
