@@ -19,6 +19,14 @@ public class CustomerAccountService {
     @Autowired
     private AccountService accountService;
 
+    /**
+     * Find CustomerAccount by Id
+     * 
+     * @param id - CustomerAccount id
+     * @return CustomerAccount
+     * @throws Exception
+     * @vivianeltain
+     */
     public CustomerAccount getCustomerAccountByID(int id) throws Exception {
         CustomerAccount customerAccount = customerAccountRepository.findById(id);
         if (customerAccount == null) {
@@ -27,6 +35,14 @@ public class CustomerAccountService {
         return customerAccount;
     }
 
+    /**
+     * Find CustomerAccount by email
+     * 
+     * @param email - CustomerAccount email
+     * @return CustomerAccount
+     * @throws Exception
+     * @vivianeltain
+     */
     public CustomerAccount getCustomerAccountByEmail(String email) throws Exception {
         CustomerAccount customerAccount = customerAccountRepository.findByEmailAddress(email);
         if (customerAccount == null) {
@@ -35,6 +51,14 @@ public class CustomerAccountService {
         return customerAccount;
     }
 
+    /**
+     * Find CustomerAccount by username
+     * 
+     * @param username - CustomerAccount username
+     * @return CustomerAccount
+     * @throws Exception
+     * @vivianeltain
+     */
     public CustomerAccount getCustomerAccountByUsername(String username) throws Exception {
         CustomerAccount customerAccount = customerAccountRepository.findByUsername(username);
         if (customerAccount == null) {
@@ -43,10 +67,24 @@ public class CustomerAccountService {
         return customerAccount;
     }
 
+    /**
+     * Get all list of all CustomerAccounts
+     * 
+     * @return List<CustomerAccount>
+     * @vivianeltain
+     */
     public List<CustomerAccount> getAllCustomerAccounts() {
         return toList(customerAccountRepository.findAll());
     }
 
+    /**
+     * Delete CustomerAccount with userId
+     * 
+     * @param id - CustomerAccount Id
+     * @return CustomerAccount
+     * @throws Exception
+     * @vivianeltain
+     */
     public CustomerAccount deleteAccount(int id) throws Exception {
         CustomerAccount customerAccount = customerAccountRepository.findById(id);
         if (customerAccount == null) {
@@ -56,21 +94,31 @@ public class CustomerAccountService {
         return customerAccount;
     }
 
+    /**
+     * Helper method to determine if email is valid
+     * A valid email has the following format: example@ecse.ca
+     * 
+     * @param email
+     * @return Empty String if email is valid or the error message associated
+     *         with the invalid email
+     * @vivianeltain
+     */
     private static String isValidEmail(String email) {
+        // checks that email is not null
         if (email == null) {
             return "Email cannot be null";
         }
-
-        if (email.isEmpty()) {
+        // check to see that email is not empty or just a bunch of spaces
+        if (email.trim().isEmpty()) {
             return "Email cannot be empty";
         }
-
         int atIndex = email.indexOf('@');
         // checks that there is an "@" in the email that is not at the start or
         // end of the email string
         if (atIndex == -1 || atIndex == 0 || atIndex == email.length() - 1) {
             return "Email is not valid";
         }
+        // seperate email in two parts: local (before@) and domain (after@)
         String localPart = email.substring(0, atIndex);
         String domainPart = email.substring(atIndex + 1);
 
@@ -85,15 +133,26 @@ public class CustomerAccountService {
         if (dotIndex == -1 || dotIndex == 0 || dotIndex == domainPart.length() - 1) {
             return "Email is not valid";
         }
-        // if domainString or dotString is empty, return false
+        // seperate domain part in two parts: domain (before .) and dot (after .)
         String domainString = domainPart.substring(0, dotIndex);
         String dotString = domainPart.substring(dotIndex + 1);
+        // if domainString or dotString is empty, return false
         if (domainString.isEmpty() || dotString.isEmpty()) {
             return "Email is not valid";
         }
         return "";
     }
 
+    /**
+     * Create CustomerAccount with given parameters
+     * 
+     * @param username - CustomerAccount username
+     * @param email    - CustomerAccount email
+     * @param password - CustomerAccount password
+     * @return Newly created CustomerAccount
+     * @throws Exception
+     * @vivianeltain
+     */
     @Transactional
     public CustomerAccount createCustomerAccount(String username, String email, String password) throws Exception {
         if (username == null) {
@@ -105,9 +164,20 @@ public class CustomerAccountService {
         if (accountService.checkUsernameAvailability(username)) {
             throw new Exception("Username is already taken");
         }
+        // Check that email follows proper format
+        String emailValidation = isValidEmail(email);
+        if (!emailValidation.isEmpty()) {
+            throw new Exception(emailValidation);
+        }
+        // Check that account with the same email doesn't already exist
+        if (customerAccountRepository.findByEmailAddress(email) != null) {
+            throw new Exception("Account associatd with given email already exists");
+        }
+        // check that password is valid
         if (!AccountService.isValidPassword(password).isEmpty()) {
             throw new Exception(AccountService.isValidPassword(password));
         }
+        // Generate salt and hash password for data encryption
         String salt = AccountService.generateSalt(8);
         String hashedPassword = AccountService.hashPassword(password, salt);
         CustomerAccount customerAccount = new CustomerAccount(username, hashedPassword, salt, email);
@@ -116,8 +186,17 @@ public class CustomerAccountService {
         return customerAccount;
     }
 
+    /**
+     * Check if given email and password are associated with the same account
+     * 
+     * @param email    - given email
+     * @param password - given password
+     * @return CustomerAccount associated with given email and password
+     * @throws Exception
+     * @vivianeltain
+     */
     @Transactional
-    public CustomerAccount authenticate(String email, String password) throws Exception {
+    public CustomerAccount authenticateWithEmail(String email, String password) throws Exception {
         // Check input
         if (email == null || email.trim().length() == 0 || password == null || password.trim().length() == 0
                 || !isValidEmail(email).isEmpty()) {
@@ -127,16 +206,25 @@ public class CustomerAccountService {
         if (customerAccount == null) {
             throw new Exception("There is no account associated with that email address");
         }
-
+        // get salt associated with account to rehash password and compare
         String salt = customerAccount.getRandomPassword();
         String hashedPassword = AccountService.hashPassword(password, salt);
         if (hashedPassword.equals(customerAccount.getPasswordHash())) {
             return customerAccount;
         } else {
-            throw new Exception("Password and username do not match");
+            throw new Exception("Password and email do not match");
         }
     }
 
+    /**
+     * Helper method to determine if name has valid format
+     * Name cannot contain special characters or numbers except for ' and -
+     * 
+     * @param name - given name
+     * @return Empty String if name is valid or the error message associated
+     *         with the invalid name
+     * @vivianeltain
+     */
     private String isValidName(String name) {
         if (name.trim().length() == 0) {
             return "Name cannot be empty";
@@ -150,13 +238,22 @@ public class CustomerAccountService {
         return "";
     }
 
-    private boolean containsSpecialCharacterExceptDashAndApostrophe(String name) {
+    /**
+     * Helper method to see if string contains a special character except
+     * for dash and apostrophe
+     * 
+     * @param string - given stringg
+     * @return true if string does contains a special character that is not
+     *         - or '
+     * @vivianeltain
+     */
+    private boolean containsSpecialCharacterExceptDashAndApostrophe(String string) {
         char dash = 145;
         char apostrophe = 146;
 
-        for (int i = 0; i < name.length(); i++) {
-            char character = name.charAt(i);
-            if (!Character.isLetterOrDigit(character) && (character == dash || character == apostrophe)) {
+        for (int i = 0; i < string.length(); i++) {
+            char character = string.charAt(i);
+            if (!Character.isLetterOrDigit(character) && (character != dash || character != apostrophe)) {
                 return true;
             }
         }
@@ -164,31 +261,38 @@ public class CustomerAccountService {
 
     }
 
-    public CustomerAccount updateAccount(int id, String username, String email, String password, String name)
+    /**
+     * Update CustomerAccount with given parameters
+     * Note: email cannot change
+     * 
+     * @param id       - CustomerAccount Id
+     * @param username - CustomerAccount username
+     * @param password - CustomerAccount password
+     * @param name     - CustomerAccount name *
+     * @return updated CustomerAccount
+     * @throws Exception
+     * @vivianeltain
+     */
+    public CustomerAccount updateCustomerAccount(int id, String username, String password, String name)
             throws Exception {
-        // Check for duplicate emails
-        CustomerAccount dupeEmailAccount = customerAccountRepository.findByEmailAddress(email);
-        if (dupeEmailAccount != null && !dupeEmailAccount.getUsername().equals(username)) {
-            throw new Exception("An account with this email already exists");
+        // check for duplicate username
+        if (!accountService.checkUsernameAvailability(username)) {
+            throw new Exception("An account with this username already exits");
         }
-
         // Attempt to update account
         CustomerAccount customerAccount = customerAccountRepository.findById(id);
         if (customerAccount == null) {
             throw new Exception("No account with this id exists");
         }
-        String emailValidation = isValidEmail(email);
-        if (!emailValidation.isEmpty()) {
-            throw new Exception(emailValidation);
-        }
+        // Check that new password is valid
         String passwordValidation = AccountService.isValidPassword(password);
         if (!passwordValidation.isEmpty()) {
             throw new Exception(passwordValidation);
         }
+        // Check that new name is valid
         if (name != null && !isValidName(name).isEmpty()) {
             throw new Exception(isValidName(name));
         }
-        customerAccount.setEmail(email);
         String salt = AccountService.generateSalt(8);
         String hashedPassword = AccountService.hashPassword(password, salt);
         customerAccount.setPasswordHash(hashedPassword);
@@ -198,6 +302,14 @@ public class CustomerAccountService {
         return customerAccount;
     }
 
+    /**
+     * Helper method to turn iterable into list
+     * 
+     * @param <T>
+     * @param iterable
+     * @return iterable as a list
+     * @vivianeltain
+     */
     private <T> List<T> toList(Iterable<T> iterable) {
         List<T> resultList = new ArrayList<T>();
         for (T t : iterable) {

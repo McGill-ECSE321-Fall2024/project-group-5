@@ -28,6 +28,13 @@ public class AccountService {
     @Autowired
     private StaffAccountRepository staffAccountRepository;
 
+    /**
+     * Generates a random salt of wanted length
+     * 
+     * @param length - wanted length of the salt
+     * @return String salt
+     * @vivianeltain
+     */
     public static String generateSalt(int length) {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         Random random = new Random();
@@ -40,6 +47,20 @@ public class AccountService {
         return salt.toString();
     }
 
+    /**
+     * Helper method to determine if password is valid
+     * Requirements for the password to be valid:
+     * - Longer than 8 characters long
+     * - Contains at least one lower case letter
+     * - Contains at least one upper case letter
+     * - Contains at least one special character
+     * - Contains at least one number
+     * 
+     * @param password
+     * @return Empty String if password is valid or the error message associated
+     *         with the invalid password
+     * @vivianeltain
+     */
     public static String isValidPassword(String password) {
         if (password == null) {
             return "Password cannot be null";
@@ -71,53 +92,100 @@ public class AccountService {
         return "";
     }
 
-    // checks if password contains a digit
-    public static boolean containsNumber(String password) {
-        for (int i = 0; i < password.length(); i++) {
-            if (Character.isDigit(password.charAt(i))) {
+    /**
+     * Helper method to check if string contains a number
+     * 
+     * @param string
+     * @return true: string contains a number
+     *         false: string does not contain a number
+     * @vivianeltain
+     */
+    public static boolean containsNumber(String string) {
+        for (int i = 0; i < string.length(); i++) {
+            if (Character.isDigit(string.charAt(i))) {
                 return true;
             }
         }
         return false;
     }
 
-    private static boolean containsSpecialCharacter(String password) {
-        for (int i = 0; i < password.length(); i++) {
-            if (!Character.isLetterOrDigit(password.charAt(i))) {
+    /**
+     * Helper method to check if string contains a special character
+     * 
+     * @param string
+     * @return true: string contains a special character
+     *         false: string does not a special character
+     * @vivianeltain
+     */
+    private static boolean containsSpecialCharacter(String string) {
+        for (int i = 0; i < string.length(); i++) {
+            if (!Character.isLetterOrDigit(string.charAt(i))) {
                 return true;
             }
         }
         return false;
     }
 
-    private static boolean containsLetter(String password) {
-        for (int i = 0; i < password.length(); i++) {
-            if (Character.isLetter(password.charAt(i))) {
+    /**
+     * Helper method to check if string contains a letter
+     * 
+     * @param string
+     * @return true: string contains a letter
+     *         false: string does not contain a letter
+     * @vivianeltain
+     */
+    private static boolean containsLetter(String string) {
+        for (int i = 0; i < string.length(); i++) {
+            if (Character.isLetter(string.charAt(i))) {
                 return true;
             }
         }
         return false;
     }
 
-    private static boolean hasUpperCase(String password) {
-        for (int i = 0; i < password.length(); i++) {
-            if (Character.isUpperCase(password.charAt(i))) {
+    /**
+     * Helper method to check if string contains an uppercase letter
+     * 
+     * @param string
+     * @return true: string contains an uppercase letter
+     *         false: string does not contain an uppercase letter
+     * @vivianeltain
+     */
+    private static boolean hasUpperCase(String string) {
+        for (int i = 0; i < string.length(); i++) {
+            if (Character.isUpperCase(string.charAt(i))) {
                 return true;
             }
         }
         return false;
     }
 
-    private static boolean hasLowerCase(String password) {
-        for (int i = 0; i < password.length(); i++) {
-            if (Character.isLowerCase(password.charAt(i))) {
+    /**
+     * Helper method to check if string contains a lowercase letter
+     * 
+     * @param string
+     * @return true: string contains a lowercase letter
+     *         false: string does not contain a lowercase letter
+     * @vivianeltain
+     */
+    private static boolean hasLowerCase(String string) {
+        for (int i = 0; i < string.length(); i++) {
+            if (Character.isLowerCase(string.charAt(i))) {
                 return true;
             }
         }
         return false;
     }
 
-    // https://howtodoinjava.com/java/java-security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/
+    /**
+     * method to hash password and salt using MD5
+     * 
+     * @param passwordToHash
+     * @param salt
+     * @return String hashedPassword
+     * @vivianeltain and
+     *               https://howtodoinjava.com/java/java-security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/
+     */
     public static String hashPassword(String passwordToHash, String salt) {
         String hashedPassword = null;
         if (!isValidPassword(passwordToHash).isEmpty()) {
@@ -150,9 +218,17 @@ public class AccountService {
         return hashedPassword;
     }
 
-    // check log in info is correct
+    /**
+     * Check if given username and password are associated with the same account
+     * 
+     * @param username - given email
+     * @param password - given password
+     * @return CustomerAccount associated with given username and password
+     * @throws Exception
+     * @vivianeltain
+     */
     @Transactional
-    public Account authenticate(String username, String password) throws Exception {
+    public Account authenticateWithUsername(String username, String password) throws Exception {
         // Check input
         if (username == null || username.trim().length() == 0 || password == null || password.trim().length() == 0) {
             throw new Exception("Please enter an email and a password");
@@ -180,6 +256,13 @@ public class AccountService {
         }
     }
 
+    /**
+     * Check if username isn't already taken by another account
+     * 
+     * @param username - wanted username
+     * @return true if username is free
+     *         false if username is taken
+     */
     public boolean checkUsernameAvailability(String username) {
         CustomerAccount customerAccount = customerAccountRepository.findByUsername(username);
         StaffAccount staffAccount = staffAccountRepository.findStaffAccountByUsername(username);
