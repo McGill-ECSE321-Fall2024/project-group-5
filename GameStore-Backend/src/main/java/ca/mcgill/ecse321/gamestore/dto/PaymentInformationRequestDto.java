@@ -1,33 +1,72 @@
 package ca.mcgill.ecse321.gamestore.dto;
 
-import ca.mcgill.ecse321.gamestore.model.PaymentInformation;
+import java.util.Date;
+import ca.mcgill.ecse321.gamestore.model.PaymentInformation.CardType;
 
 public class PaymentInformationRequestDto {
-    private int id;
-    private String name;
+    private String cardholderName;
+    private long cardNumber; // Changed to long for larger card numbers
+    private Date expirationDate; // Changed to java.util.Date
+    private int cvc;
+    private CardType cardType;
+    private int customerAccountId;
 
-    // Jackson needs a default constructor, but it doesn't need to be public
-    @SuppressWarnings("unused")
-    private PaymentInformationRequestDto() {
+    // Constructor
+    public PaymentInformationRequestDto(String cardholderName, long cardNumber, Date expirationDate, int cvc, CardType cardType, int customerAccountId) {
+        this.cardholderName = cardholderName;
+        this.cardNumber = cardNumber;
+        this.expirationDate = expirationDate;
+        this.cvc = cvc;
+        this.cardType = cardType;
+        this.customerAccountId = customerAccountId;
     }
 
-    public PaymentInformationRequestDto(PaymentInformation model) {
-        this.id = model.getId();
+    // Getters and Setters
+    public String getCardholderName() {
+        return cardholderName;
     }
 
-    public int getId() {
-        return id;
+    public void setCardholderName(String cardholderName) {
+        this.cardholderName = cardholderName;
     }
 
-    public String getName() {
-        return name;
+    public long getCardNumber() {
+        return cardNumber;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCardNumber(long cardNumber) {
+        this.cardNumber = cardNumber;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Date getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(Date expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    public int getCvc() {
+        return cvc;
+    }
+
+    public void setCvc(int cvc) {
+        this.cvc = cvc;
+    }
+
+    public CardType getCardType() {
+        return cardType;
+    }
+
+    public void setCardType(CardType cardType) {
+        this.cardType = cardType;
+    }
+
+    public int getCustomerAccountId() {
+        return customerAccountId;
+    }
+
+    public void setCustomerAccountId(int customerAccountId) {
+        this.customerAccountId = customerAccountId;
     }
 }
