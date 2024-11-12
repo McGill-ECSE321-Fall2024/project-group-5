@@ -42,7 +42,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public void deleteReview(int id) {
+    public void deleteReview(int id)  {
         if (!reviewRepository.existsById(id)) {
             throw new IllegalArgumentException("Review not found");
         }
