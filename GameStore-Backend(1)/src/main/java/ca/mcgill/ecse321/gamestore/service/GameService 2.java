@@ -11,7 +11,7 @@ import ca.mcgill.ecse321.gamestore.model.Game;
 import ca.mcgill.ecse321.gamestore.model.Game.GameConsole;
 import ca.mcgill.ecse321.gamestore.model.GameQty;
 import ca.mcgill.ecse321.gamestore.model.Review;
-// import ca.mcgill.ecse321.gamestore.dao.GameQtyRepository;
+import ca.mcgill.ecse321.gamestore.dao.GameQtyRepository;
 import ca.mcgill.ecse321.gamestore.dao.GameRepository;
 import jakarta.transaction.Transactional;
 import ca.mcgill.ecse321.gamestore.dao.ReviewRepository;
@@ -20,8 +20,8 @@ import ca.mcgill.ecse321.gamestore.dao.ReviewRepository;
 public class GameService {
     @Autowired
     private GameRepository gameRepository;
-    // @Autowired
-    // private GameQtyRepository gameQtyRepository;
+    @Autowired
+    private GameQtyRepository gameQtyRepository;
     @Autowired
     private ReviewRepository reviewRepository;
 
@@ -106,6 +106,56 @@ public class GameService {
      */ 
     public List<Game> listAllGames() {
         return gameRepository.findAll();
+    }
+
+    /**
+     * List Games by inCatalog status
+     * 
+     * @param inCatalog
+     * @return list of Games 
+     * @throws Exception
+     * @carolinethom
+     */ 
+    public List<Game> listGamesInCatalog(boolean inCatalog) {
+        return gameRepository.findByInCatalog(inCatalog);
+    }
+
+    /**
+     * Add Review for a Game
+     * 
+     * @param id - Game id
+     * @param description - Game description
+     * @param likeCount - number of likes on review
+     * @param dislikeCount - number of dislikes on review
+     * @param rating - Game rating
+     * @return updated reviewRepository 
+     * @throws Exception
+     * @carolinethom
+     */ 
+    @Transactional
+    public Review addReview(int gameId, String description, int likeCount, int dislikeCount, float rating) throws Exception {
+        Game game = getGameByID(gameId);
+        Review review = new Review();
+        review.setGame(game);
+        review.setDescription(description);
+        review.setLikeCount(likeCount);
+        review.setDislikeCount(dislikeCount);
+        review.setRating(rating);
+        review.setDate(Date.valueOf(LocalDate.now()));
+        return reviewRepository.save(review);
+    }
+
+    /**
+     * Get Reviews for a Game
+     * 
+     * @param id - Game id
+     * @return updated reviewRepository 
+     * @throws Exception
+     * @carolinethom
+     */ 
+    public List<Review> getReviewsByGame(int gameId) throws Exception {
+        Game game = getGameByID(gameId);
+        return reviewRepository.findByGame(game);
     }
 
 
