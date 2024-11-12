@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -31,9 +32,11 @@ public class ReviewIntegrationTests {
     @Autowired
     private TestRestTemplate client;
 
-    private final String VALID_REVIEW_NAME = "Great Game!";
+    private final String VALID_DESCRIPTION = "Great Game!";
+    private final float VALID_RATING = 4.5f;
     private final int VALID_GAME_ID = 1;
     private final int VALID_CUSTOMER_ID = 1;
+    private final Date VALID_DATE = Date.valueOf(LocalDate.now());
     private int validReviewId;
 
     @Test
@@ -41,7 +44,11 @@ public class ReviewIntegrationTests {
     public void testCreateValidReview() {
         // Arrange
         ReviewRequestDto request = new ReviewRequestDto();
-        request.setName(VALID_REVIEW_NAME);
+        request.setDate(VALID_DATE);
+        request.setDescription(VALID_DESCRIPTION);
+        request.setRating(VALID_RATING);
+        request.setGameId(VALID_GAME_ID);
+        request.setCustomerAccountId(VALID_CUSTOMER_ID);
 
         // Act
         ResponseEntity<ReviewResponseDto> response = client.postForEntity("/reviews", request, ReviewResponseDto.class);
@@ -51,7 +58,8 @@ public class ReviewIntegrationTests {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         ReviewResponseDto createdReview = response.getBody();
         assertNotNull(createdReview);
-        assertEquals(VALID_REVIEW_NAME, createdReview.getName());
+        assertEquals(VALID_DESCRIPTION, createdReview.getDescription());
+        assertEquals(VALID_RATING, createdReview.getRating());
         assertNotNull(createdReview.getId());
         assertTrue(createdReview.getId() > 0, "Response should have a positive ID.");
 
@@ -72,7 +80,8 @@ public class ReviewIntegrationTests {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         ReviewResponseDto review = response.getBody();
         assertNotNull(review);
-        assertEquals(VALID_REVIEW_NAME, review.getName());
+        assertEquals(VALID_DESCRIPTION, review.getDescription());
+        assertEquals(VALID_RATING, review.getRating());
         assertEquals(this.validReviewId, review.getId());
     }
 
@@ -91,7 +100,7 @@ public class ReviewIntegrationTests {
         List<ReviewResponseDto> reviews = Arrays.asList(response.getBody());
         assertNotNull(reviews);
         assertTrue(reviews.size() > 0, "There should be at least one review for the game.");
-        assertEquals(VALID_GAME_ID, reviews.get(0).getId()); // Assuming the ID matches
+        assertEquals(VALID_GAME_ID, reviews.get(0).getGameId());
     }
 
     @Test
@@ -109,7 +118,7 @@ public class ReviewIntegrationTests {
         List<ReviewResponseDto> reviews = Arrays.asList(response.getBody());
         assertNotNull(reviews);
         assertTrue(reviews.size() > 0, "There should be at least one review for the customer.");
-        assertEquals(VALID_CUSTOMER_ID, reviews.get(0).getId()); // Assuming the ID matches
+        assertEquals(VALID_CUSTOMER_ID, reviews.get(0).getCustomerAccountId());
     }
 
     @Test
@@ -118,7 +127,7 @@ public class ReviewIntegrationTests {
         // Arrange
         String url = "/reviews/" + this.validReviewId;
 
-        // Act
+        //  Act
         client.delete(url);
 
         // Try fetching the deleted review
