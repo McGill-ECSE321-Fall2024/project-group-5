@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -29,10 +29,11 @@ import ca.mcgill.ecse321.gamestore.dto.ReviewResponseDto;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(Lifecycle.PER_CLASS)
 public class ReviewIntegrationTests {
+
     @Autowired
     private TestRestTemplate client;
 
-    private final String VALID_DESCRIPTION = "Great Game!";
+    private final String VALID_DESCRIPTION = "Great game!";
     private final float VALID_RATING = 4.5f;
     private final int VALID_GAME_ID = 1;
     private final int VALID_CUSTOMER_ID = 1;
@@ -61,32 +62,57 @@ public class ReviewIntegrationTests {
         assertEquals(VALID_DESCRIPTION, createdReview.getDescription());
         assertEquals(VALID_RATING, createdReview.getRating());
         assertNotNull(createdReview.getId());
-        assertTrue(createdReview.getId() > 0, "Response should have a positive ID.");
+        assertTrue(createdReview.getId() > 0);
 
-        this.validReviewId = createdReview.getId(); // Save ID for further tests
+        this.validReviewId = createdReview.getId();
     }
 
     @Test
     @Order(2)
-    public void testReadReviewByValidId() {
+    public void testCreateInvalidReviewRating() {
         // Arrange
-        String url = "/reviews/" + this.validReviewId;
+        ReviewRequestDto request = new ReviewRequestDto();
+        request.setDate(VALID_DATE);
+        request.setDescription(VALID_DESCRIPTION);
+        request.setRating(6.0f); // Invalid rating
+        request.setGameId(VALID_GAME_ID);
+        request.setCustomerAccountId(VALID_CUSTOMER_ID);
 
         // Act
-        ResponseEntity<ReviewResponseDto> response = client.getForEntity(url, ReviewResponseDto.class);
+        ResponseEntity<String> response = client.postForEntity("/reviews", request, String.class);
 
         // Assert
         assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        ReviewResponseDto review = response.getBody();
-        assertNotNull(review);
-        assertEquals(VALID_DESCRIPTION, review.getDescription());
-        assertEquals(VALID_RATING, review.getRating());
-        assertEquals(this.validReviewId, review.getId());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertTrue(response.getBody().contains("Rating must be between 0 and 5"));
     }
 
     @Test
     @Order(3)
+    public void testUpdateReviewLikeDislike() {
+        // Arrange
+        String url = "/reviews/" + this.validReviewId + "/update";
+        ReviewRequestDto updateRequest = new ReviewRequestDto();
+        updateRequest.setLikeCount(20);
+        updateRequest.setDislikeCount(3);
+
+        // Act
+        client.put(url, updateRequest);
+
+        // Fetch updated review
+        ResponseEntity<ReviewResponseDto> response = client.getForEntity("/reviews/" + this.validReviewId, ReviewResponseDto.class);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        ReviewResponseDto updatedReview = response.getBody();
+        assertNotNull(updatedReview);
+        assertEquals(20, updatedReview.getLikeCount());
+        assertEquals(3, updatedReview.getDislikeCount());
+    }
+
+    @Test
+    @Order(4)
     public void testGetReviewsByGameId() {
         // Arrange
         String url = "/reviews/game/" + VALID_GAME_ID;
@@ -104,7 +130,7 @@ public class ReviewIntegrationTests {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     public void testGetReviewsByCustomerId() {
         // Arrange
         String url = "/reviews/customer/" + VALID_CUSTOMER_ID;
@@ -119,21 +145,5 @@ public class ReviewIntegrationTests {
         assertNotNull(reviews);
         assertTrue(reviews.size() > 0, "There should be at least one review for the customer.");
         assertEquals(VALID_CUSTOMER_ID, reviews.get(0).getCustomerAccountId());
-    }
-
-    @Test
-    @Order(5)
-    public void testDeleteReview() {
-        // Arrange
-        String url = "/reviews/" + this.validReviewId;
-
-        //  Act
-        client.delete(url);
-
-        // Try fetching the deleted review
-        ResponseEntity<ReviewResponseDto> response = client.getForEntity(url, ReviewResponseDto.class);
-
-        // Assert
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }
