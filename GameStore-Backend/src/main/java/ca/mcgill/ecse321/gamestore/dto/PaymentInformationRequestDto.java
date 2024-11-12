@@ -1,33 +1,64 @@
+// src/main/java/ca/mcgill/ecse321/gamestore/dto/PaymentInformationRequestDTO.java
 package ca.mcgill.ecse321.gamestore.dto;
 
-import ca.mcgill.ecse321.gamestore.model.PaymentInformation;
+import ca.mcgill.ecse321.gamestore.model.PaymentInformation.CardType;
 
 public class PaymentInformationRequestDto {
-    private int id;
-    private String name;
+    private String cardholderName;
+    private int cardNumber;
+    private String expirationDate;
+    private int cvc;
+    private CardType cardType;
+    private int customerAccountId;
 
-    // Jackson needs a default constructor, but it doesn't need to be public
+    // Private default constructor for Jackson
     @SuppressWarnings("unused")
-    private PaymentInformationRequestDto() {
+    private PaymentInformationRequestDto() {}
+
+    // Parameterized constructor
+    public PaymentInformationRequestDto(String cardholderName, int cardNumber, String expirationDate, int cvc, CardType cardType, int customerAccountId) {
+        this.cardholderName = cardholderName;
+        this.cardNumber = cardNumber;
+        this.expirationDate = expirationDate;
+        this.cvc = cvc;
+        this.cardType = cardType;
+        this.customerAccountId = customerAccountId;
     }
 
-    public PaymentInformationRequestDto(PaymentInformation model) {
-        this.id = model.getId();
+    public boolean setCardholderName(String cardholderName) {
+        this.cardholderName = cardholderName;
+        return true;
     }
 
-    public int getId() {
-        return id;
+    public boolean setCardNumber(int cardNumber) {
+        this.cardNumber = cardNumber;
+        return true;
     }
 
-    public String getName() {
-        return name;
+    public boolean setExpirationDate(String expirationDate) {
+        this.expirationDate = expirationDate;
+        return true;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public boolean setCvc(int cvc) {
+        this.cvc = cvc;
+        return true;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public boolean setCardType(CardType cardType) {
+        this.cardType = cardType;
+        return true;
     }
+
+    public boolean setCustomerAccountId(int customerAccountId) {
+        this.customerAccountId = customerAccountId;
+        return true;
+    }
+
+    public String getCardholderName() { return cardholderName; }
+    public int getCardNumber() { return cardNumber; }
+    public String getExpirationDate() { return expirationDate; }
+    public int getCvc() { return cvc; }
+    public CardType getCardType() { return cardType; }
+    public int getCustomerAccountId() { return customerAccountId; }
 }

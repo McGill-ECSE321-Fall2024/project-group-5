@@ -41,7 +41,7 @@ class GameStoreObjectRepositoryTest {
 		assertEquals(policy, gameStore.getPolicy());
 
 		// Read object from database using ID
-		gameStore = gameStoreObjectRepository.getGameStoreObjectByIdIsNotNull();
+		gameStore = gameStoreObjectRepository.findGameStoreObjectById(gameStore.getId());
 
 		// tests
 		assertNotNull(gameStore);
@@ -69,7 +69,7 @@ class GameStoreObjectRepositoryTest {
 		gameStoreObjectRepository.deleteById(gameStore.getId());
 
 		// Assert that database doesn't have object
-		assertNull(gameStoreObjectRepository.getGameStoreObjectByIdIsNotNull());
+		assertNull(gameStoreObjectRepository.findGameStoreObjectById(gameStore.getId()));
 
 	}
 
@@ -93,7 +93,7 @@ class GameStoreObjectRepositoryTest {
 		gameStoreObjectRepository.save(gameStore);
 
 		// read object from database using username
-		gameStore = gameStoreObjectRepository.getGameStoreObjectByIdIsNotNull();
+		gameStore = gameStoreObjectRepository.findGameStoreObjectById(gameStore.getId());
 
 		// tests
 		assertNotNull(gameStore);
