@@ -282,7 +282,7 @@ public class CustomerAccountService {
         // Attempt to update account
         CustomerAccount customerAccount = customerAccountRepository.findById(id);
         if (customerAccount == null) {
-            throw new Exception("No account with this id exists");
+            throw new Exception("No account associated with this id exists");
         }
         // Check that new password is valid
         String passwordValidation = AccountService.isValidPassword(password);
