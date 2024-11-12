@@ -1,17 +1,28 @@
 package ca.mcgill.ecse321.gamestore.controller;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import ca.mcgill.ecse321.gamestore.dto.GameRequestDto;
 import ca.mcgill.ecse321.gamestore.dto.GameResponseDto;
 import ca.mcgill.ecse321.gamestore.model.Game;
 import ca.mcgill.ecse321.gamestore.service.GameService;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/games")
@@ -20,11 +31,17 @@ public class GameController {
     @Autowired
     private GameService gameService;
 
-    // Endpoint to create a new game
-    @PostMapping
-    public ResponseEntity<GameResponseDto> createGame(@RequestBody GameRequestDto gameRequestDto) {
-        Game createdGame = gameService.createGame(gameRequestDto);
-        return new ResponseEntity<>(new GameResponseDto(createdGame), HttpStatus.CREATED);
+    public Game createGame(GameRequestDto gameRequestDto) {
+        // Create a new Game entity from the DTO
+        Game game = new Game();
+        game.setName(gameRequestDto.getName());
+        game.setPrice(gameRequestDto.getPrice());
+        game.setDescription(gameRequestDto.getDescription());
+        game.setCategory(gameRequestDto.getCategory());
+        game.setGameConsole(gameRequestDto.getGameConsole());
+        
+        // Save the game to the database
+        return gameRepository.save(game);
     }
 
     // Endpoint to get a game by ID
@@ -67,6 +84,10 @@ public class GameController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    // my vs code is struggling
+    
+    
+    
     // Additional endpoint to get games by category (if needed)
     @GetMapping("/category/{category}")
     public ResponseEntity<List<GameResponseDto>> getGamesByCategory(@PathVariable String category) {
