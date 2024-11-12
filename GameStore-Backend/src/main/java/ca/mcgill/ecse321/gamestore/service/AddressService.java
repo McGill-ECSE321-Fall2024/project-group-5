@@ -96,7 +96,11 @@ public class AddressService {
         Address address = addressRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Address with ID " + id + " not found."));
         
+        // Perform the deletion
         addressRepository.deleteById(id);
+        
+        // Return the deleted address (optional, if you need to confirm what was deleted)
         return address;
-    }
+    }   
+    
 }
