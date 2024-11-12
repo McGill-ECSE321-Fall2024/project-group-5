@@ -78,7 +78,7 @@ public class CustomerAccountController {
         }
 
         try {
-            customerAccountService.deleteAccount(aId);
+            customerAccountService.deleteCustomerAccount(aId);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

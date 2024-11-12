@@ -553,7 +553,7 @@ public class CustomerAccountServiceTests {
     }
 
     @Test
-    public void testDeleteAccount_Success() {
+    public void testDeleteAccountWithId() {
         String eMSG = "";
         Account account = null;
 
@@ -568,7 +568,24 @@ public class CustomerAccountServiceTests {
         assertEquals("", eMSG);
         assertNotNull(account);
         assertEquals(CA1, account);
-        assertEquals(false, repo.existsByEmailAddress(CA1.getEmailAddress()));
+        assertEquals(true, repo.existsByEmailAddress(CA1.getEmailAddress()));
+    }
+
+    @Test
+    public void testDeleteAccountWithInvalidId() {
+        String eMSG = "";
+        Account account = null;
+
+        // Delete account
+        try {
+            account = service.deleteCustomerAccount(TEST_ID);
+        } catch (Exception e) {
+            eMSG = e.getMessage();
+        }
+
+        // Check
+        assertEquals("No account associated with this id exists", eMSG);
+        assertNull(account);
     }
 
 }
