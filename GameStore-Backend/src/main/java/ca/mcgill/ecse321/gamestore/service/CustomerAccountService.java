@@ -85,7 +85,7 @@ public class CustomerAccountService {
      * @throws Exception
      * @vivianeltain
      */
-    public CustomerAccount deleteAccount(int id) throws Exception {
+    public CustomerAccount deleteCustomerAccount(int id) throws Exception {
         CustomerAccount customerAccount = customerAccountRepository.findById(id);
         if (customerAccount == null) {
             throw new Exception("No account associated with this id exists");
@@ -171,7 +171,7 @@ public class CustomerAccountService {
         }
         // Check that account with the same email doesn't already exist
         if (customerAccountRepository.findByEmailAddress(email) != null) {
-            throw new Exception("Account associatd with given email already exists");
+            throw new Exception("Account associated with given email already exists");
         }
         // check that password is valid
         if (!AccountService.isValidPassword(password).isEmpty()) {
@@ -282,7 +282,7 @@ public class CustomerAccountService {
         // Attempt to update account
         CustomerAccount customerAccount = customerAccountRepository.findById(id);
         if (customerAccount == null) {
-            throw new Exception("No account with this id exists");
+            throw new Exception("No account associated with this id exists");
         }
         // Check that new password is valid
         String passwordValidation = AccountService.isValidPassword(password);

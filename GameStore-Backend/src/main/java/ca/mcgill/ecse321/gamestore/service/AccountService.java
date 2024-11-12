@@ -65,7 +65,7 @@ public class AccountService {
         if (password == null) {
             return "Password cannot be null";
         }
-        if (password.isEmpty()) {
+        if (password.trim().isEmpty()) {
             return "Password cannot be empty";
         }
         if (password.length() < 8) {
