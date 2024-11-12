@@ -144,27 +144,6 @@ public class CustomerAccountServiceTests {
     }
 
     @Test
-    public void testCreateValidCustomerAccount() {
-        String errorMessage = "";
-        CustomerAccount createdCustomerAccount = null;
-        try {
-            // Act
-            createdCustomerAccount = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, TEST_PASSWORD);
-        } catch (Exception e) {
-            errorMessage = e.getMessage();
-        }
-        String createdSalt = createdCustomerAccount.getRandomPassword();
-        String createdHashPassword = createdCustomerAccount.getPasswordHash();
-
-        // Assert
-        assertEquals("", errorMessage);
-        assertNotNull(createdCustomerAccount);
-        assertEquals(TEST_EMAIL, createdCustomerAccount.getEmailAddress());
-        assertEquals(createdHashPassword, createdCustomerAccount.getPasswordHash());
-        assertEquals(TEST_USERNAME, createdCustomerAccount.getUsername());
-    }
-
-    @Test
     public void testReadCustomerAccountByValidId() {
         String errorMessage = "";
         CustomerAccount retrievedCustomerAccount = null;
@@ -276,6 +255,320 @@ public class CustomerAccountServiceTests {
         // Assert
         assertEquals("", errorMessage);
         assertNotNull(allRetrievedCustomerAccounts);
+    }
+
+    @Test
+    public void testCreateValidCustomerAccount() {
+        String errorMessage = "";
+        CustomerAccount createdCustomerAccount = null;
+        try {
+            // Act
+            createdCustomerAccount = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, TEST_PASSWORD);
+        } catch (Exception e) {
+            errorMessage = e.getMessage();
+        }
+
+        assertNotNull(createdCustomerAccount);
+        String createdSalt = createdCustomerAccount.getRandomPassword();
+        String createdHashPassword = createdCustomerAccount.getPasswordHash();
+
+        // Assert
+        assertEquals("", errorMessage);
+        assertEquals(TEST_EMAIL, createdCustomerAccount.getEmailAddress());
+        assertEquals(createdHashPassword, createdCustomerAccount.getPasswordHash());
+        assertEquals(TEST_USERNAME, createdCustomerAccount.getUsername());
+        assertEquals(createdSalt, createdCustomerAccount.getRandomPassword());
+    }
+
+    @Test
+    public void testCreateAccount_DuplicateEmail() {
+        String eMSG = "";
+        Account account = null;
+
+        // Create account
+        try {
+            account = service.createCustomerAccount(TEST_USERNAME, CA1.getEmailAddress(), TEST_PASSWORD);
+        } catch (Exception e) {
+            eMSG = e.getMessage();
+        }
+
+        // Check
+        assertEquals("Account associated with given email already exists", eMSG);
+        assertNull(account);
+    }
+
+    @Test
+    public void testCreateAccount_NullEmail() {
+        String eMSG = "";
+        Account account = null;
+
+        // Create account
+        try {
+            account = service.createCustomerAccount(TEST_USERNAME, null, TEST_PASSWORD);
+        } catch (Exception e) {
+            eMSG = e.getMessage();
+        }
+
+        // Check
+        assertEquals("Email cannot be empty", eMSG);
+        assertNull(account);
+    }
+
+    @Test
+    public void testCreateAccount_EmptyEmail() {
+        String eMSG = "";
+        Account account = null;
+
+        // Create account
+        try {
+            account = service.createCustomerAccount(TEST_USERNAME, "", TEST_PASSWORD);
+        } catch (Exception e) {
+            eMSG = e.getMessage();
+        }
+
+        // Check
+        assertEquals("Email cannot be empty", eMSG);
+        assertNull(account);
+    }
+
+    @Test
+    public void testCreateAccount_InvalidEmail() {
+        String eMSG = "";
+        Account account = null;
+
+        // Create account
+        try {
+            account = service.createCustomerAccount(TEST_USERNAME, "test", TEST_PASSWORD);
+        } catch (Exception e) {
+            eMSG = e.getMessage();
+        }
+
+        // Check
+        assertEquals("Email is not valid", eMSG);
+        assertNull(account);
+    }
+
+    @Test
+    public void testCreateAccount_InvalidEmail1() {
+        String eMSG = "";
+        Account account = null;
+
+        // Create account
+        try {
+            account = service.createCustomerAccount(TEST_USERNAME, "test@.com", TEST_PASSWORD);
+        } catch (Exception e) {
+            eMSG = e.getMessage();
+        }
+
+        // Check
+        assertEquals("Email is not valid", eMSG);
+        assertNull(account);
+    }
+
+    @Test
+    public void testCreateAccount_InvalidEmail2() {
+        String eMSG = "";
+        Account account = null;
+
+        // Create account
+        try {
+            account = service.createCustomerAccount(TEST_USERNAME, "test@test.", TEST_PASSWORD);
+        } catch (Exception e) {
+            eMSG = e.getMessage();
+        }
+
+        // Check
+        assertEquals("Email is not valid", eMSG);
+        assertNull(account);
+    }
+
+    @Test
+    public void testCreateAccount_InvalidEmail3() {
+        String eMSG = "";
+        Account account = null;
+
+        // Create account
+        try {
+            account = service.createCustomerAccount(TEST_USERNAME, "@test.com", TEST_PASSWORD);
+        } catch (Exception e) {
+            eMSG = e.getMessage();
+        }
+
+        // Check
+        assertEquals("Email is not valid", eMSG);
+        assertNull(account);
+    }
+
+    @Test
+    public void testCreateAccount_nullPassword() {
+        String eMSG = "";
+        Account account = null;
+
+        // Create account
+        try {
+            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, null);
+        } catch (Exception e) {
+            eMSG = e.getMessage();
+        }
+
+        // Check
+        assertEquals("Password cannot be null", eMSG);
+        assertNull(account);
+    }
+
+    @Test
+    public void testCreateAccount_EmptyPassword() {
+        String eMSG = "";
+        Account account = null;
+
+        // Create account
+        try {
+            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "         ");
+        } catch (Exception e) {
+            eMSG = e.getMessage();
+        }
+
+        // Check
+        assertEquals("Password cannot be empty", eMSG);
+        assertNull(account);
+    }
+
+    @Test
+    public void testCreateAccount_tooShortPassword() {
+        String eMSG = "";
+        Account account = null;
+
+        // Create account
+        try {
+            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "1234");
+        } catch (Exception e) {
+            eMSG = e.getMessage();
+        }
+
+        // Check
+        assertEquals("Password must be at least 8 characters long", eMSG);
+        assertNull(account);
+    }
+
+    @Test
+    public void testCreateAccount_noDigitPassword() {
+        String eMSG = "";
+        Account account = null;
+
+        // Create account
+        try {
+            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "hellohello");
+        } catch (Exception e) {
+            eMSG = e.getMessage();
+        }
+
+        // Check
+        assertEquals("Password must contain at least one digit", eMSG);
+        assertNull(account);
+    }
+
+    @Test
+    public void testCreateAccount_noSpecialCharacterPassword() {
+        String eMSG = "";
+        Account account = null;
+
+        // Create account
+        try {
+            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "hellohello!");
+        } catch (Exception e) {
+            eMSG = e.getMessage();
+        }
+
+        // Check
+        assertEquals("Password must contain at least one special character", eMSG);
+        assertNull(account);
+    }
+
+    @Test
+    public void testCreateAccount_noLettersPassword() {
+        String eMSG = "";
+        Account account = null;
+
+        // Create account
+        try {
+            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "12341234!");
+        } catch (Exception e) {
+            eMSG = e.getMessage();
+        }
+
+        // Check
+        assertEquals("Password must contain at least one letter", eMSG);
+        assertNull(account);
+    }
+
+    @Test
+    public void testCreateAccount_noLowerCasePassword() {
+        String eMSG = "";
+        Account account = null;
+
+        // Create account
+        try {
+            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "TESTTEST!2");
+        } catch (Exception e) {
+            eMSG = e.getMessage();
+        }
+
+        // Check
+        assertEquals("Password must have at least one lower case letter", eMSG);
+        assertNull(account);
+    }
+
+    @Test
+    public void testCreateAccount_noUpperCasePassword() {
+        String eMSG = "";
+        Account account = null;
+
+        // Create account
+        try {
+            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "testtest!2");
+        } catch (Exception e) {
+            eMSG = e.getMessage();
+        }
+
+        // Check
+        assertEquals("Password must have at least one upper case letter", eMSG);
+        assertNull(account);
+    }
+
+    @Test
+    public void testCreateAccount_noSpacePassword() {
+        String eMSG = "";
+        Account account = null;
+
+        // Create account
+        try {
+            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "Test Test!2");
+        } catch (Exception e) {
+            eMSG = e.getMessage();
+        }
+
+        // Check
+        assertEquals("Password must not contain a space", eMSG);
+        assertNull(account);
+    }
+
+    @Test
+    public void testDeleteAccount_Success() {
+        String eMSG = "";
+        Account account = null;
+
+        // Delete account
+        try {
+            account = service.deleteCustomerAccount(CA1.getId());
+        } catch (Exception e) {
+            eMSG = e.getMessage();
+        }
+
+        // Check
+        assertEquals("", eMSG);
+        assertNotNull(account);
+        assertEquals(CA1, account);
+        assertEquals(false, repo.existsByEmailAddress(CA1.getEmailAddress()));
     }
 
 }
