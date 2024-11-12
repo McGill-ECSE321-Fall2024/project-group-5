@@ -13,6 +13,12 @@ public class StaffAccountService {
     private StaffAccountRepository staffAccountRepository;
 
     @Transactional
+    public StaffAccount getStaffAccountById(int id) {
+        return staffAccountRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Staff account not found"));
+    }
+
+    @Transactional
     public StaffAccount getStaffAccountByUsername(String username) {
         StaffAccount staffAccount = staffAccountRepository.findStaffAccountByUsername(username);
         if (staffAccount == null) {
@@ -22,16 +28,7 @@ public class StaffAccountService {
     }
 
     @Transactional
-    public StaffAccount getStaffAccountById(int id) {
-        return staffAccountRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Staff account with ID " + id + " not found"));
-    }
-
-    @Transactional
     public StaffAccount createStaffAccount(String username, String password, String name) {
-        if (staffAccountRepository.existsStaffAccountByUsername(username)) {
-            throw new IllegalArgumentException("Username already exists");
-        }
         if (username == null || username.trim().isEmpty()) {
             throw new IllegalArgumentException("Username cannot be empty");
         }
@@ -42,7 +39,19 @@ public class StaffAccountService {
             throw new IllegalArgumentException("Name cannot be empty");
         }
 
+        if (staffAccountRepository.existsStaffAccountByUsername(username)) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+
         StaffAccount staffAccount = new StaffAccount(username, password, null, name);
         return staffAccountRepository.save(staffAccount);
+    }
+
+    @Transactional
+    public void deleteStaffAccount(int id) {
+        if (!staffAccountRepository.existsById(id)) {
+            throw new IllegalArgumentException("Staff account not found");
+        }
+        staffAccountRepository.deleteById(id);
     }
 }
