@@ -1,57 +1,98 @@
-package ca.mcgill.ecse321.gamestore.service;
+package ca.mcgill.ecse321.gamestore.Service;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import ca.mcgill.ecse321.gamestore.dao.StaffAccountRepository;
 import ca.mcgill.ecse321.gamestore.model.StaffAccount;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import ca.mcgill.ecse321.gamestore.service.StaffAccountService;
 
-@Service
-public class StaffAccountService {
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-    @Autowired
+import java.util.Optional;
+
+public class StaffAccountServiceTests {
+
+    @Mock
     private StaffAccountRepository staffAccountRepository;
 
-    @Transactional
-    public StaffAccount getStaffAccountById(int id) {
-        return staffAccountRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Staff account not found"));
+    @InjectMocks
+    private StaffAccountService staffAccountService;
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
-    @Transactional
-    public StaffAccount getStaffAccountByUsername(String username) {
-        StaffAccount staffAccount = staffAccountRepository.findStaffAccountByUsername(username);
-        if (staffAccount == null) {
-            throw new IllegalArgumentException("Staff account with username " + username + " not found");
-        }
-        return staffAccount;
+    @Test
+    public void testCreateValidStaffAccount() {
+        // Arrange
+        String name = "John Doe";
+        String username = "johndoe";
+        String password = "password123";
+
+        StaffAccount mockAccount = new StaffAccount();
+        mockAccount.setId(1);
+        mockAccount.setName(name);
+        mockAccount.setUsername(username);
+
+        when(staffAccountRepository.existsStaffAccountByUsername(username)).thenReturn(false);
+        when(staffAccountRepository.save(any(StaffAccount.class))).thenReturn(mockAccount);
+
+        // Act
+        StaffAccount result = staffAccountService.createStaffAccount(username, password, name);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(name, result.getName());
+        assertEquals(username, result.getUsername());
+        assertEquals(1, result.getId());
+        verify(staffAccountRepository, times(1)).save(any(StaffAccount.class));
     }
 
-    @Transactional
-    public StaffAccount createStaffAccount(String username, String password, String name) {
-        if (username == null || username.trim().isEmpty()) {
-            throw new IllegalArgumentException("Username cannot be empty");
-        }
-        if (password == null || password.trim().isEmpty()) {
-            throw new IllegalArgumentException("Password cannot be empty");
-        }
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Name cannot be empty");
-        }
+    @Test
+    public void testCreateDuplicateUsername() {
+        // Arrange
+        String username = "johndoe";
 
-        if (staffAccountRepository.existsStaffAccountByUsername(username)) {
-            throw new IllegalArgumentException("Username already exists");
-        }
+        when(staffAccountRepository.existsStaffAccountByUsername(username)).thenReturn(true);
 
-        StaffAccount staffAccount = new StaffAccount(username, password, null, name);
-        return staffAccountRepository.save(staffAccount);
+        // Act & Assert
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            staffAccountService.createStaffAccount(username, "password123", "John Doe");
+        });
+        assertEquals("Username already exists", exception.getMessage());
     }
 
-    @Transactional
-    public void deleteStaffAccount(int id) {
-        if (!staffAccountRepository.existsById(id)) {
-            throw new IllegalArgumentException("Staff account not found");
-        }
-        staffAccountRepository.deleteById(id);
+    @Test
+    public void testDeleteStaffAccount() {
+        // Arrange
+        int staffId = 1;
+
+        when(staffAccountRepository.existsById(staffId)).thenReturn(true);
+
+        // Act
+        staffAccountService.deleteStaffAccount(staffId);
+
+        // Assert
+        verify(staffAccountRepository, times(1)).deleteById(staffId);
+    }
+
+    @Test
+    public void testDeleteNonExistentStaffAccount()  {
+        // Arrange
+        int staffId = 999;
+
+        when(staffAccountRepository.existsById(staffId)).thenReturn(false);
+
+        // Act & Assert
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            staffAccountService.deleteStaffAccount(staffId);
+        });
+        assertEquals("Staff account not found", exception.getMessage());
     }
 }
