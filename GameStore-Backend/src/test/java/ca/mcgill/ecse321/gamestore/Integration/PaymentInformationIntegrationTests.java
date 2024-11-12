@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDate;
+import java.sql.Date;
 
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -21,72 +21,109 @@ import org.springframework.http.ResponseEntity;
 
 import ca.mcgill.ecse321.gamestore.dto.PaymentInformationRequestDto;
 import ca.mcgill.ecse321.gamestore.dto.PaymentInformationResponseDto;
+import ca.mcgill.ecse321.gamestore.model.PaymentInformation;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(Lifecycle.PER_CLASS)
 public class PaymentInformationIntegrationTests {
+
     @Autowired
     private TestRestTemplate client;
 
     private final String VALID_NAME = "Alice";
-    private final String VALID_EMAIL = "alice@mail.mcgill.ca";
-    private final String VALID_PASSWORD = "password123";
-    private final String INVALID_PASSWORD = "123";
-    private final int INVALID_ID = 0;
-    private int validId;
+    private final int VALID_CARD_NUMBER = 12345678;
+    private final Date VALID_EXPIRATION_DATE = Date.valueOf("2025-12-31");
+    private final int VALID_CVC = 123;
+    private final int CUSTOMER_ACCOUNT_ID = 1;
+
+    private int validPaymentInfoId;
 
     @Test
     @Order(1)
     public void testCreateValidPaymentInformation() {
-        /*
-         * // Arrange
-         * PaymentInformationRequestDto request = new
-         * PaymentInformationRequestDto(VALID_NAME, VALID_EMAIL,
-         * VALID_PASSWORD);
-         * 
-         * // Act
-         * ResponseEntity<PaymentInformationResponseDto> response =
-         * client.postForEntity("/people",
-         * request, PaymentInformationResponseDto.class);
-         * 
-         * // Assert
-         * assertNotNull(response);
-         * assertEquals(HttpStatus.CREATED, response.getStatusCode());
-         * PaymentInformationResponseDto createdPaymentInformation = response.getBody();
-         * assertNotNull(createdPaymentInformation);
-         * assertEquals(VALID_NAME, createdPaymentInformation.getName());
-         * assertEquals(VALID_EMAIL, createdPaymentInformation.getEmail());
-         * assertNotNull(createdPaymentInformation.getId());
-         * assertTrue(createdPaymentInformation.getId() > 0,
-         * "Response should have a positive ID.");
-         * assertEquals(LocalDate.now(), createdPaymentInformation.getCreationDate());
-         * 
-         * this.validId = createdPaymentInformation.getId();
-         */
+        // Arrange
+        PaymentInformationRequestDto request = new PaymentInformationRequestDto(
+                VALID_NAME, VALID_CARD_NUMBER, VALID_EXPIRATION_DATE.toString(), VALID_CVC, 
+                PaymentInformation.CardType.Visa, CUSTOMER_ACCOUNT_ID);
+        
+        // Act
+        ResponseEntity<PaymentInformationResponseDto> response = client.postForEntity(
+                "/api/paymentInformation/create", request, PaymentInformationResponseDto.class);
+        
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        PaymentInformationResponseDto createdPaymentInfo = response.getBody();
+        assertNotNull(createdPaymentInfo);
+        assertEquals(VALID_NAME, createdPaymentInfo.getCardholderName());
+        assertEquals(VALID_EXPIRATION_DATE, createdPaymentInfo.getExpirationDate());
+        assertEquals(PaymentInformation.CardType.Visa, createdPaymentInfo.getCardType());
+        assertTrue(createdPaymentInfo.getCustomerAccountId() > 0);
+
+        this.validPaymentInfoId = createdPaymentInfo.getId();
     }
 
     @Test
     @Order(2)
     public void testReadPaymentInformationByValidId() {
-        /*
-         * // Arrange
-         * String url = "/people/" + this.validId;
-         * 
-         * // Act
-         * ResponseEntity<PaymentInformationResponseDto> response =
-         * client.getForEntity(url,
-         * PaymentInformationResponseDto.class);
-         * 
-         * // Assert
-         * assertNotNull(response);
-         * assertEquals(HttpStatus.OK, response.getStatusCode());
-         * PaymentInformationResponseDto person = response.getBody();
-         * assertNotNull(person);
-         * assertEquals(VALID_NAME, person.getName());
-         * assertEquals(VALID_EMAIL, person.getEmail());
-         * assertEquals(this.validId, person.getId());
-         * assertEquals(LocalDate.now(), person.getCreationDate());
-         */
+        // Arrange
+        String url = "/api/paymentInformation/get/" + this.validPaymentInfoId;
+        
+        // Act
+        ResponseEntity<PaymentInformationResponseDto> response = client.getForEntity(
+                url, PaymentInformationResponseDto.class);
+        
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        PaymentInformationResponseDto retrievedPaymentInfo = response.getBody();
+        assertNotNull(retrievedPaymentInfo);
+        assertEquals(VALID_NAME, retrievedPaymentInfo.getCardholderName());
+        assertEquals(VALID_EXPIRATION_DATE, retrievedPaymentInfo.getExpirationDate());
+        assertEquals(PaymentInformation.CardType.Visa, retrievedPaymentInfo.getCardType());
+    }
+
+    @Test
+    @Order(3)
+    public void testUpdatePaymentInformation() {
+        // Arrange
+        PaymentInformationRequestDto updatedRequest = new PaymentInformationRequestDto(
+                "Updated Name", VALID_CARD_NUMBER, VALID_EXPIRATION_DATE.toString(), 
+                456, PaymentInformation.CardType.Mastercard, CUSTOMER_ACCOUNT_ID);
+        String url = "/api/paymentInformation/update/" + this.validPaymentInfoId;
+        
+        // Act
+        client.put(url, updatedRequest);
+        
+        // Verify Update
+        ResponseEntity<PaymentInformationResponseDto> response = client.getForEntity(
+                "/api/paymentInformation/get/" + this.validPaymentInfoId, PaymentInformationResponseDto.class);
+        
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        PaymentInformationResponseDto updatedPaymentInfo = response.getBody();
+        assertNotNull(updatedPaymentInfo);
+        assertEquals("Updated Name", updatedPaymentInfo.getCardholderName());
+        assertEquals(456, updatedPaymentInfo.getCvc());
+        assertEquals(PaymentInformation.CardType.Mastercard, updatedPaymentInfo.getCardType());
+    }
+
+    @Test
+    @Order(4)
+    public void testDeletePaymentInformation() {
+        // Arrange
+        String url = "/api/paymentInformation/delete/" + this.validPaymentInfoId;
+        
+        // Act
+        client.delete(url);
+        
+        // Verify Deletion
+        ResponseEntity<PaymentInformationResponseDto> response = client.getForEntity(
+                "/api/paymentInformation/get/" + this.validPaymentInfoId, PaymentInformationResponseDto.class);
+        
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }
