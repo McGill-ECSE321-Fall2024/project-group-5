@@ -3,6 +3,7 @@ package ca.mcgill.ecse321.gamestore.dto;
 import ca.mcgill.ecse321.gamestore.model.StaffAccount;
 
 public class StaffAccountResponseDto {
+    //priavte fields
     private int id;
     private String name;
     private String username;
