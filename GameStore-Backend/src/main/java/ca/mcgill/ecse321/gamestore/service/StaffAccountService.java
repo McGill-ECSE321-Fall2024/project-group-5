@@ -1,5 +1,6 @@
 package ca.mcgill.ecse321.gamestore.service;
 
+//import statements
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -7,11 +8,10 @@ import ca.mcgill.ecse321.gamestore.model.StaffAccount;
 import ca.mcgill.ecse321.gamestore.dao.StaffAccountRepository;
 import ca.mcgill.ecse321.gamestore.dto.StaffAccountRequestDto;
 import jakarta.transaction.Transactional;
-
 import java.util.List;
 
 @Service
-public class StaffAccountService {
+public class StaffAccountService  {
     @Autowired
     private StaffAccountRepository staffAccountRepository;
 
