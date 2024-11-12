@@ -1,7 +1,5 @@
 package ca.mcgill.ecse321.gamestore.dto;
 
-import java.util.List;
-
 import ca.mcgill.ecse321.gamestore.model.Game;
 
 
@@ -17,7 +15,7 @@ public class GameResponseDto {
     }
 
     // Method to convert Category from Game to CategoryResDto
-    private static CategoryResDto toCategoryResDto(Game.Category category) {
+    public static CategoryResDto toCategoryResDto(Game.Category category) {
         if (category == null) {
             return null;
         }
@@ -25,7 +23,7 @@ public class GameResponseDto {
     }
 
     // Method to convert GameConsole from Game to GameConsoleResDto
-    private static GameConsoleResDto toGameConsoleResDto(Game.GameConsole gameConsole) {
+    public static GameConsoleResDto toGameConsoleResDto(Game.GameConsole gameConsole) {
         if (gameConsole == null) {
             return null;
         }
@@ -39,9 +37,6 @@ public class GameResponseDto {
     private CategoryResDto category;
     private GameConsoleResDto gameConsole;
     private boolean inCatalog;
-
-    private GameQtyResponseDto gameQty;
-    private List<ReviewResponseDto> reviewList;
 
     // Jackson needs a default constructor, but it doesn't need to be public
     @SuppressWarnings("unused")
@@ -87,14 +82,6 @@ public class GameResponseDto {
         return inCatalog;
     }
 
-    public GameQtyResponseDto getGameQty() {
-        return gameQty;
-    }
-
-    public List<ReviewResponseDto> getReviewList() {
-        return reviewList;
-    }
-
     // Setters
     public void setId(int id) {
         this.id = id;
@@ -124,25 +111,4 @@ public class GameResponseDto {
         this.inCatalog = inCatalog;
     }
 
-    // Method to set GameQtyResponseDto
-    public boolean setGameQty(GameQtyResponseDto gameQty) {
-        boolean wasSet = false;
-        if (gameQty == null) {
-            return wasSet;
-        }
-        this.gameQty = gameQty;
-        wasSet = true;
-        return wasSet;
-    }
-
-    // Method to set ReviewResponseDto list
-    public boolean setReviewList(List<ReviewResponseDto> reviewList) {
-        boolean wasSet = false;
-        if (reviewList == null) {
-            return wasSet;
-        }
-        this.reviewList = reviewList;
-        wasSet = true;
-        return wasSet;
-    }
 }

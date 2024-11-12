@@ -21,9 +21,6 @@ public class GameRequestDto {
     private GameConsoleReqDto gameConsole; 
     private boolean inCatalog;
 
-    private GameQtyRequestDto gameQty;
-    private List<ReviewResponseDto> reviewList;
-
     // Jackson needs a default constructor, but it doesn't need to be public
     @SuppressWarnings("unused")
     private GameRequestDto() {
@@ -68,14 +65,6 @@ public class GameRequestDto {
         return inCatalog;
     }
 
-    public GameQtyRequestDto getGameQty() {
-        return gameQty;
-    }
-
-    public List<ReviewResponseDto> getReviewList() {
-        return reviewList;
-    }
-
     // Setters
     public void setGameID(int gameID) {
         this.gameID = gameID;
@@ -105,3 +94,5 @@ public class GameRequestDto {
         this.inCatalog = inCatalog;
     }
 }
+
+
