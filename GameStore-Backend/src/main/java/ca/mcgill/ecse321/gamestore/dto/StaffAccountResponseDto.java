@@ -5,14 +5,12 @@ import ca.mcgill.ecse321.gamestore.model.StaffAccount;
 public class StaffAccountResponseDto {
     private int id;
     private String name;
-
-    // Jackson needs a default constructor, but it doesn't need to be public
-    @SuppressWarnings("unused")
-    private StaffAccountResponseDto() {
-    }
+    private String username;
 
     public StaffAccountResponseDto(StaffAccount model) {
         this.id = model.getId();
+        this.name = model.getName();
+        this.username = model.getUsername();
     }
 
     public int getId() {
@@ -23,11 +21,7 @@ public class StaffAccountResponseDto {
         return name;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public String getUsername() {
+        return username;
     }
 }

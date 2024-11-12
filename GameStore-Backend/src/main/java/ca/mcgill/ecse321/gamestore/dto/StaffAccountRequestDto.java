@@ -1,33 +1,35 @@
 package ca.mcgill.ecse321.gamestore.dto;
 
-import ca.mcgill.ecse321.gamestore.model.StaffAccount;
-
 public class StaffAccountRequestDto {
-    private int id;
     private String name;
+    private String username;
+    private String password; // Avoid exposing passwords unnecessarily
 
-    // Jackson needs a default constructor, but it doesn't need to be public
-    @SuppressWarnings("unused")
-    private StaffAccountRequestDto() {
-    }
-
-    public StaffAccountRequestDto(StaffAccount model) {
-        this.id = model.getId();
-    }
-
-    public int getId() {
-        return id;
+    public StaffAccountRequestDto() {
+        // Default constructor for Jackson
     }
 
     public String getName() {
         return name;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
