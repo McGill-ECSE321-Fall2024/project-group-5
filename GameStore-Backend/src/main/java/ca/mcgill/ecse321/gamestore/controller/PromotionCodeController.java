@@ -37,4 +37,14 @@ public class PromotionCodeController {
         }
         return null; // Or you could handle this with an appropriate HTTP response status
     }
+
+    @DeleteMapping("/{id}/delete")
+    public String deletePromotionCode(@PathVariable Long id) {
+        boolean isDeleted = promotionCodeService.deletePromotionCode(id);
+        if (isDeleted) {
+            return "Promotion code with ID " + id + " deleted successfully.";
+        } else {
+            return "Promotion code with ID " + id + " not found.";
+        }
+    }
 }
