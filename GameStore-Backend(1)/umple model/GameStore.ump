@@ -1,0 +1,143 @@
+class Account
+{
+  abstract;
+  unique String username;
+   passwordHash;
+     randomPassword;
+  int id;
+}
+
+class StaffAccount
+{
+  abstract;
+  isA Account;
+}
+
+class CustomerAccount
+{
+    isA Account;
+  immutable String emailAddress;
+ lazy String name;
+    1 -- 1 Wishlist;
+  1 -- 0..* PaymentInformation;
+  1 -- * Review;
+  1 -- * Transaction;
+}
+
+class ManagerAccount
+{
+  singleton;
+    isA StaffAccount;
+  String username = "admin";
+}
+
+class EmployeeAccount
+{
+
+    isA StaffAccount;
+}
+
+class Cart
+{
+  int id;
+* -- 1 CustomerAccount;
+  1 -- * GameQty;
+  1 -- 0..1 Transaction;
+}
+
+class Wishlist
+{
+  int id;
+}
+
+class Catalog
+{
+  int id;
+singleton;
+  0..1 -- 0..* Game;
+}
+
+class Address
+{
+  String address;
+  String city;
+  String province;
+  String country;
+  String postalCode;
+  int id;
+1 -- * Transaction;
+  0..* -- 1 CustomerAccount;
+}
+
+enum CardType {Visa, Mastercard, Interact, AmericanExpress}
+
+class PaymentInformation 
+{
+  String cardholderName;
+  int cardNumber;
+  Date expirationDate;
+  int cvc;
+  CardType cardType;
+  int id;
+}
+
+class Transaction
+{
+  int transactionId;
+  double totalPrice;
+  boolean isPaid;
+  boolean deliveryStatus;
+promotionCode;
+boolean userAgreementCheck;
+  * -- 1 PaymentInformation;
+}
+
+class Review
+{
+  Date date;
+  String description;
+  int likeCount;
+  int dislikeCount;
+  float rating;
+  Boolean employeeReviewed;
+  int id;
+0..1 -- * Review reply;
+}
+
+enum Category {Horror, Puzzle, Action, ActionjAdventure, Sports, Strategy, RPG, Multiplayer, Simulation, Survival, Party, Shooter, Casual, Platformer, BattleRoyale, Sandbox, MMO}
+enum GameConsole {PS4, PS5, WiiU, NintendoSwitch, PC, XBoxSeriesS, XBoxSeriesX, Mac}
+
+class Game
+{
+  String name;
+  int price;
+  String description;
+  Category category;
+  GameConsole gameConsole;
+    int id;
+1 -- * GameQty;
+  1 -- * Review;
+}
+
+
+
+class GameStoreApplication
+{
+  policy;
+  int id;
+  1 -- * PromotionCode;
+}
+
+class GameQty
+{
+  int qty;
+  int id;
+}
+
+class PromotionCode
+{
+  code;
+  int percentageValue;
+  int id;
+}
+
