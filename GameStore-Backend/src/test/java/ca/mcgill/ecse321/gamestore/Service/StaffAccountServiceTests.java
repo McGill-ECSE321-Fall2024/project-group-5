@@ -10,17 +10,16 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.MockitoAnnotations;
 
 import ca.mcgill.ecse321.gamestore.model.StaffAccount;
 import ca.mcgill.ecse321.gamestore.service.StaffAccountService;
 import ca.mcgill.ecse321.gamestore.dao.StaffAccountRepository;
-import ca.mcgill.ecse321.gamestore.dto.StaffAccountRequestDto;
 
-@SpringBootTest
 public class StaffAccountServiceTests {
 
     @Mock
@@ -29,46 +28,53 @@ public class StaffAccountServiceTests {
     @InjectMocks
     private StaffAccountService service;
 
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
     @Test
     public void testCreateValidStaffAccount() {
-        StaffAccountRequestDto request = new StaffAccountRequestDto();
-        request.setName("John Doe");
-        request.setUsername("johndoe");
-        request.setPassword("password123");
+        // Arrange
+        String name = "John Doe";
+        String username = "johndoe";
+        String password = "password123";
 
         StaffAccount savedAccount = new StaffAccount();
         savedAccount.setId(1);
-        savedAccount.setName(request.getName());
-        savedAccount.setUsername(request.getUsername());
-        savedAccount.setPassword(request.getPassword());
+        savedAccount.setName(name);
+        savedAccount.setUsername(username);
 
-        when(repo.existsStaffAccountByUsername("johndoe")).thenReturn(false);
+        when(repo.existsStaffAccountByUsername(username)).thenReturn(false);
         when(repo.save(any(StaffAccount.class))).thenReturn(savedAccount);
 
-        StaffAccount result = service.createStaffAccount(request);
+        // Act
+        StaffAccount result = service.createStaffAccount(username, password, name);
 
+        // Assert
         assertNotNull(result);
-        assertEquals("John Doe", result.getName());
-        assertEquals("johndoe", result.getUsername());
-        assertEquals("password123", result.getPassword());
+        assertEquals(name, result.getName());
+        assertEquals(username, result.getUsername());
         assertEquals(1, result.getId());
 
-        verify(repo, times(1)).existsStaffAccountByUsername("johndoe");
+        verify(repo, times(1)).existsStaffAccountByUsername(username);
         verify(repo, times(1)).save(any(StaffAccount.class));
     }
 
     @Test
     public void testReadStaffAccountByValidId() {
+        // Arrange
         StaffAccount mockAccount = new StaffAccount();
         mockAccount.setId(1);
         mockAccount.setName("Alice");
         mockAccount.setUsername("alice123");
-        mockAccount.setPassword("password123");
 
         when(repo.findById(1)).thenReturn(Optional.of(mockAccount));
 
+        // Act
         StaffAccount result = service.getStaffAccountById(1);
 
+        // Assert
         assertNotNull(result);
         assertEquals(1, result.getId());
         assertEquals("Alice", result.getName());
@@ -79,13 +85,15 @@ public class StaffAccountServiceTests {
 
     @Test
     public void testReadStaffAccountByInvalidId() {
+        // Arrange
         when(repo.findById(999)).thenReturn(Optional.empty());
 
+        // Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             service.getStaffAccountById(999);
         });
 
-        assertEquals("StaffAccount not found", exception.getMessage());
+        assertEquals("Staff account with ID 999 not found", exception.getMessage());
 
         verify(repo, times(1)).findById(999);
     }
