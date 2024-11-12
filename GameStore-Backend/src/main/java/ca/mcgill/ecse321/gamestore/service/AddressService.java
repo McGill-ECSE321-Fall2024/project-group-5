@@ -92,15 +92,16 @@ public class AddressService {
 
     // Deletes an Address entry by ID and returns the deleted object, throws an error if not found
     @Transactional
-    public Address deleteAddress(int id) {
-        Address address = addressRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Address with ID " + id + " not found."));
-        
-        // Perform the deletion
+    public boolean deleteAddress(int id) {
+        // Check if the address exists by id
+        if (!addressRepository.existsById(id)) {
+            return false; // If address doesn't exist, return false
+        }
+    
+        // If address exists, delete it
         addressRepository.deleteById(id);
         
-        // Return the deleted address (optional, if you need to confirm what was deleted)
-        return address;
-    }   
-    
+        // Return true to indicate the deletion was successful
+        return true;
+    }     
 }
