@@ -1,53 +1,48 @@
 package ca.mcgill.ecse321.gamestore.service;
 
-//import statements
+import ca.mcgill.ecse321.gamestore.dao.StaffAccountRepository;
+import ca.mcgill.ecse321.gamestore.model.StaffAccount;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ca.mcgill.ecse321.gamestore.model.StaffAccount;
-import ca.mcgill.ecse321.gamestore.dao.StaffAccountRepository;
-import ca.mcgill.ecse321.gamestore.dto.StaffAccountRequestDto;
-import jakarta.transaction.Transactional;
-import java.util.List;
-
 @Service
-public class StaffAccountService  {
+public class StaffAccountService {
+
     @Autowired
     private StaffAccountRepository staffAccountRepository;
 
     @Transactional
-    public StaffAccount createStaffAccount(StaffAccountRequestDto requestDto) {
-        if (staffAccountRepository.existsStaffAccountByUsername(requestDto.getUsername())) {
-            throw new IllegalArgumentException("Username already exists");
+    public StaffAccount getStaffAccountByUsername(String username) {
+        StaffAccount staffAccount = staffAccountRepository.findStaffAccountByUsername(username);
+        if (staffAccount == null) {
+            throw new IllegalArgumentException("Staff account with username " + username + " not found");
         }
-        StaffAccount staffAccount = new StaffAccount();
-        staffAccount.setName(requestDto.getName());
-        staffAccount.setUsername(requestDto.getUsername());
-        staffAccount.setPassword(requestDto.getPassword()); // Assuming password is hashed elsewhere
-        return staffAccountRepository.save(staffAccount);
+        return staffAccount;
     }
 
     @Transactional
     public StaffAccount getStaffAccountById(int id) {
         return staffAccountRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("StaffAccount not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Staff account with ID " + id + " not found"));
     }
 
     @Transactional
-    public StaffAccount getStaffAccountByUsername(String username) {
-        return staffAccountRepository.findStaffAccountByUsername(username);
-    }
-
-    @Transactional
-    public List<StaffAccount> getAllStaffAccounts() {
-        return (List<StaffAccount>) staffAccountRepository.findAll();
-    }
-
-    @Transactional
-    public void deleteStaffAccount(int id) {
-        if (!staffAccountRepository.existsById(id)) {
-            throw new IllegalArgumentException("StaffAccount not found");
+    public StaffAccount createStaffAccount(String username, String password, String name) {
+        if (staffAccountRepository.existsStaffAccountByUsername(username)) {
+            throw new IllegalArgumentException("Username already exists");
         }
-        staffAccountRepository.deleteById(id);
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be empty");
+        }
+        if (password == null || password.trim().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be empty");
+        }
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
+
+        StaffAccount staffAccount = new StaffAccount(username, password, null, name);
+        return staffAccountRepository.save(staffAccount);
     }
 }
