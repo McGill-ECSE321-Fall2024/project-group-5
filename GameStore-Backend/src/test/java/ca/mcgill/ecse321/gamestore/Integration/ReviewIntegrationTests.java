@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -29,61 +31,100 @@ public class ReviewIntegrationTests {
     @Autowired
     private TestRestTemplate client;
 
-    private final String VALID_NAME = "Alice";
-    private final String VALID_EMAIL = "alice@mail.mcgill.ca";
-    private final String VALID_PASSWORD = "password123";
-    private final String INVALID_PASSWORD = "123";
-    private final int INVALID_ID = 0;
-    private int validId;
+    private final String VALID_REVIEW_NAME = "Great Game!";
+    private final int VALID_GAME_ID = 1;
+    private final int VALID_CUSTOMER_ID = 1;
+    private int validReviewId;
 
     @Test
     @Order(1)
     public void testCreateValidReview() {
-        /*
-         * // Arrange
-         * ReviewRequestDto request = new ReviewRequestDto(VALID_NAME, VALID_EMAIL,
-         * VALID_PASSWORD);
-         * 
-         * // Act
-         * ResponseEntity<ReviewResponseDto> response = client.postForEntity("/people",
-         * request, ReviewResponseDto.class);
-         * 
-         * // Assert
-         * assertNotNull(response);
-         * assertEquals(HttpStatus.CREATED, response.getStatusCode());
-         * ReviewResponseDto createdReview = response.getBody();
-         * assertNotNull(createdReview);
-         * assertEquals(VALID_NAME, createdReview.getName());
-         * assertEquals(VALID_EMAIL, createdReview.getEmail());
-         * assertNotNull(createdReview.getId());
-         * assertTrue(createdReview.getId() > 0,
-         * "Response should have a positive ID.");
-         * assertEquals(LocalDate.now(), createdReview.getCreationDate());
-         * 
-         * this.validId = createdReview.getId();
-         */
+        // Arrange
+        ReviewRequestDto request = new ReviewRequestDto();
+        request.setName(VALID_REVIEW_NAME);
+
+        // Act
+        ResponseEntity<ReviewResponseDto> response = client.postForEntity("/reviews", request, ReviewResponseDto.class);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        ReviewResponseDto createdReview = response.getBody();
+        assertNotNull(createdReview);
+        assertEquals(VALID_REVIEW_NAME, createdReview.getName());
+        assertNotNull(createdReview.getId());
+        assertTrue(createdReview.getId() > 0, "Response should have a positive ID.");
+
+        this.validReviewId = createdReview.getId(); // Save ID for further tests
     }
 
     @Test
     @Order(2)
     public void testReadReviewByValidId() {
-        /*
-         * // Arrange
-         * String url = "/people/" + this.validId;
-         * 
-         * // Act
-         * ResponseEntity<ReviewResponseDto> response = client.getForEntity(url,
-         * ReviewResponseDto.class);
-         * 
-         * // Assert
-         * assertNotNull(response);
-         * assertEquals(HttpStatus.OK, response.getStatusCode());
-         * ReviewResponseDto person = response.getBody();
-         * assertNotNull(person);
-         * assertEquals(VALID_NAME, person.getName());
-         * assertEquals(VALID_EMAIL, person.getEmail());
-         * assertEquals(this.validId, person.getId());
-         * assertEquals(LocalDate.now(), person.getCreationDate());
-         */
+        // Arrange
+        String url = "/reviews/" + this.validReviewId;
+
+        // Act
+        ResponseEntity<ReviewResponseDto> response = client.getForEntity(url, ReviewResponseDto.class);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        ReviewResponseDto review = response.getBody();
+        assertNotNull(review);
+        assertEquals(VALID_REVIEW_NAME, review.getName());
+        assertEquals(this.validReviewId, review.getId());
+    }
+
+    @Test
+    @Order(3)
+    public void testGetReviewsByGameId() {
+        // Arrange
+        String url = "/reviews/game/" + VALID_GAME_ID;
+
+        // Act
+        ResponseEntity<ReviewResponseDto[]> response = client.getForEntity(url, ReviewResponseDto[].class);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        List<ReviewResponseDto> reviews = Arrays.asList(response.getBody());
+        assertNotNull(reviews);
+        assertTrue(reviews.size() > 0, "There should be at least one review for the game.");
+        assertEquals(VALID_GAME_ID, reviews.get(0).getId()); // Assuming the ID matches
+    }
+
+    @Test
+    @Order(4)
+    public void testGetReviewsByCustomerId() {
+        // Arrange
+        String url = "/reviews/customer/" + VALID_CUSTOMER_ID;
+
+        // Act
+        ResponseEntity<ReviewResponseDto[]> response = client.getForEntity(url, ReviewResponseDto[].class);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        List<ReviewResponseDto> reviews = Arrays.asList(response.getBody());
+        assertNotNull(reviews);
+        assertTrue(reviews.size() > 0, "There should be at least one review for the customer.");
+        assertEquals(VALID_CUSTOMER_ID, reviews.get(0).getId()); // Assuming the ID matches
+    }
+
+    @Test
+    @Order(5)
+    public void testDeleteReview() {
+        // Arrange
+        String url = "/reviews/" + this.validReviewId;
+
+        // Act
+        client.delete(url);
+
+        // Try fetching the deleted review
+        ResponseEntity<ReviewResponseDto> response = client.getForEntity(url, ReviewResponseDto.class);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }
