@@ -40,13 +40,16 @@ public class StaffAccountIntegrationTests {
     @Test
     @Order(1)
     public void testCreateValidStaffAccount() {
+        // Arrange
         StaffAccountRequestDto request = new StaffAccountRequestDto();
         request.setName(VALID_NAME);
         request.setUsername(VALID_USERNAME);
         request.setPassword(VALID_PASSWORD);
 
+        // Act
         ResponseEntity<StaffAccountResponseDto> response = client.postForEntity("/staffAccounts", request, StaffAccountResponseDto.class);
 
+        // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         StaffAccountResponseDto createdStaffAccount = response.getBody();
@@ -62,10 +65,13 @@ public class StaffAccountIntegrationTests {
     @Test
     @Order(2)
     public void testReadStaffAccountByValidId() {
+        // Arrange
         String url = "/staffAccounts/" + this.validId;
 
+        // Act
         ResponseEntity<StaffAccountResponseDto> response = client.getForEntity(url, StaffAccountResponseDto.class);
 
+        // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         StaffAccountResponseDto staffAccount = response.getBody();
@@ -78,10 +84,13 @@ public class StaffAccountIntegrationTests {
     @Test
     @Order(3)
     public void testReadStaffAccountByUsername() {
+        // Arrange
         String url = "/staffAccounts/username/" + VALID_USERNAME;
 
+        // Act
         ResponseEntity<StaffAccountResponseDto> response = client.getForEntity(url, StaffAccountResponseDto.class);
 
+        // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         StaffAccountResponseDto staffAccount = response.getBody();
@@ -93,8 +102,10 @@ public class StaffAccountIntegrationTests {
     @Test
     @Order(4)
     public void testGetAllStaffAccounts() {
+        // Act
         ResponseEntity<StaffAccountResponseDto[]> response = client.getForEntity("/staffAccounts", StaffAccountResponseDto[].class);
 
+        // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         List<StaffAccountResponseDto> staffAccounts = Arrays.asList(response.getBody());
@@ -104,13 +115,17 @@ public class StaffAccountIntegrationTests {
 
     @Test
     @Order(5)
-    public void testDeleteStaffAccount()  {
+    public void testDeleteStaffAccount() {
+        // Arrange
         String url = "/staffAccounts/" + this.validId;
 
+        // Act
         client.delete(url);
 
+        // Try fetching the deleted staff account
         ResponseEntity<StaffAccountResponseDto> response = client.getForEntity(url, StaffAccountResponseDto.class);
 
+        //  Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }
