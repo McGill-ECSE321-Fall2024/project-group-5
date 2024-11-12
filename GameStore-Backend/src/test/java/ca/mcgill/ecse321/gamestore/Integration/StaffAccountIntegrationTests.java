@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDate;
+import java.util.List;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -26,66 +27,90 @@ import ca.mcgill.ecse321.gamestore.dto.StaffAccountResponseDto;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(Lifecycle.PER_CLASS)
 public class StaffAccountIntegrationTests {
+
     @Autowired
     private TestRestTemplate client;
 
     private final String VALID_NAME = "Alice";
-    private final String VALID_EMAIL = "alice@mail.mcgill.ca";
+    private final String VALID_USERNAME = "alice123";
     private final String VALID_PASSWORD = "password123";
-    private final String INVALID_PASSWORD = "123";
-    private final int INVALID_ID = 0;
+    private final String INVALID_USERNAME = "nonexistent_user";
     private int validId;
 
     @Test
     @Order(1)
     public void testCreateValidStaffAccount() {
-        /*
-         * // Arrange
-         * StaffAccountRequestDto request = new StaffAccountRequestDto(VALID_NAME,
-         * VALID_EMAIL,
-         * VALID_PASSWORD);
-         * 
-         * // Act
-         * ResponseEntity<StaffAccountResponseDto> response =
-         * client.postForEntity("/people",
-         * request, StaffAccountResponseDto.class);
-         * 
-         * // Assert
-         * assertNotNull(response);
-         * assertEquals(HttpStatus.CREATED, response.getStatusCode());
-         * StaffAccountResponseDto createdStaffAccount = response.getBody();
-         * assertNotNull(createdStaffAccount);
-         * assertEquals(VALID_NAME, createdStaffAccount.getName());
-         * assertEquals(VALID_EMAIL, createdStaffAccount.getEmail());
-         * assertNotNull(createdStaffAccount.getId());
-         * assertTrue(createdStaffAccount.getId() > 0,
-         * "Response should have a positive ID.");
-         * assertEquals(LocalDate.now(), createdStaffAccount.getCreationDate());
-         * 
-         * this.validId = createdStaffAccount.getId();
-         */
+        StaffAccountRequestDto request = new StaffAccountRequestDto();
+        request.setName(VALID_NAME);
+        request.setUsername(VALID_USERNAME);
+        request.setPassword(VALID_PASSWORD);
+
+        ResponseEntity<StaffAccountResponseDto> response = client.postForEntity("/staffAccounts", request, StaffAccountResponseDto.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        StaffAccountResponseDto createdStaffAccount = response.getBody();
+        assertNotNull(createdStaffAccount);
+        assertEquals(VALID_NAME, createdStaffAccount.getName());
+        assertEquals(VALID_USERNAME, createdStaffAccount.getUsername());
+        assertNotNull(createdStaffAccount.getId());
+        assertTrue(createdStaffAccount.getId() > 0);
+
+        this.validId = createdStaffAccount.getId();
     }
 
     @Test
     @Order(2)
     public void testReadStaffAccountByValidId() {
-        /*
-         * // Arrange
-         * String url = "/people/" + this.validId;
-         * 
-         * // Act
-         * ResponseEntity<StaffAccountResponseDto> response = client.getForEntity(url,
-         * StaffAccountResponseDto.class);
-         * 
-         * // Assert
-         * assertNotNull(response);
-         * assertEquals(HttpStatus.OK, response.getStatusCode());
-         * StaffAccountResponseDto person = response.getBody();
-         * assertNotNull(person);
-         * assertEquals(VALID_NAME, person.getName());
-         * assertEquals(VALID_EMAIL, person.getEmail());
-         * assertEquals(this.validId, person.getId());
-         * assertEquals(LocalDate.now(), person.getCreationDate());
-         */
+        String url = "/staffAccounts/" + this.validId;
+
+        ResponseEntity<StaffAccountResponseDto> response = client.getForEntity(url, StaffAccountResponseDto.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        StaffAccountResponseDto staffAccount = response.getBody();
+        assertNotNull(staffAccount);
+        assertEquals(VALID_NAME, staffAccount.getName());
+        assertEquals(VALID_USERNAME, staffAccount.getUsername());
+        assertEquals(this.validId, staffAccount.getId());
+    }
+
+    @Test
+    @Order(3)
+    public void testReadStaffAccountByUsername() {
+        String url = "/staffAccounts/username/" + VALID_USERNAME;
+
+        ResponseEntity<StaffAccountResponseDto> response = client.getForEntity(url, StaffAccountResponseDto.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        StaffAccountResponseDto staffAccount = response.getBody();
+        assertNotNull(staffAccount);
+        assertEquals(VALID_NAME, staffAccount.getName());
+        assertEquals(VALID_USERNAME, staffAccount.getUsername());
+    }
+
+    @Test
+    @Order(4)
+    public void testGetAllStaffAccounts() {
+        ResponseEntity<StaffAccountResponseDto[]> response = client.getForEntity("/staffAccounts", StaffAccountResponseDto[].class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        List<StaffAccountResponseDto> staffAccounts = Arrays.asList(response.getBody());
+        assertNotNull(staffAccounts);
+        assertTrue(staffAccounts.size() > 0);
+    }
+
+    @Test
+    @Order(5)
+    public void testDeleteStaffAccount()  {
+        String url = "/staffAccounts/" + this.validId;
+
+        client.delete(url);
+
+        ResponseEntity<StaffAccountResponseDto> response = client.getForEntity(url, StaffAccountResponseDto.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }
