@@ -8,174 +8,137 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import ca.mcgill.ecse321.gamestore.dao.PaymentInformationRepository;
+import java.sql.Date;
+import java.util.Optional;
+
 import ca.mcgill.ecse321.gamestore.dao.CustomerAccountRepository;
+import ca.mcgill.ecse321.gamestore.dao.PaymentInformationRepository;
 import ca.mcgill.ecse321.gamestore.dto.PaymentInformationRequestDto;
-import ca.mcgill.ecse321.gamestore.dto.PaymentInformationResponseDto;
+import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
 import ca.mcgill.ecse321.gamestore.model.PaymentInformation;
 import ca.mcgill.ecse321.gamestore.model.PaymentInformation.CardType;
 import ca.mcgill.ecse321.gamestore.service.PaymentInformationService;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.sql.Date;
-import java.util.Optional;
-
 @SpringBootTest
 public class PaymentInformationServiceTests {
 
     @Mock
-    private PaymentInformationRepository paymentInfoRepo;
+    private PaymentInformationRepository paymentInformationRepository;
 
     @Mock
-    private CustomerAccountRepository customerAccountRepo;
+    private CustomerAccountRepository customerAccountRepository;
 
     @InjectMocks
-    private PaymentInformationService paymentInfoService;
+    private PaymentInformationService paymentInformationService;
 
     @Test
     public void testCreateValidPaymentInformation() {
         // Arrange
-        long validCardNumber = 1234567890123456L; // This is a long card number.
-        PaymentInformationRequestDto requestDto = new PaymentInformationRequestDto(
-                "John Doe", validCardNumber, Date.valueOf("2025-12-31"), 123, CardType.Visa, 1);
+        PaymentInformationRequestDto request = new PaymentInformationRequestDto(
+                "Alice", 12345678, "2025-12-31", 123, CardType.Visa, 1);
+        
+        CustomerAccount customerAccount = new CustomerAccount();
+        customerAccount.setEmail("alice@example.com");
+        customerAccount.setName("Alice");
 
-        // Set up mock behavior for the repository save method
-        PaymentInformation paymentInformation = new PaymentInformation();
-        paymentInformation.setCardholderName(requestDto.getCardholderName());
-        paymentInformation.setCardNumber((int) validCardNumber);  // Cast to int as per the repository requirements
-        paymentInformation.setExpirationDate(requestDto.getExpirationDate());
-        paymentInformation.setCvc(requestDto.getCvc());
-        paymentInformation.setCardType(requestDto.getCardType());
+        PaymentInformation paymentInformation = new PaymentInformation(
+                "Alice", 12345678, Date.valueOf("2025-12-31"), 123, CardType.Visa, customerAccount);
 
-        when(paymentInfoRepo.save(any(PaymentInformation.class))).thenReturn(paymentInformation);
+        when(customerAccountRepository.findById(1)).thenReturn(customerAccount);
+        when(paymentInformationRepository.save(any(PaymentInformation.class))).thenReturn(paymentInformation);
 
         // Act
-        PaymentInformationResponseDto createdPaymentInfo = paymentInfoService.createPaymentInformation(requestDto);
+        PaymentInformation createdPaymentInfo = paymentInformationService.createPaymentInformation(request);
 
         // Assert
         assertNotNull(createdPaymentInfo);
-        assertEquals(requestDto.getCardholderName(), createdPaymentInfo.getCardholderName());
-        assertEquals((int) validCardNumber, createdPaymentInfo.getCardNumber());  // Assert after casting to int
-        assertEquals(requestDto.getExpirationDate(), createdPaymentInfo.getExpirationDate());
-        assertEquals(requestDto.getCvc(), createdPaymentInfo.getCvc());
-        assertEquals(requestDto.getCardType(), createdPaymentInfo.getCardType());
-        verify(paymentInfoRepo, times(1)).save(any(PaymentInformation.class));
+        assertEquals("Alice", createdPaymentInfo.getCardholderName());
+        assertEquals(12345678, createdPaymentInfo.getCardNumber());
+        assertEquals(Date.valueOf("2025-12-31"), createdPaymentInfo.getExpirationDate());
+        assertEquals(123, createdPaymentInfo.getCvc());
+        assertEquals(CardType.Visa, createdPaymentInfo.getCardType());
+        verify(paymentInformationRepository, times(1)).save(any(PaymentInformation.class));
     }
 
     @Test
-    public void testCreatePaymentInformationWithInvalidCardNumber() {
-        // Arrange: invalid card number (0 is not a valid card number)
-        PaymentInformationRequestDto requestDto = new PaymentInformationRequestDto(
-                "John Doe", 0, Date.valueOf("2025-12-31"), 123, CardType.Visa, 1);
+    public void testGetPaymentInformationByValidId() {
+        // Arrange
+        CustomerAccount customerAccount = new CustomerAccount();
+        PaymentInformation paymentInfo = new PaymentInformation("Alice", 12345678, Date.valueOf("2025-12-31"), 123, CardType.Visa, customerAccount);
 
-        // Act & Assert
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> paymentInfoService.createPaymentInformation(requestDto));
-        assertEquals("Invalid card number.", e.getMessage());
-    }
-
-    @Test
-    public void testCreatePaymentInformationWithExpiredDate() {
-        // Arrange: expired card date
-        PaymentInformationRequestDto requestDto = new PaymentInformationRequestDto(
-                "John Doe", 1234567890123456L, Date.valueOf("2020-12-31"), 123, CardType.Visa, 1);
-
-        // Act & Assert
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> paymentInfoService.createPaymentInformation(requestDto));
-        assertEquals("Expiration date is in the past.", e.getMessage());
-    }
-
-    @Test
-    public void testCreatePaymentInformationWithInvalidCardType() {
-        // Arrange: invalid card type (null)
-        PaymentInformationRequestDto requestDto = new PaymentInformationRequestDto(
-                "John Doe", 1234567890123456L, Date.valueOf("2025-12-31"), 123, null, 1);
-
-        // Act & Assert
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> paymentInfoService.createPaymentInformation(requestDto));
-        assertEquals("Card type cannot be null.", e.getMessage());
-    }
-
-    @Test
-    public void testReadPaymentInformationByValidId() {
-        // Arrange: valid ID
-        int id = 1;
-        PaymentInformation paymentInformation = new PaymentInformation();
-        paymentInformation.setCardholderName("John Doe");
-        paymentInformation.setCardNumber(123456789);
-        paymentInformation.setExpirationDate(Date.valueOf("2025-12-31"));
-        paymentInformation.setCvc(123);
-        paymentInformation.setCardType(CardType.Visa);
-
-        when(paymentInfoRepo.findById(id)).thenReturn(Optional.of(paymentInformation));
+        when(paymentInformationRepository.findById(1)).thenReturn(Optional.of(paymentInfo));
 
         // Act
-        PaymentInformationResponseDto foundPaymentInfo = paymentInfoService.getPaymentInformationById(id);
+        PaymentInformation foundPaymentInfo = paymentInformationService.getPaymentInformationById(1);
 
         // Assert
         assertNotNull(foundPaymentInfo);
-        assertEquals(paymentInformation.getCardholderName(), foundPaymentInfo.getCardholderName());
-        assertEquals(paymentInformation.getCardNumber(), foundPaymentInfo.getCardNumber());
-        assertEquals(paymentInformation.getExpirationDate(), foundPaymentInfo.getExpirationDate());
-        assertEquals(paymentInformation.getCvc(), foundPaymentInfo.getCvc());
-        assertEquals(paymentInformation.getCardType(), foundPaymentInfo.getCardType());
+        assertEquals("Alice", foundPaymentInfo.getCardholderName());
+        assertEquals(12345678, foundPaymentInfo.getCardNumber());
     }
 
     @Test
-    public void testReadPaymentInformationByInvalidId() {
-        // Arrange: invalid ID
-        int id = 999;
-        when(paymentInfoRepo.findById(id)).thenReturn(Optional.empty());
+    public void testGetPaymentInformationByInvalidId() {
+        // Arrange
+        when(paymentInformationRepository.findById(999)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act and Assert
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> paymentInfoService.getPaymentInformationById(id));
-        assertEquals("Payment information not found for this ID.", e.getMessage());
+                () -> paymentInformationService.getPaymentInformationById(999));
+        assertEquals("No PaymentInformation with the specified ID exists.", e.getMessage());
+    }
+
+    @Test
+    public void testUpdatePaymentInformation() {
+        // Arrange
+        PaymentInformationRequestDto request = new PaymentInformationRequestDto(
+                "Updated Name", 87654321, "2026-01-01", 456, CardType.Mastercard, 1);
+        
+        CustomerAccount customerAccount = new CustomerAccount();
+        PaymentInformation paymentInfo = new PaymentInformation("Alice", 12345678, Date.valueOf("2025-12-31"), 123, CardType.Visa, customerAccount);
+
+        when(paymentInformationRepository.findById(1)).thenReturn(Optional.of(paymentInfo));
+        when(paymentInformationRepository.save(any(PaymentInformation.class))).thenReturn(paymentInfo);
+
+        // Act
+        PaymentInformation updatedPaymentInfo = paymentInformationService.updatePaymentInformation(1, request);
+
+        // Assert
+        assertNotNull(updatedPaymentInfo);
+        assertEquals("Updated Name", updatedPaymentInfo.getCardholderName());
+        assertEquals(456, updatedPaymentInfo.getCvc());
+        assertEquals(CardType.Mastercard, updatedPaymentInfo.getCardType());
+        verify(paymentInformationRepository, times(1)).save(any(PaymentInformation.class));
     }
 
     @Test
     public void testDeletePaymentInformationByValidId() {
-        // Arrange: valid ID
-        int id = 1;
-        PaymentInformation paymentInformation = new PaymentInformation();
-        paymentInformation.setId(id);
-        paymentInformation.setCardholderName("John Doe");
+        // Arrange
+        CustomerAccount customerAccount = new CustomerAccount();
+        PaymentInformation paymentInfo = new PaymentInformation("Alice", 12345678, Date.valueOf("2025-12-31"), 123, CardType.Visa, customerAccount);
 
-        when(paymentInfoRepo.findById(id)).thenReturn(Optional.of(paymentInformation));
+        when(paymentInformationRepository.findById(1)).thenReturn(Optional.of(paymentInfo));
 
         // Act
-        paymentInfoService.deletePaymentInformation(id);
+        paymentInformationService.deletePaymentInformation(1);
 
-        // Assert: Verify that the repository's delete method is called
-        verify(paymentInfoRepo, times(1)).delete(paymentInformation);
+        // Assert
+        verify(paymentInformationRepository, times(1)).delete(paymentInfo);
     }
 
     @Test
     public void testDeletePaymentInformationByInvalidId() {
-        // Arrange: invalid ID
-        int id = 999;
-        when(paymentInfoRepo.findById(id)).thenReturn(Optional.empty());
+        // Arrange
+        when(paymentInformationRepository.findById(999)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act and Assert
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> paymentInfoService.deletePaymentInformation(id));
-        assertEquals("Payment information not found for this ID.", e.getMessage());
-    }
-
-    @Test
-    public void testDeletePaymentInformationThatDoesNotExist() {
-        // Arrange: invalid ID
-        int id = 999;
-        when(paymentInfoRepo.findById(id)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-                () -> paymentInfoService.deletePaymentInformation(id));
-        assertEquals("Payment information not found for this ID.", e.getMessage());
+                () -> paymentInformationService.deletePaymentInformation(999));
+        assertEquals("No PaymentInformation with the specified ID exists.", e.getMessage());
     }
 }

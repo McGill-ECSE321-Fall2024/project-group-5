@@ -21,70 +21,109 @@ import org.springframework.http.ResponseEntity;
 
 import ca.mcgill.ecse321.gamestore.dto.PaymentInformationRequestDto;
 import ca.mcgill.ecse321.gamestore.dto.PaymentInformationResponseDto;
+import ca.mcgill.ecse321.gamestore.model.PaymentInformation;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(Lifecycle.PER_CLASS)
 public class PaymentInformationIntegrationTests {
+
     @Autowired
     private TestRestTemplate client;
 
     private final String VALID_NAME = "Alice";
-    private final long VALID_CARD_NUMBER = 1234567812345678L; // Example card number
+    private final int VALID_CARD_NUMBER = 12345678;
     private final Date VALID_EXPIRATION_DATE = Date.valueOf("2025-12-31");
     private final int VALID_CVC = 123;
-    private final int CUSTOMER_ACCOUNT_ID = 1; // Example customer account ID
+    private final int CUSTOMER_ACCOUNT_ID = 1;
 
-    private int validId;
+    private int validPaymentInfoId;
 
     @Test
     @Order(1)
     public void testCreateValidPaymentInformation() {
         // Arrange
         PaymentInformationRequestDto request = new PaymentInformationRequestDto(
-                VALID_NAME, VALID_CARD_NUMBER, VALID_EXPIRATION_DATE, VALID_CVC, 
+                VALID_NAME, VALID_CARD_NUMBER, VALID_EXPIRATION_DATE.toString(), VALID_CVC, 
                 PaymentInformation.CardType.Visa, CUSTOMER_ACCOUNT_ID);
         
         // Act
-        ResponseEntity<PaymentInformationResponseDto> response =
-        client.postForEntity("/api/paymentinformation/create",
-        request, PaymentInformationResponseDto.class);
+        ResponseEntity<PaymentInformationResponseDto> response = client.postForEntity(
+                "/api/paymentInformation/create", request, PaymentInformationResponseDto.class);
         
         // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        PaymentInformationResponseDto createdPaymentInformation = response.getBody();
-        assertNotNull(createdPaymentInformation);
-        assertEquals(VALID_NAME, createdPaymentInformation.getCardholderName());
-        assertEquals(VALID_CARD_NUMBER, createdPaymentInformation.getCardNumber());
-        assertEquals(VALID_EXPIRATION_DATE, createdPaymentInformation.getExpirationDate());
-        assertEquals(VALID_CVC, createdPaymentInformation.getCvc());
-        assertEquals(PaymentInformation.CardType.Visa, createdPaymentInformation.getCardType());
-        assertTrue(createdPaymentInformation.getCustomerAccountId() > 0, 
-                "Customer account ID should be positive.");
+        PaymentInformationResponseDto createdPaymentInfo = response.getBody();
+        assertNotNull(createdPaymentInfo);
+        assertEquals(VALID_NAME, createdPaymentInfo.getCardholderName());
+        assertEquals(VALID_EXPIRATION_DATE, createdPaymentInfo.getExpirationDate());
+        assertEquals(PaymentInformation.CardType.Visa, createdPaymentInfo.getCardType());
+        assertTrue(createdPaymentInfo.getCustomerAccountId() > 0);
 
-        this.validId = createdPaymentInformation.getCustomerAccountId();
+        this.validPaymentInfoId = createdPaymentInfo.getId();
     }
 
     @Test
     @Order(2)
     public void testReadPaymentInformationByValidId() {
         // Arrange
-        String url = "/api/paymentinformation/" + this.validId;
+        String url = "/api/paymentInformation/get/" + this.validPaymentInfoId;
         
         // Act
-        ResponseEntity<PaymentInformationResponseDto> response =
-        client.getForEntity(url, PaymentInformationResponseDto.class);
+        ResponseEntity<PaymentInformationResponseDto> response = client.getForEntity(
+                url, PaymentInformationResponseDto.class);
         
         // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        PaymentInformationResponseDto person = response.getBody();
-        assertNotNull(person);
-        assertEquals(VALID_NAME, person.getCardholderName());
-        assertEquals(VALID_CARD_NUMBER, person.getCardNumber());
-        assertEquals(VALID_EXPIRATION_DATE, person.getExpirationDate());
-        assertEquals(VALID_CVC, person.getCvc());
-        assertEquals(PaymentInformation.CardType.Visa, person.getCardType());
+        PaymentInformationResponseDto retrievedPaymentInfo = response.getBody();
+        assertNotNull(retrievedPaymentInfo);
+        assertEquals(VALID_NAME, retrievedPaymentInfo.getCardholderName());
+        assertEquals(VALID_EXPIRATION_DATE, retrievedPaymentInfo.getExpirationDate());
+        assertEquals(PaymentInformation.CardType.Visa, retrievedPaymentInfo.getCardType());
+    }
+
+    @Test
+    @Order(3)
+    public void testUpdatePaymentInformation() {
+        // Arrange
+        PaymentInformationRequestDto updatedRequest = new PaymentInformationRequestDto(
+                "Updated Name", VALID_CARD_NUMBER, VALID_EXPIRATION_DATE.toString(), 
+                456, PaymentInformation.CardType.Mastercard, CUSTOMER_ACCOUNT_ID);
+        String url = "/api/paymentInformation/update/" + this.validPaymentInfoId;
+        
+        // Act
+        client.put(url, updatedRequest);
+        
+        // Verify Update
+        ResponseEntity<PaymentInformationResponseDto> response = client.getForEntity(
+                "/api/paymentInformation/get/" + this.validPaymentInfoId, PaymentInformationResponseDto.class);
+        
+        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        PaymentInformationResponseDto updatedPaymentInfo = response.getBody();
+        assertNotNull(updatedPaymentInfo);
+        assertEquals("Updated Name", updatedPaymentInfo.getCardholderName());
+        assertEquals(456, updatedPaymentInfo.getCvc());
+        assertEquals(PaymentInformation.CardType.Mastercard, updatedPaymentInfo.getCardType());
+    }
+
+    @Test
+    @Order(4)
+    public void testDeletePaymentInformation() {
+        // Arrange
+        String url = "/api/paymentInformation/delete/" + this.validPaymentInfoId;
+        
+        // Act
+        client.delete(url);
+        
+        // Verify Deletion
+        ResponseEntity<PaymentInformationResponseDto> response = client.getForEntity(
+                "/api/paymentInformation/get/" + this.validPaymentInfoId, PaymentInformationResponseDto.class);
+        
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }

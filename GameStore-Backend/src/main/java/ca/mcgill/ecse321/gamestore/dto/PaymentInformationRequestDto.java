@@ -1,18 +1,22 @@
+// src/main/java/ca/mcgill/ecse321/gamestore/dto/PaymentInformationRequestDTO.java
 package ca.mcgill.ecse321.gamestore.dto;
 
-import java.util.Date;
 import ca.mcgill.ecse321.gamestore.model.PaymentInformation.CardType;
 
 public class PaymentInformationRequestDto {
     private String cardholderName;
-    private long cardNumber; // Changed to long for larger card numbers
-    private Date expirationDate; // Changed to java.util.Date
+    private int cardNumber;
+    private String expirationDate;
     private int cvc;
     private CardType cardType;
     private int customerAccountId;
 
-    // Constructor
-    public PaymentInformationRequestDto(String cardholderName, long cardNumber, Date expirationDate, int cvc, CardType cardType, int customerAccountId) {
+    // Private default constructor for Jackson
+    @SuppressWarnings("unused")
+    private PaymentInformationRequestDto() {}
+
+    // Parameterized constructor
+    public PaymentInformationRequestDto(String cardholderName, int cardNumber, String expirationDate, int cvc, CardType cardType, int customerAccountId) {
         this.cardholderName = cardholderName;
         this.cardNumber = cardNumber;
         this.expirationDate = expirationDate;
@@ -21,52 +25,40 @@ public class PaymentInformationRequestDto {
         this.customerAccountId = customerAccountId;
     }
 
-    // Getters and Setters
-    public String getCardholderName() {
-        return cardholderName;
-    }
-
-    public void setCardholderName(String cardholderName) {
+    public boolean setCardholderName(String cardholderName) {
         this.cardholderName = cardholderName;
+        return true;
     }
 
-    public long getCardNumber() {
-        return cardNumber;
-    }
-
-    public void setCardNumber(long cardNumber) {
+    public boolean setCardNumber(int cardNumber) {
         this.cardNumber = cardNumber;
+        return true;
     }
 
-    public Date getExpirationDate() {
-        return expirationDate;
-    }
-
-    public void setExpirationDate(Date expirationDate) {
+    public boolean setExpirationDate(String expirationDate) {
         this.expirationDate = expirationDate;
+        return true;
     }
 
-    public int getCvc() {
-        return cvc;
-    }
-
-    public void setCvc(int cvc) {
+    public boolean setCvc(int cvc) {
         this.cvc = cvc;
+        return true;
     }
 
-    public CardType getCardType() {
-        return cardType;
-    }
-
-    public void setCardType(CardType cardType) {
+    public boolean setCardType(CardType cardType) {
         this.cardType = cardType;
+        return true;
     }
 
-    public int getCustomerAccountId() {
-        return customerAccountId;
-    }
-
-    public void setCustomerAccountId(int customerAccountId) {
+    public boolean setCustomerAccountId(int customerAccountId) {
         this.customerAccountId = customerAccountId;
+        return true;
     }
+
+    public String getCardholderName() { return cardholderName; }
+    public int getCardNumber() { return cardNumber; }
+    public String getExpirationDate() { return expirationDate; }
+    public int getCvc() { return cvc; }
+    public CardType getCardType() { return cardType; }
+    public int getCustomerAccountId() { return customerAccountId; }
 }

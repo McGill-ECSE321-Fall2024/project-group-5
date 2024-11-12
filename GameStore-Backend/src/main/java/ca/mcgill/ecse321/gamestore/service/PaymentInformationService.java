@@ -3,81 +3,117 @@ package ca.mcgill.ecse321.gamestore.service;
 import ca.mcgill.ecse321.gamestore.dao.CustomerAccountRepository;
 import ca.mcgill.ecse321.gamestore.dao.PaymentInformationRepository;
 import ca.mcgill.ecse321.gamestore.dto.PaymentInformationRequestDto;
-import ca.mcgill.ecse321.gamestore.dto.PaymentInformationResponseDto;
 import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
 import ca.mcgill.ecse321.gamestore.model.PaymentInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-import java.util.regex.Pattern;
+import jakarta.transaction.Transactional;
+import java.sql.Date;
+
 
 @Service
 public class PaymentInformationService {
-
     @Autowired
     private PaymentInformationRepository paymentInformationRepository;
 
     @Autowired
     private CustomerAccountRepository customerAccountRepository;
 
-    // Regular expression for card number (just an example, you can improve it)
-    private static final Pattern CARD_NUMBER_PATTERN = Pattern.compile("^[0-9]{16}$");
-
     @Transactional
-    public PaymentInformationResponseDto createPaymentInformation(PaymentInformationRequestDto requestDto) {
-        // Retrieve customer account based on customerAccountId
-        Optional<CustomerAccount> optionalCustomerAccount = customerAccountRepository.findById(requestDto.getCustomerAccountId());
-        if (!optionalCustomerAccount.isPresent()) {
-            throw new IllegalArgumentException("Customer account not found");
+    public PaymentInformation createPaymentInformation(PaymentInformationRequestDto requestDTO) {
+        if (requestDTO == null) {
+            throw new IllegalArgumentException("Request DTO cannot be null.");
         }
-        CustomerAccount customerAccount = optionalCustomerAccount.get();
-
-        // Validate card number (basic example, you can improve it with more sophisticated logic)
-        if (!CARD_NUMBER_PATTERN.matcher(String.valueOf(requestDto.getCardNumber())).matches()) {
-            throw new IllegalArgumentException("Invalid card number.");
+        if (requestDTO.getCardholderName() == null || requestDTO.getCardholderName().isEmpty()) {
+            throw new IllegalArgumentException("Cardholder name cannot be null or empty.");
         }
-
-        // Validate expiration date (it must not be in the past)
-        if (requestDto.getExpirationDate().before(new java.util.Date())) {
-            throw new IllegalArgumentException("Expiration date is in the past.");
+        if (requestDTO.getCardNumber() <= 0) {
+            throw new IllegalArgumentException("Card number must be a positive integer.");
         }
-
-        // Validate card type
-        if (requestDto.getCardType() == null) {
+        if (requestDTO.getExpirationDate() == null) {
+            throw new IllegalArgumentException("Expiration date cannot be null.");
+        }
+        if (requestDTO.getCvc() <= 0 || String.valueOf(requestDTO.getCvc()).length() != 3) {
+            throw new IllegalArgumentException("CVC must be a 3-digit positive integer.");
+        }
+        if (requestDTO.getCardType() == null) {
             throw new IllegalArgumentException("Card type cannot be null.");
         }
 
-        // Convert card number from long to int (ensure it's within the valid range for int)
-        long cardNumberLong = requestDto.getCardNumber();
-        if (cardNumberLong < Integer.MIN_VALUE || cardNumberLong > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException("Card number is too large to fit in an integer.");
+        // Adjusting the ID type to `int` to match the CustomerAccountRepository method
+        CustomerAccount customerAccount = customerAccountRepository.findById(requestDTO.getCustomerAccountId());
+        if (customerAccount == null) {
+            throw new IllegalArgumentException("Customer account with the provided ID does not exist.");
         }
-        int cardNumber = (int) cardNumberLong;
 
-        // Create new PaymentInformation object
-        PaymentInformation paymentInformation = new PaymentInformation();
-        paymentInformation.setCardholderName(requestDto.getCardholderName());
-        paymentInformation.setCardNumber(cardNumber);  // Now safely using int
-        paymentInformation.setExpirationDate(requestDto.getExpirationDate());
-        paymentInformation.setCvc(requestDto.getCvc());
-        paymentInformation.setCardType(requestDto.getCardType());
-        paymentInformation.setCustomerAccount(customerAccount);
+        PaymentInformation paymentInformation = new PaymentInformation(
+                requestDTO.getCardholderName(),
+                requestDTO.getCardNumber(),
+                Date.valueOf(requestDTO.getExpirationDate()),
+                requestDTO.getCvc(),
+                requestDTO.getCardType(),
+                customerAccount
+        );
 
-        // Save to repository
-        paymentInformation = paymentInformationRepository.save(paymentInformation);
-
-        // Return response DTO
-        return new PaymentInformationResponseDto(paymentInformation);
+        return paymentInformationRepository.save(paymentInformation);
     }
 
-    public PaymentInformationResponseDto getPaymentInformationById(int id) {
-        Optional<PaymentInformation> paymentInformationOpt = paymentInformationRepository.findById(id);
-        if (!paymentInformationOpt.isPresent()) {
-            throw new IllegalArgumentException("Payment information not found for this ID.");
+    @Transactional
+    public PaymentInformation getPaymentInformationById(int id) {
+        return paymentInformationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No PaymentInformation with the specified ID exists."));
+    }
+
+    @Transactional
+    public Iterable<PaymentInformation> getPaymentInformationsByCustomerAccountId(int customerAccountId) {
+        CustomerAccount customerAccount = customerAccountRepository.findById(customerAccountId);
+        if (customerAccount == null) {
+            throw new IllegalArgumentException("Customer account with the specified ID does not exist.");
         }
-        PaymentInformation paymentInformation = paymentInformationOpt.get();
-        return new PaymentInformationResponseDto(paymentInformation);
+
+        Iterable<PaymentInformation> paymentInformations = paymentInformationRepository.findByCustomerAccount_Id(customerAccountId);
+        if (!paymentInformations.iterator().hasNext()) {
+            throw new IllegalArgumentException("No PaymentInformation entries associated with this Customer Account ID.");
+        }
+        return paymentInformations;
+    }
+
+    @Transactional
+    public PaymentInformation updatePaymentInformation(int id, PaymentInformationRequestDto requestDTO) {
+        PaymentInformation paymentInformation = paymentInformationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No PaymentInformation with the specified ID exists."));
+
+        if (requestDTO.getCardholderName() != null && !requestDTO.getCardholderName().isEmpty()) {
+            paymentInformation.setCardholderName(requestDTO.getCardholderName());
+        }
+        if (requestDTO.getCardNumber() > 0) {
+            paymentInformation.setCardNumber(requestDTO.getCardNumber());
+        }
+        if (requestDTO.getExpirationDate() != null) {
+            paymentInformation.setExpirationDate(Date.valueOf(requestDTO.getExpirationDate()));
+        }
+        if (requestDTO.getCvc() > 0 && String.valueOf(requestDTO.getCvc()).length() == 3) {
+            paymentInformation.setCvc(requestDTO.getCvc());
+        }
+        if (requestDTO.getCardType() != null) {
+            paymentInformation.setCardType(requestDTO.getCardType());
+        }
+        if (requestDTO.getCustomerAccountId() > 0) {
+            CustomerAccount customerAccount = customerAccountRepository.findById(requestDTO.getCustomerAccountId());
+            if (customerAccount != null) {
+                paymentInformation.setCustomerAccount(customerAccount);
+            }
+        }
+
+        return paymentInformationRepository.save(paymentInformation);
+    }
+
+    @Transactional
+    public void deletePaymentInformation(int id) {
+        PaymentInformation paymentInformation = paymentInformationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No PaymentInformation with the specified ID exists."));
+
+        paymentInformationRepository.delete(paymentInformation);
     }
 }
