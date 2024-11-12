@@ -2,32 +2,33 @@ package ca.mcgill.ecse321.gamestore.dto;
 
 import ca.mcgill.ecse321.gamestore.model.Review;
 
+import java.sql.Date;
+
 public class ReviewResponseDto {
     private int id;
-    private String name;
+    private Date date;
+    private String description;
+    private int likeCount;
+    private int dislikeCount;
+    private float rating;
+    private boolean employeeReviewed;
 
-    // Jackson needs a default constructor, but it doesn't need to be public
-    @SuppressWarnings("unused")
-    private ReviewResponseDto() {
+    public ReviewResponseDto(Review review) {
+        this.id = review.getId();
+        this.date = review.getDate();
+        this.description = review.getDescription();
+        this.likeCount = review.getLikeCount();
+        this.dislikeCount = review.getDislikeCount();
+        this.rating = review.getRating();
+        this.employeeReviewed = review.isEmployeeReviewed();
     }
 
-    public ReviewResponseDto(Review model) {
-        this.id = model.getId();
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    // Getters only
+    public int getId() { return id; }
+    public Date getDate() { return date; }
+    public String getDescription() { return description; }
+    public int getLikeCount() { return likeCount; }
+    public int getDislikeCount() { return dislikeCount; }
+    public float getRating() { return rating; }
+    public boolean isEmployeeReviewed() { return employeeReviewed; }
 }

@@ -4,30 +4,17 @@ import ca.mcgill.ecse321.gamestore.model.StaffAccount;
 
 public class StaffAccountResponseDto {
     private int id;
+    private String username;
     private String name;
 
-    // Jackson needs a default constructor, but it doesn't need to be public
-    @SuppressWarnings("unused")
-    private StaffAccountResponseDto() {
+    public StaffAccountResponseDto(StaffAccount staffAccount) {
+        this.id = staffAccount.getId();
+        this.username = staffAccount.getUsername();
+        this.name = staffAccount.getName();
     }
 
-    public StaffAccountResponseDto(StaffAccount model) {
-        this.id = model.getId();
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    // Getters only (response DTOs should be immutable)
+    public int getId() { return id; }
+    public String getUsername() { return username; }
+    public String getName() { return name; }
 }

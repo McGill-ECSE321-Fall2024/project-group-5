@@ -63,7 +63,7 @@ public class ReviewService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("Review not found"));
 
-        if (likeCount < 0 || dislikeCount < 0) {
+        if (likeCount < 0 || dislikeCount < 0)  {
             throw new IllegalArgumentException("Like and dislike counts cannot be negative");
         }
 
