@@ -6,7 +6,7 @@ public class StaffAccountRequestDto {
     private String password; // Avoid exposing passwords unnecessarily
 
     public StaffAccountRequestDto() {
-        // Default constructor for Jackson
+        
     }
 
     public String getName() {
