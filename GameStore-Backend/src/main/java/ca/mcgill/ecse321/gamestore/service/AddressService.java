@@ -1,6 +1,5 @@
 package ca.mcgill.ecse321.gamestore.service;
 
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ca.mcgill.ecse321.gamestore.model.Address;
@@ -15,12 +14,26 @@ public class AddressService {
 
     // Creates a new Address entry in the database
     public Address createAddress(Address address) {
+        if (address == null ||
+            address.getAddress() == null ||
+            address.getCity() == null ||
+            address.getProvince() == null ||
+            address.getCountry() == null ||
+            address.getPostalCode() == null) {
+            throw new IllegalArgumentException("All address attributes must be non-null.");
+        }
+        
+        if (!"CANADA".equalsIgnoreCase(address.getCountry())) {
+            throw new IllegalArgumentException("Only addresses in Canada are supported.");
+        }
+
         return addressRepository.save(address);
     }
 
-    // Retrieves an Address by its unique ID, or null if not found
+    // Retrieves an Address by its unique ID, or throws an error if not found
     public Address getAddressById(int id) {
-        return addressRepository.findById(id).orElse(null);
+        return addressRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Address with ID " + id + " not found."));
     }
 
     // Retrieves all Address entries
@@ -53,29 +66,37 @@ public class AddressService {
         return addressRepository.findByCustomerAccount_Id(customerId);
     }
 
-    // Updates an existing Address entry if present, or returns null if not found
+    // Updates an existing Address entry if present, or throws an error if not found
     @Transactional
     public Address updateAddress(int id, Address updatedAddress) {
-        Optional<Address> existingAddress = addressRepository.findById(id);
-        if (existingAddress.isPresent()) {
-            Address address = existingAddress.get();
-            address.setAddress(updatedAddress.getAddress());
-            address.setCity(updatedAddress.getCity());
-            address.setProvince(updatedAddress.getProvince());
-            address.setCountry(updatedAddress.getCountry());
-            address.setPostalCode(updatedAddress.getPostalCode());
-            return addressRepository.save(address);
+        Address existingAddress = addressRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Address with ID " + id + " not found."));
+
+        if (updatedAddress == null ||
+            updatedAddress.getAddress() == null ||
+            updatedAddress.getCity() == null ||
+            updatedAddress.getProvince() == null ||
+            updatedAddress.getCountry() == null ||
+            updatedAddress.getPostalCode() == null) {
+            throw new IllegalArgumentException("All updated address attributes must be non-null.");
         }
-        return null;
+
+        existingAddress.setAddress(updatedAddress.getAddress());
+        existingAddress.setCity(updatedAddress.getCity());
+        existingAddress.setProvince(updatedAddress.getProvince());
+        existingAddress.setCountry(updatedAddress.getCountry());
+        existingAddress.setPostalCode(updatedAddress.getPostalCode());
+
+        return addressRepository.save(existingAddress);
     }
 
-    // Deletes an Address entry by ID and returns true if deletion was successful
+    // Deletes an Address entry by ID and returns the deleted object, throws an error if not found
     @Transactional
-    public boolean deleteAddress(int id) {
-        if (addressRepository.existsById(id)) {
-            addressRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public Address deleteAddress(int id) {
+        Address address = addressRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Address with ID " + id + " not found."));
+        
+        addressRepository.deleteById(id);
+        return address;
     }
 }
