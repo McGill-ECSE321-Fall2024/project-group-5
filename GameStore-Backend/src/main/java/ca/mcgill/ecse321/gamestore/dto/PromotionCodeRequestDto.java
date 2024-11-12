@@ -1,12 +1,14 @@
 package ca.mcgill.ecse321.gamestore.dto;
 
+import java.sql.Date;
+
 import ca.mcgill.ecse321.gamestore.model.PromotionCode;
 
 public class PromotionCodeRequestDto {
     private int id;
-    private String name;
-    private double discountValue;
-    private String expirationDate; // Assuming it's stored as a string or update as per your model's date type
+    private String code;
+    private int discountValue;
+    private Date expirationDate;
 
     // Default constructor for Jackson
     public PromotionCodeRequestDto() {
@@ -15,24 +17,24 @@ public class PromotionCodeRequestDto {
     // Constructor to create DTO from model
     public PromotionCodeRequestDto(PromotionCode model) {
         this.id = model.getId();
-        this.name = model.getName();
-        this.discountValue = model.getDiscountValue();
-        this.expirationDate = model.getExpirationDate().toString(); // Adjust if necessary
+        this.code = model.getCode();
+        this.discountValue = model.getPercentageValue();
+        this.expirationDate = model.getExpirationDate();
     }
 
     public int getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getCode() {
+        return code;
     }
 
-    public double getDiscountValue() {
+    public int getDiscount() {
         return discountValue;
     }
 
-    public String getExpirationDate() {
+    public Date getExpirationDate() {
         return expirationDate;
     }
 
@@ -40,15 +42,15 @@ public class PromotionCodeRequestDto {
         this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public void setDiscountValue(double discountValue) {
+    public void setDiscountValue(int discountValue) {
         this.discountValue = discountValue;
     }
 
-    public void setExpirationDate(String expirationDate) {
+    public void setExpirationDate(Date expirationDate) {
         this.expirationDate = expirationDate;
     }
 }

@@ -1,5 +1,7 @@
 package ca.mcgill.ecse321.gamestore.model;
 
+import java.sql.Date;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -18,6 +20,7 @@ public class PromotionCode {
   // PromotionCode Attributes
   private String code;
   private int percentageValue;
+  private Date expirationDate;
   @Id
   @GeneratedValue
   private int id;
@@ -34,10 +37,12 @@ public class PromotionCode {
   public PromotionCode() {
   }
 
-  public PromotionCode(String aCode, int aPercentageValue, int aId, GameStoreObject aGameStoreObject) {
+  public PromotionCode(String aCode, int aPercentageValue, int aId, GameStoreObject aGameStoreObject,
+      Date aExpirationDate) {
     code = aCode;
     percentageValue = aPercentageValue;
     id = aId;
+    expirationDate = aExpirationDate;
     boolean didAddGameStoreObject = setGameStoreObject(aGameStoreObject);
     if (!didAddGameStoreObject) {
       throw new RuntimeException(
@@ -70,6 +75,13 @@ public class PromotionCode {
     return wasSet;
   }
 
+  public boolean setExpirationDate(Date aExpirationDate) {
+    boolean wasSet = false;
+    expirationDate = aExpirationDate;
+    wasSet = true;
+    return wasSet;
+  }
+
   public String getCode() {
     return code;
   }
@@ -80,6 +92,10 @@ public class PromotionCode {
 
   public int getId() {
     return id;
+  }
+
+  public Date getExpirationDate() {
+    return expirationDate;
   }
 
   /* Code from template association_GetOne */

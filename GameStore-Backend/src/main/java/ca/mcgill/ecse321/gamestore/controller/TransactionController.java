@@ -125,7 +125,11 @@ public class TransactionController {
     @PostMapping("/create")
     public TransactionResponseDto createTransaction(@RequestBody TransactionRequestDto transaction) {
         CustomerAccount customerAccount;
-        customerAccount = customerAccountService.findCustomerAccountById(transaction.getCustomerAccount().getId());
+        try {
+            customerAccount = customerAccountService.getCustomerAccountByID(transaction.getCustomerAccount().getId());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to retrieve customer account by ID", e);
+        }
         Transaction createdTransaction = transactionService.createTransaction(customerAccount);
         return new TransactionResponseDto(createdTransaction);
     }
@@ -138,7 +142,7 @@ public class TransactionController {
      */
     @DeleteMapping("/delete/{id}")
     public TransactionResponseDto deleteTransaction(@PathVariable int id) {
-        Transaction transaction = transactionService.deletedTransaction(id);
+        Transaction transaction = transactionService.deleteTransaction(id);
         return new TransactionResponseDto(transaction);
     }
 
@@ -152,8 +156,8 @@ public class TransactionController {
     @PutMapping("/update")
     public TransactionResponseDto updateTransaction(@RequestBody TransactionResponseDto transaction) {
         PaymentInformation paymentInformation = paymentInformationService
-                .findPaymentInformationById(transaction.getPaymentInformation().getId());
-        Address address = addressService.findAddressById(transaction.getAddress().getId());
+                .getPaymentInformationById(transaction.getPaymentInformation().getId());
+        Address address = addressService.getAddressById(transaction.getAddress().getId());
 
         Transaction updatedTransaction = transactionService.updateTransaction(transaction.getTransactionId(),
                 transaction.getTotalPrice(), transaction.getIsPaid(), transaction.getDeliveryStatus(),

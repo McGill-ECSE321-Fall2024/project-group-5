@@ -16,18 +16,13 @@ public class GameStoreObjectService {
     private GameStoreObjectRepository gameStoreObjectRepository;
 
     @Transactional
-    public GameStoreObject createGameStoreObject(String name, String description, double price, String policy) {
-        if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("Name cannot be null or empty");
-        }
-        if (price <= 0) {
-            throw new IllegalArgumentException("Price must be greater than zero");
+    public GameStoreObject createGameStoreObject(String policy) {
+        if (policy == null) {
+            throw new IllegalArgumentException("Policy cannot be null or empty");
         }
 
         GameStoreObject gameStoreObject = new GameStoreObject();
-        gameStoreObject.setName(name);
-        gameStoreObject.setDescription(description);
-        gameStoreObject.setPrice(price);
+        gameStoreObject.setPolicy(policy);
         gameStoreObject.setPolicy(policy);
 
         return gameStoreObjectRepository.save(gameStoreObject);
@@ -40,22 +35,12 @@ public class GameStoreObjectService {
     }
 
     @Transactional
-    public GameStoreObject updateGameStoreObject(int id, String name, String description, double price, String policy) {
+    public GameStoreObject updateGameStoreObject(int id, String policy) {
         GameStoreObject gameStoreObject = getGameStoreObjectById(id);
 
-        if (name != null && !name.isEmpty()) {
-            gameStoreObject.setName(name);
-        }
-        if (description != null) {
-            gameStoreObject.setDescription(description);
-        }
-        if (price > 0) {
-            gameStoreObject.setPrice(price);
-        }
         if (policy != null) {
             gameStoreObject.setPolicy(policy);
         }
-
         return gameStoreObjectRepository.save(gameStoreObject);
     }
 

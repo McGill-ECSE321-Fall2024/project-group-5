@@ -17,21 +17,21 @@ public class PromotionCodeService {
     private PromotionCodeRepository promotionCodeRepository;
 
     @Transactional
-    public PromotionCode createPromotionCode(String name, double discountValue, LocalDate expirationDate) {
+    public PromotionCode createPromotionCode(String name, int discountValue, Date expirationDate) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Promotion code name cannot be empty");
         }
         if (discountValue <= 0) {
             throw new IllegalArgumentException("Discount value must be greater than zero");
         }
-        if (expirationDate == null || expirationDate.isBefore(LocalDate.now())) {
+        if (expirationDate == null) {
             throw new IllegalArgumentException("Expiration date must be a future date");
         }
 
         PromotionCode promotionCode = new PromotionCode();
-        promotionCode.setName(name);
-        promotionCode.setDiscountValue(discountValue);
-        promotionCode.setExpirationDate(Date.valueOf(expirationDate));
+        promotionCode.setCode(name);
+        promotionCode.setPercentageValue(discountValue);
+        promotionCode.setExpirationDate(expirationDate);
 
         return promotionCodeRepository.save(promotionCode);
     }
@@ -43,14 +43,14 @@ public class PromotionCodeService {
     }
 
     @Transactional
-    public PromotionCode updatePromotionCode(int id, String name, double discountValue, LocalDate expirationDate) {
+    public PromotionCode updatePromotionCode(int id, String name, int discountValue, LocalDate expirationDate) {
         PromotionCode promotionCode = getPromotionCodeById(id);
 
         if (name != null && !name.isEmpty()) {
-            promotionCode.setName(name);
+            promotionCode.setCode(name);
         }
         if (discountValue > 0) {
-            promotionCode.setDiscountValue(discountValue);
+            promotionCode.setPercentageValue(discountValue);
         }
         if (expirationDate != null && expirationDate.isAfter(LocalDate.now())) {
             promotionCode.setExpirationDate(Date.valueOf(expirationDate));
@@ -60,10 +60,11 @@ public class PromotionCodeService {
     }
 
     @Transactional
-    public void deletePromotionCode(int id) {
+    public boolean deletePromotionCode(int id) {
         if (!promotionCodeRepository.existsById(id)) {
             throw new IllegalArgumentException("Promotion code not found");
         }
         promotionCodeRepository.deleteById(id);
+        return true;
     }
 }

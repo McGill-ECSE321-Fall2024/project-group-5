@@ -2,8 +2,6 @@ package ca.mcgill.ecse321.gamestore.service;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,16 +10,12 @@ import org.springframework.stereotype.Service;
 import ca.mcgill.ecse321.gamestore.model.Account;
 import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
 import ca.mcgill.ecse321.gamestore.model.StaffAccount;
-import ca.mcgill.ecse321.gamestore.dao.AccountRepository;
 import ca.mcgill.ecse321.gamestore.dao.CustomerAccountRepository;
 import ca.mcgill.ecse321.gamestore.dao.StaffAccountRepository;
 import jakarta.transaction.Transactional;
 
 @Service
 public class AccountService {
-    @Autowired
-    private AccountRepository accountRepository;
-
     @Autowired
     private CustomerAccountRepository customerAccountRepository;
 

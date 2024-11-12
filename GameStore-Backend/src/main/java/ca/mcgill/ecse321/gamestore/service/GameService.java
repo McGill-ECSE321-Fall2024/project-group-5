@@ -22,18 +22,19 @@ public class GameService {
     /**
      * Add a new Game
      *
-     * @param name - Game name
-     * @param price - Game price
+     * @param name        - Game name
+     * @param price       - Game price
      * @param description - Game description
-     * @param category - Game category
+     * @param category    - Game category
      * @param gameConsole - Game console
-     * @param inCatalog - Whether the game is in catalog
+     * @param inCatalog   - Whether the game is in catalog
      * @return Saved Game
      * @throws IllegalArgumentException if any parameter is invalid
      * @carolinethom
      */
     @Transactional
-    public Game addGame(String name, int price, String description, Category category, GameConsole gameConsole, boolean inCatalog) {
+    public Game addGame(String name, int price, String description, Category category, GameConsole gameConsole,
+            boolean inCatalog) {
         validateGameDetails(name, price, category, gameConsole);
         Game game = new Game();
         game.setName(name);
@@ -48,19 +49,20 @@ public class GameService {
     /**
      * Update an existing Game by ID
      *
-     * @param id - Game id
-     * @param name - New game name
-     * @param price - New game price
+     * @param id          - Game id
+     * @param name        - New game name
+     * @param price       - New game price
      * @param description - New game description
-     * @param category - New game category
+     * @param category    - New game category
      * @param gameConsole - New game console
-     * @param inCatalog - New catalog status
+     * @param inCatalog   - New catalog status
      * @return Updated Game
      * @throws Exception if game is not found or parameters are invalid
      * @carolinethom
      */
     @Transactional
-    public Game updateGame(int id, String name, int price, String description, Category category, GameConsole gameConsole, boolean inCatalog) throws Exception {
+    public Game updateGame(int id, String name, int price, String description, Category category,
+            GameConsole gameConsole, boolean inCatalog) throws Exception {
         validateGameDetails(name, price, category, gameConsole);
         Game game = getGameById(id);
         game.setName(name);
@@ -88,7 +90,6 @@ public class GameService {
             return game;
         }
     }
-    
 
     /**
      * Find Game by name
@@ -176,15 +177,18 @@ public class GameService {
     @Transactional
     public void deleteGameById(int id) throws Exception {
         Game game = getGameById(id); // Ensure game exists before deleting
+        if (game == null) {
+            throw new IllegalArgumentException("No game exist for this id.");
+        }
         gameRepository.deleteById(id);
     }
 
     /**
      * Helper method to validate game details
      *
-     * @param name - Game name
-     * @param price - Game price
-     * @param category - Game category
+     * @param name        - Game name
+     * @param price       - Game price
+     * @param category    - Game category
      * @param gameConsole - Game console
      * @throws IllegalArgumentException if any field is invalid
      */

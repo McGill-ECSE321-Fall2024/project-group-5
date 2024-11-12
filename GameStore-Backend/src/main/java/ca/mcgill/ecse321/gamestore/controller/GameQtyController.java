@@ -12,12 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.mcgill.ecse321.gamestore.dto.GameQtyRequestDto;
 import ca.mcgill.ecse321.gamestore.dto.GameQtyResponseDto;
-import ca.mcgill.ecse321.gamestore.dto.TransactionResponseDto;
 import ca.mcgill.ecse321.gamestore.model.Game;
 import ca.mcgill.ecse321.gamestore.model.Transaction;
 import ca.mcgill.ecse321.gamestore.model.GameQty;
@@ -75,7 +73,12 @@ public class GameQtyController {
     @PostMapping("/create")
     public GameQtyResponseDto createGameQty(@RequestBody GameQtyRequestDto gameQty) {
         Transaction transaction = transactionService.findTransactionById(gameQty.getTransaction().getTransactionId());
-        Game game = gameService.findGameById(gameQty.getGame().getId());
+        Game game;
+        try {
+            game = gameService.getGameById(gameQty.getGame().getId());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to retrieve game by ID", e);
+        }
         GameQty createdGameQty = gameQtyService.createGameQty(gameQty.getQty(), transaction, game);
         return new GameQtyResponseDto(createdGameQty);
     }

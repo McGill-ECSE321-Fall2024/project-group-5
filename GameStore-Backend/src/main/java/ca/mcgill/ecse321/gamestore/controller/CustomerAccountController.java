@@ -10,26 +10,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.mcgill.ecse321.gamestore.controller.utilities.AuthenticationUtility;
-import ca.mcgill.ecse321.gamestore.dto.CustomerAccountRequestDto;
 import ca.mcgill.ecse321.gamestore.dto.CustomerAccountResponseDto;
 import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
-import ca.mcgill.ecse321.gamestore.service.AccountService;
 import ca.mcgill.ecse321.gamestore.service.CustomerAccountService;
-import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 public class CustomerAccountController {
     @Autowired
     private CustomerAccountService customerAccountService;
-
-    @Autowired
-    private AccountService accountService;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerCustomerAccount(HttpServletRequest request,

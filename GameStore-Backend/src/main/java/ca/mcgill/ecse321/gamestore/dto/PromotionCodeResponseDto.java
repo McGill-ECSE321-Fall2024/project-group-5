@@ -1,12 +1,14 @@
 package ca.mcgill.ecse321.gamestore.dto;
 
+import java.sql.Date;
+
 import ca.mcgill.ecse321.gamestore.model.PromotionCode;
 
 public class PromotionCodeResponseDto {
     private int id;
-    private String name;
-    private double discountValue;
-    private String expirationDate; // Adjust type if needed, e.g., Date or LocalDate
+    private String code;
+    private int discountValue;
+    private Date expirationDate;
 
     // Default constructor for Jackson
     public PromotionCodeResponseDto() {
@@ -15,9 +17,9 @@ public class PromotionCodeResponseDto {
     // Constructor to create DTO from model
     public PromotionCodeResponseDto(PromotionCode model) {
         this.id = model.getId();
-        this.name = model.getName();
-        this.discountValue = model.getDiscountValue();
-        this.expirationDate = model.getExpirationDate().toString(); // Adjust as per your date handling
+        this.code = model.getCode();
+        this.discountValue = model.getPercentageValue();
+        this.expirationDate = model.getExpirationDate();
     }
 
     public int getId() {
@@ -25,14 +27,14 @@ public class PromotionCodeResponseDto {
     }
 
     public String getName() {
-        return name;
+        return code;
     }
 
     public double getDiscountValue() {
         return discountValue;
     }
 
-    public String getExpirationDate() {
+    public Date getExpirationDate() {
         return expirationDate;
     }
 
@@ -40,15 +42,15 @@ public class PromotionCodeResponseDto {
         this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String code) {
+        this.code = code;
     }
 
-    public void setDiscountValue(double discountValue) {
+    public void setDiscountValue(int discountValue) {
         this.discountValue = discountValue;
     }
 
-    public void setExpirationDate(String expirationDate) {
+    public void setExpirationDate(Date expirationDate) {
         this.expirationDate = expirationDate;
     }
 }
