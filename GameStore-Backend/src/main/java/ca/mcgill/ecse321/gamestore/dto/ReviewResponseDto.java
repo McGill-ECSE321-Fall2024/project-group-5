@@ -15,7 +15,7 @@ public class ReviewResponseDto {
         return id;
     }
 
-    public String getName() {
+    public String getName()  {
         return name;
     }
 }
