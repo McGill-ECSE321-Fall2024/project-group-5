@@ -3,12 +3,22 @@ package ca.mcgill.ecse321.gamestore.dto;
 import java.util.List;
 
 public class GameRequestDto {
+
+    public enum CategoryReqDto {
+        Horror, Puzzle, Action, ActionjAdventure, Sports, Strategy, RPG, Multiplayer, Simulation, Survival, Party, Shooter,
+        Casual, Platformer, BattleRoyale, Sandbox, MMO
+    }
+    
+    public enum GameConsoleReqDto {
+        PS4, PS5, WiiU, NintendoSwitch, PC, XBoxSeriesS, XBoxSeriesX, Mac
+    }
+
     private int gameID;
     private String name;
     private int price;
     private String description;
-    private Category category; 
-    private GameConsole gameConsole; 
+    private CategoryReqDto category; 
+    private GameConsoleReqDto gameConsole; 
     private boolean inCatalog;
 
     private GameQtyRequestDto gameQty;
@@ -19,7 +29,7 @@ public class GameRequestDto {
     private GameRequestDto() {
     }
 
-    public GameRequestDto(int gameID, String aName, int aPrice, String aDescription, Category aCategory, GameConsole aGameConsole, boolean isInCatalog, GameQtyRequestDto aGameQty, List<ReviewResponseDto> aReviewList) {
+    public GameRequestDto(int gameID, String aName, int aPrice, String aDescription, CategoryReqDto aCategory, GameConsoleReqDto aGameConsole, boolean isInCatalog, GameQtyRequestDto aGameQty, List<ReviewResponseDto> aReviewList) {
         this.gameID = gameID;
         this.name = aName;
         this.price = aPrice;
@@ -48,11 +58,11 @@ public class GameRequestDto {
         return description;
     }
 
-    public Category getCategory() {
+    public CategoryReqDto getCategory() {
         return category;
     }
 
-    public GameConsole getGameConsole() {
+    public GameConsoleReqDto getGameConsole() {
         return gameConsole;
     }
 
@@ -85,11 +95,11 @@ public class GameRequestDto {
         this.description = description;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(CategoryReqDto category) {
         this.category = category;
     }
 
-    public void setGameConsole(GameConsole gameConsole) {
+    public void setGameConsole(GameConsoleReqDto gameConsole) {
         this.gameConsole = gameConsole;
     }
 

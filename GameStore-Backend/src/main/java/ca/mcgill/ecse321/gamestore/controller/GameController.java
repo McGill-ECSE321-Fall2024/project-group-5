@@ -70,7 +70,7 @@ public class GameController {
     // Additional endpoint to get games by category (if needed)
     @GetMapping("/category/{category}")
     public ResponseEntity<List<GameResponseDto>> getGamesByCategory(@PathVariable String category) {
-        List<Game> games = gameService.getGamesByCategory(category);
+        List<Game> games = gameService.getCategory(category);
         List<GameResponseDto> gameDtos = games.stream()
                 .map(GameResponseDto::new)
                 .collect(Collectors.toList());
@@ -79,8 +79,8 @@ public class GameController {
 
     // Additional endpoint to get games by console (if needed)
     @GetMapping("/console/{console}")
-    public ResponseEntity<List<GameResponseDto>> getGamesByConsole(@PathVariable String console) {
-        List<Game> games = gameService.getGamesByConsole(console);
+    public ResponseEntity<List<GameResponseDto>> getGamesConsole(@PathVariable String console) {
+        List<Game> games = gameService.getGameConsole(console);
         List<GameResponseDto> gameDtos = games.stream()
                 .map(GameResponseDto::new)
                 .collect(Collectors.toList());
