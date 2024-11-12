@@ -56,18 +56,6 @@ public class GameResponseDto {
         this.category = toCategoryResDto(model.getCategory());
         this.gameConsole = toGameConsoleResDto(model.getGameConsole());
         this.inCatalog = model.getInCatalog();
-
-        // // Convert GameQty model to GameQtyResponseDto if present
-        // if (model.getQty() != null) {
-        //     setGameQty(new GameQtyResponseDto(model.getGameQty()));
-        // }
-
-        // // Convert each Review model to ReviewResponseDto if present
-        // if (model.getReviewList() != null) {
-        //     this.reviewList = model.getReviewList().stream()
-        //                             .map(ReviewResponseDto::new)
-        //                             .collect(Collectors.toList());
-        // }
     }
 
     // Getters

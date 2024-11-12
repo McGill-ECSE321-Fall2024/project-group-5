@@ -37,8 +37,6 @@ public class GameRequestDto {
         this.category = aCategory; //check enum
         this.gameConsole = aGameConsole; //check enum
         this.inCatalog = isInCatalog;
-        setGameQty(aGameQty);
-        setReviewList(aReviewList);
     }
 
     // Getters
@@ -105,21 +103,5 @@ public class GameRequestDto {
 
     public void setInCatalog(boolean inCatalog) {
         this.inCatalog = inCatalog;
-    }
-
-    public boolean setGameQty(GameQtyRequestDto aGameQty) {
-        if (aGameQty == null) {
-            return false;
-        }
-        this.gameQty = aGameQty;
-        return true;
-    }
-
-    public boolean setReviewList(List<ReviewResponseDto> aReviewList) {
-        if (aReviewList == null) {
-            return false;
-        }
-        this.reviewList = aReviewList;
-        return true;
     }
 }
