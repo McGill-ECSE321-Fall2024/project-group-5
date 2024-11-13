@@ -53,7 +53,7 @@ public class GameController {
      * GET: Retrieve a game by ID
      * Endpoint: /api/games/{id}
      */
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public ResponseEntity<GameResponseDto> getGameById(@PathVariable int id) {
         try {
             Game game = gameService.getGameById(id);
@@ -67,7 +67,7 @@ public class GameController {
      * GET: Retrieve all games
      * Endpoint: /api/games
      */
-    @GetMapping
+    @GetMapping("/get/allgames")
     public ResponseEntity<List<GameResponseDto>> getAllGames() {
         List<Game> games = gameService.listAllGames();
         List<GameResponseDto> gameDtos = games.stream()
@@ -80,7 +80,7 @@ public class GameController {
      * PUT: Update an existing game by ID
      * Endpoint: /api/games/{id}
      */
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<GameResponseDto> updateGame(@PathVariable int id, @RequestBody GameRequestDto gameRequestDto) {
         try {
             // Convert DTO enums to entity enums
@@ -103,7 +103,7 @@ public class GameController {
      * DELETE: Delete a game by ID
      * Endpoint: /api/games/{id}
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteGame(@PathVariable int id) {
         try {
             gameService.deleteGameById(id);
