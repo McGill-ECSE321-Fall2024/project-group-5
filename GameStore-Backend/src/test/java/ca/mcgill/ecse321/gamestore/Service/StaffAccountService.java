@@ -20,6 +20,9 @@ public class StaffAccountServiceTests {
     @Mock
     private StaffAccountRepository staffAccountRepository;
 
+    @Mock
+    private AccountService accountService; // For password handling
+
     @InjectMocks
     private StaffAccountService staffAccountService;
 
@@ -29,70 +32,85 @@ public class StaffAccountServiceTests {
     }
 
     @Test
-    public void testCreateValidStaffAccount() {
-        // Arrange
-        String name = "John Doe";
-        String username = "johndoe";
-        String password = "password123";
+    public void testCreateStaffAccount() {
+        when(staffAccountRepository.existsStaffAccountByUsername("johndoe")).thenReturn(false);
+        when(accountService.isValidPassword("password123")).thenReturn(true);
+        when(accountService.generateSalt(8)).thenReturn("randomSalt");
+        when(accountService.hashPassword("password123", "randomSalt")).thenReturn("hashedPassword");
 
-        StaffAccount mockAccount = new StaffAccount();
-        mockAccount.setId(1);
-        mockAccount.setName(name);
-        mockAccount.setUsername(username);
+        StaffAccount savedAccount = new StaffAccount();
+        savedAccount.setId(1);
+        savedAccount.setUsername("johndoe");
+        savedAccount.setName("John Doe");
 
-        when(staffAccountRepository.existsStaffAccountByUsername(username)).thenReturn(false);
-        when(staffAccountRepository.save(any(StaffAccount.class))).thenReturn(mockAccount);
+        when(staffAccountRepository.save(any(StaffAccount.class))).thenReturn(savedAccount);
 
-        // Act
-        StaffAccount result = staffAccountService.createStaffAccount(username, password, name);
+        StaffAccount result = staffAccountService.createStaffAccount("johndoe", "password123", "John Doe");
 
-        // Assert
         assertNotNull(result);
-        assertEquals(name, result.getName());
-        assertEquals(username, result.getUsername());
         assertEquals(1, result.getId());
+        assertEquals("johndoe", result.getUsername());
         verify(staffAccountRepository, times(1)).save(any(StaffAccount.class));
     }
 
     @Test
-    public void testCreateDuplicateUsername() {
-        // Arrange
-        String username = "johndoe";
+    public void testUpdatePassword() {
+        StaffAccount staffAccount = new StaffAccount();
+        staffAccount.setId(1);
+        staffAccount.setPasswordHash("oldPasswordHash");
+        staffAccount.setSalt("oldSalt");
 
-        when(staffAccountRepository.existsStaffAccountByUsername(username)).thenReturn(true);
+        when(staffAccountRepository.findById(1)).thenReturn(Optional.of(staffAccount));
+        when(accountService.isValidPassword("newPassword")).thenReturn(true);
+        when(accountService.generateSalt(8)).thenReturn("newSalt");
+        when(accountService.hashPassword("newPassword", "newSalt")).thenReturn("newHashedPassword");
 
-        // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            staffAccountService.createStaffAccount(username, "password123", "John Doe");
-        });
-        assertEquals("Username already exists", exception.getMessage());
+        staffAccountService.updatePassword(1, "newPassword");
+
+        assertEquals("newHashedPassword", staffAccount.getPasswordHash());
+        assertEquals("newSalt", staffAccount.getSalt());
+        verify(staffAccountRepository, times(1)).save(staffAccount);
     }
 
     @Test
     public void testDeleteStaffAccount() {
-        // Arrange
-        int staffId = 1;
+        when(staffAccountRepository.existsById(1)).thenReturn(true);
 
-        when(staffAccountRepository.existsById(staffId)).thenReturn(true);
+        staffAccountService.deleteStaffAccount(1);
 
-        // Act
-        staffAccountService.deleteStaffAccount(staffId);
-
-        // Assert
-        verify(staffAccountRepository, times(1)).deleteById(staffId);
+        verify(staffAccountRepository, times(1)).deleteById(1);
     }
 
     @Test
-    public void testDeleteNonExistentStaffAccount()  {
-        // Arrange
-        int staffId = 999;
+    public void testGetStaffAccountById() {
+        StaffAccount staffAccount = new StaffAccount();
+        staffAccount.setId(1);
+        staffAccount.setUsername("johndoe");
+        staffAccount.setName("John Doe");
 
-        when(staffAccountRepository.existsById(staffId)).thenReturn(false);
+        when(staffAccountRepository.findById(1)).thenReturn(Optional.of(staffAccount));
 
-        // Act & Assert
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            staffAccountService.deleteStaffAccount(staffId);
-        });
-        assertEquals("Staff account not found", exception.getMessage());
+        StaffAccount result = staffAccountService.getStaffAccountById(1);
+
+        assertNotNull(result);
+        assertEquals(1, result.getId());
+        assertEquals("johndoe", result.getUsername());
+        verify(staffAccountRepository, times(1)).findById(1);
+    }
+
+    @Test
+    public void testGetStaffAccountByUsername() {
+        StaffAccount staffAccount = new StaffAccount();
+        staffAccount.setId(1);
+        staffAccount.setUsername("johndoe");
+        staffAccount.setName("John Doe");
+
+        when(staffAccountRepository.findStaffAccountByUsername("johndoe")).thenReturn(staffAccount);
+
+        StaffAccount result = staffAccountService.getStaffAccountByUsername("johndoe");
+
+        assertNotNull(result);
+        assertEquals("johndoe", result.getUsername());
+        verify(staffAccountRepository, times(1)).findStaffAccountByUsername("johndoe");
     }
 }

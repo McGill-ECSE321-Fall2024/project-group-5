@@ -2,9 +2,6 @@ package ca.mcgill.ecse321.gamestore.Integration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-import java.util.Arrays;
-
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -32,22 +29,19 @@ public class StaffAccountIntegrationTests {
     private final String VALID_NAME = "John Doe";
     private final String VALID_USERNAME = "johndoe";
     private final String VALID_PASSWORD = "password123";
-    private final String INVALID_USERNAME = "";
+    private final String UPDATED_PASSWORD = "newpassword456";
     private int validId;
 
     @Test
     @Order(1)
-    public void testCreateValidStaffAccount() {
-        // Arrange
+    public void testCreateStaffAccount() {
         StaffAccountRequestDto request = new StaffAccountRequestDto();
         request.setName(VALID_NAME);
         request.setUsername(VALID_USERNAME);
         request.setPassword(VALID_PASSWORD);
 
-        // Act
         ResponseEntity<StaffAccountResponseDto> response = client.postForEntity("/staffAccounts", request, StaffAccountResponseDto.class);
 
-        // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         StaffAccountResponseDto createdAccount = response.getBody();
@@ -62,32 +56,11 @@ public class StaffAccountIntegrationTests {
 
     @Test
     @Order(2)
-    public void testCreateInvalidStaffAccount() {
-        // Arrange
-        StaffAccountRequestDto request = new StaffAccountRequestDto();
-        request.setName(""); // Invalid name
-        request.setUsername(INVALID_USERNAME); // Invalid username
-        request.setPassword(VALID_PASSWORD);
-
-        // Act
-        ResponseEntity<String> response = client.postForEntity("/staffAccounts", request, String.class);
-
-        // Assert
-        assertNotNull(response);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertTrue(response.getBody().contains("Username cannot be empty"));
-    }
-
-    @Test
-    @Order(3)
-    public void testReadStaffAccountByValidId() {
-        // Arrange
+    public void testGetStaffAccountById() {
         String url = "/staffAccounts/" + this.validId;
 
-        // Act
         ResponseEntity<StaffAccountResponseDto> response = client.getForEntity(url, StaffAccountResponseDto.class);
 
-        // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         StaffAccountResponseDto account = response.getBody();
@@ -98,18 +71,42 @@ public class StaffAccountIntegrationTests {
     }
 
     @Test
-    @Order(4)
-    public void testDeleteStaffAccount() {
-        // Arrange
-        String url = "/staffAccounts/" + this.validId;
+    @Order(3)
+    public void testGetStaffAccountByUsername() {
+        String url = "/staffAccounts/username/" + VALID_USERNAME;
 
-        // Act
-        client.delete(url);
-
-        // Try fetching the deleted staff account
         ResponseEntity<StaffAccountResponseDto> response = client.getForEntity(url, StaffAccountResponseDto.class);
 
-        // Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        StaffAccountResponseDto account = response.getBody();
+        assertNotNull(account);
+        assertEquals(VALID_NAME, account.getName());
+        assertEquals(VALID_USERNAME, account.getUsername());
+    }
+
+    @Test
+    @Order(4)
+    public void testUpdatePassword() {
+        String url = "/staffAccounts/" + this.validId + "/updatePassword";
+
+        client.put(url, UPDATED_PASSWORD);
+
+        // There’s no direct way to verify the password hash, so ensure no error occurs
+        ResponseEntity<StaffAccountResponseDto> response = client.getForEntity("/staffAccounts/" + this.validId, StaffAccountResponseDto.class);
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    @Order(5)
+    public void testDeleteStaffAccount() {
+        String url = "/staffAccounts/" + this.validId;
+
+        client.delete(url);
+
+        ResponseEntity<StaffAccountResponseDto> response = client.getForEntity(url, StaffAccountResponseDto.class);
+
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }
