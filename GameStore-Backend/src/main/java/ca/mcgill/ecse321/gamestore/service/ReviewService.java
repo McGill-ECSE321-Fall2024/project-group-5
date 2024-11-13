@@ -1,17 +1,18 @@
 package ca.mcgill.ecse321.gamestore.service;
 
-import ca.mcgill.ecse321.gamestore.dao.CustomerAccountRepository;
-import ca.mcgill.ecse321.gamestore.dao.GameRepository;
-import ca.mcgill.ecse321.gamestore.dao.ReviewRepository;
-import ca.mcgill.ecse321.gamestore.model.Review;
-import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
-import ca.mcgill.ecse321.gamestore.model.Game;
-import jakarta.transaction.Transactional;
+import java.sql.Date;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
-import java.util.List;
+import ca.mcgill.ecse321.gamestore.dao.CustomerAccountRepository;
+import ca.mcgill.ecse321.gamestore.dao.GameRepository;
+import ca.mcgill.ecse321.gamestore.dao.ReviewRepository;
+import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
+import ca.mcgill.ecse321.gamestore.model.Game;
+import ca.mcgill.ecse321.gamestore.model.Review;
+import jakarta.transaction.Transactional;
 
 @Service
 public class ReviewService {
@@ -76,5 +77,12 @@ public class ReviewService {
         review.setLikeCount(likeCount);
         review.setDislikeCount(dislikeCount);
         return reviewRepository.save(review);
+    }
+
+    @Transactional
+    public void deleteReview(int reviewId){
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("Review not found"));
+        reviewRepository.deleteById(reviewId);
     }
 }
