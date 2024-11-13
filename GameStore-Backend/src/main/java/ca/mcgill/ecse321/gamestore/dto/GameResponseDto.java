@@ -6,7 +6,7 @@ import ca.mcgill.ecse321.gamestore.model.Game;
 public class GameResponseDto {
 
     public enum CategoryResDto {
-        Horror, Puzzle, Action, ActionjAdventure, Sports, Strategy, RPG, Multiplayer, Simulation, Survival, Party, Shooter,
+        Horror, Puzzle, Action, ActionAdventure, Sports, Strategy, RPG, Multiplayer, Simulation, Survival, Party, Shooter,
         Casual, Platformer, BattleRoyale, Sandbox, MMO
     }
     
