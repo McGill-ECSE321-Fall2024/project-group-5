@@ -16,11 +16,13 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class AccountService {
+
     @Autowired
     private CustomerAccountRepository customerAccountRepository;
 
     @Autowired
     private StaffAccountRepository staffAccountRepository;
+
 
     /**
      * Generates a random salt of wanted length
@@ -80,7 +82,7 @@ public class AccountService {
         if (!hasUpperCase(password)) {
             return "Password must have at least one upper case letter";
         }
-        if (password.trim().length() != password.length()) {
+        if (password.contains(" ")) {
             return "Password must not contain a space";
         }
         return "";
@@ -258,13 +260,8 @@ public class AccountService {
      *         false if username is taken
      */
     public boolean checkUsernameAvailability(String username) {
-        CustomerAccount customerAccount = customerAccountRepository.findByUsername(username);
-        StaffAccount staffAccount = staffAccountRepository.findStaffAccountByUsername(username);
-        if (customerAccount == null && staffAccount == null) {
-            return true;
-        } else {
-            return false;
-        }
+        return customerAccountRepository.findByUsername(username) == null
+                && staffAccountRepository.findStaffAccountByUsername(username) == null;
     }
 
 }

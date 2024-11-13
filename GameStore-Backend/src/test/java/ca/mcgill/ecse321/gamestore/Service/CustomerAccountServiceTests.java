@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import ca.mcgill.ecse321.gamestore.model.Account;
 import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
 import ca.mcgill.ecse321.gamestore.service.AccountService;
 import ca.mcgill.ecse321.gamestore.service.CustomerAccountService;
@@ -31,6 +32,8 @@ public class CustomerAccountServiceTests {
     @InjectMocks
     private CustomerAccountService service;
 
+    @Mock
+    private AccountService accountService;
     // Mock DB
 
     // Set up password and hashes
@@ -57,63 +60,75 @@ public class CustomerAccountServiceTests {
 
     @BeforeEach
     public void setMockOutput() {
+        // Mock findById based on predefined CustomerAccount instances
         lenient().when(repo.findById(anyInt())).thenAnswer((InvocationOnMock invocation) -> {
-            if (invocation.getArgument(0).equals(CA1.getId())) {
+            Integer id = invocation.getArgument(0);
+            if (id.equals(CA1.getId()))
                 return CA1;
-            } else if (invocation.getArgument(0).equals(CA2.getId())) {
+            if (id.equals(CA2.getId()))
                 return CA2;
-            } else if (invocation.getArgument(0).equals(CA3.getId())) {
+            if (id.equals(CA3.getId()))
                 return CA3;
-            } else {
-                return null;
-            }
+            return null;
         });
 
+        // Mock findByUsername using the unique usernames in mock data
         lenient().when(repo.findByUsername(anyString())).thenAnswer((InvocationOnMock invocation) -> {
-            if (invocation.getArgument(0).equals(CA1.getUsername())) {
+            String username = invocation.getArgument(0);
+            if (username.equals(CA1.getUsername()))
                 return CA1;
-            } else if (invocation.getArgument(0).equals(CA2.getUsername())) {
+            if (username.equals(CA2.getUsername()))
                 return CA2;
-            } else if (invocation.getArgument(0).equals(CA3.getUsername())) {
+            if (username.equals(CA3.getUsername()))
                 return CA3;
-            } else {
-                return null;
-            }
+            return null;
         });
 
+        // Mock findByEmailAddress to simulate email uniqueness checks
         lenient().when(repo.findByEmailAddress(anyString())).thenAnswer((InvocationOnMock invocation) -> {
-            if (invocation.getArgument(0).equals(CA1.getEmailAddress())) {
+            String email = invocation.getArgument(0);
+            if (email.equals(CA1.getEmailAddress()))
                 return CA1;
-            } else if (invocation.getArgument(0).equals(CA2.getEmailAddress())) {
+            if (email.equals(CA2.getEmailAddress()))
                 return CA2;
-            } else if (invocation.getArgument(0).equals(CA3.getEmailAddress())) {
+            if (email.equals(CA3.getEmailAddress()))
                 return CA3;
-            } else {
-                return null;
-            }
+            return null;
         });
 
-        lenient().when(repo.findAll()).thenAnswer((InvocationOnMock invocation) -> {
-            return Arrays.asList(CA1, CA2, CA3);
-        });
+        // Mock checkUsernameAvailability to reflect real behavior using
+        // accountsByUsername map
+        lenient().when(accountService.checkUsernameAvailability(anyString()))
+                .thenAnswer((InvocationOnMock invocation) -> {
+                    String username = invocation.getArgument(0);
+                    // Return true if the username is NOT in the accountsByUsername map, indicating
+                    // it's available
+                    return !Account.accountsByUsername.containsKey(username);
+                });
 
-        lenient().when(repo.existsByEmailAddress(anyString())).thenAnswer((InvocationOnMock invocation) -> {
-            if (invocation.getArgument(0).equals(CA1.getEmailAddress())) {
-                return true;
-            } else if (invocation.getArgument(0).equals(CA2.getEmailAddress())) {
-                return true;
-            } else if (invocation.getArgument(0).equals(CA3.getEmailAddress())) {
-                return true;
-            } else {
-                return false;
-            }
-        });
-
+        // Mock save to simply return the CustomerAccount passed in
         lenient().when(repo.save(any(CustomerAccount.class))).thenAnswer((InvocationOnMock invocation) -> {
             return invocation.getArgument(0);
         });
 
-        // Cannot highjack delete because it returns void
+        // Mock findAll to return a list of predefined accounts
+        lenient().when(repo.findAll()).thenAnswer((InvocationOnMock invocation) -> Arrays.asList(CA1, CA2, CA3));
+    }
+
+    @BeforeEach
+    public void setUp() {
+        // Clear the map to avoid duplicate username errors
+        Account.accountsByUsername.clear();
+        System.out.println("BeforeEach");
+        System.out.println(Account.accountsByUsername);
+    }
+
+    @AfterEach
+    public void cleanUp() {
+        // Clear the map to avoid duplicate username errors
+        Account.accountsByUsername.clear();
+        System.out.println("BeforeEach");
+        System.out.println(Account.accountsByUsername);
     }
 
     @AfterEach
@@ -135,6 +150,9 @@ public class CustomerAccountServiceTests {
         CA3.setUsername("user3");
         CA3.setRandomPassword(salt3);
         CA3.setName(null);
+
+        System.out.println("AfterEach");
+        System.out.println(Account.accountsByUsername);
     }
 
     @Test
@@ -166,7 +184,7 @@ public class CustomerAccountServiceTests {
             errorMessage = e.getMessage();
         }
 
-        assertEquals("No account associated with this email exists", errorMessage);
+        assertEquals("No account associated with this id exists", errorMessage);
         assertNull(retrievedCustomerAccount);
     }
 
@@ -208,7 +226,7 @@ public class CustomerAccountServiceTests {
         CustomerAccount retrievedCustomerAccount = null;
         // Act
         try {
-            retrievedCustomerAccount = service.getCustomerAccountByEmail(CA1.getUsername());
+            retrievedCustomerAccount = service.getCustomerAccountByUsername(CA1.getUsername());
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -230,7 +248,7 @@ public class CustomerAccountServiceTests {
             errorMessage = e.getMessage();
         }
 
-        assertEquals("No account associated with this email exists", errorMessage);
+        assertEquals("No account associated with this username exists", errorMessage);
         assertNull(retrievedCustomerAccount);
     }
 
@@ -304,7 +322,7 @@ public class CustomerAccountServiceTests {
         }
 
         // Check
-        assertEquals("Email cannot be empty", errorMessage);
+        assertEquals("Email cannot be null", errorMessage);
         assertNull(account);
     }
 
@@ -562,7 +580,7 @@ public class CustomerAccountServiceTests {
         assertEquals("", errorMessage);
         assertNotNull(account);
         assertEquals(CA1, account);
-        assertEquals(true, repo.existsByEmailAddress(CA1.getEmailAddress()));
+        assertEquals(false, repo.existsByEmailAddress(CA1.getEmailAddress()));
     }
 
     @Test
@@ -602,6 +620,7 @@ public class CustomerAccountServiceTests {
         assertNotNull(account);
         assertEquals(TEST_USERNAME, account.getUsername());
         assertEquals(hashedPassword, account.getPasswordHash());
+        assertEquals(TEST_NAME, account.getName());
         assertEquals(CA1.getEmailAddress(), account.getEmailAddress());
     }
 

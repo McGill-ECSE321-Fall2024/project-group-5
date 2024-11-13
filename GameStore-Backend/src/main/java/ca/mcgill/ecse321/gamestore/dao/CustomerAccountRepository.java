@@ -10,7 +10,7 @@ public interface CustomerAccountRepository extends CrudRepository<CustomerAccoun
     // Custom query to find a CustomerAccount by email
     CustomerAccount findByEmailAddress(String emailAddress);
 
-    CustomerAccount existsByEmailAddress(String emailAddress);
+    boolean existsByEmailAddress(String emailAddress);
 
     // Custom query to find a CustomerAccount by name
     CustomerAccount findByUsername(String username);
