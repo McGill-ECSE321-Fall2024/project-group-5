@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
@@ -61,7 +61,7 @@ public class CustomerAccountServiceTests {
     @BeforeEach
     public void setMockOutput() {
         // Mock findById based on predefined CustomerAccount instances
-        lenient().when(repo.findById(anyInt())).thenAnswer((InvocationOnMock invocation) -> {
+        when(repo.findById(anyInt())).thenAnswer((InvocationOnMock invocation) -> {
             Integer id = invocation.getArgument(0);
             if (id.equals(CA1.getId()))
                 return CA1;
@@ -73,7 +73,7 @@ public class CustomerAccountServiceTests {
         });
 
         // Mock findByUsername using the unique usernames in mock data
-        lenient().when(repo.findByUsername(anyString())).thenAnswer((InvocationOnMock invocation) -> {
+        when(repo.findByUsername(anyString())).thenAnswer((InvocationOnMock invocation) -> {
             String username = invocation.getArgument(0);
             if (username.equals(CA1.getUsername()))
                 return CA1;
@@ -85,7 +85,7 @@ public class CustomerAccountServiceTests {
         });
 
         // Mock findByEmailAddress to simulate email uniqueness checks
-        lenient().when(repo.findByEmailAddress(anyString())).thenAnswer((InvocationOnMock invocation) -> {
+        when(repo.findByEmailAddress(anyString())).thenAnswer((InvocationOnMock invocation) -> {
             String email = invocation.getArgument(0);
             if (email.equals(CA1.getEmailAddress()))
                 return CA1;
@@ -98,7 +98,7 @@ public class CustomerAccountServiceTests {
 
         // Mock checkUsernameAvailability to reflect real behavior using
         // accountsByUsername map
-        lenient().when(accountService.checkUsernameAvailability(anyString()))
+        when(accountService.checkUsernameAvailability(anyString()))
                 .thenAnswer((InvocationOnMock invocation) -> {
                     String username = invocation.getArgument(0);
                     // Return true if the username is NOT in the accountsByUsername map, indicating
@@ -107,12 +107,12 @@ public class CustomerAccountServiceTests {
                 });
 
         // Mock save to simply return the CustomerAccount passed in
-        lenient().when(repo.save(any(CustomerAccount.class))).thenAnswer((InvocationOnMock invocation) -> {
+        when(repo.save(any(CustomerAccount.class))).thenAnswer((InvocationOnMock invocation) -> {
             return invocation.getArgument(0);
         });
 
         // Mock findAll to return a list of predefined accounts
-        lenient().when(repo.findAll()).thenAnswer((InvocationOnMock invocation) -> Arrays.asList(CA1, CA2, CA3));
+        when(repo.findAll()).thenAnswer((InvocationOnMock invocation) -> Arrays.asList(CA1, CA2, CA3));
     }
 
     @BeforeEach
@@ -795,7 +795,7 @@ public class CustomerAccountServiceTests {
     }
 
     @Test
-    public void testUpdateCustomerAccount_duplicateUsername() {
+    public void testUpdateCustomerAccount_duplicateUsername() throws Exception {
         String errorMessage = "";
         CustomerAccount account = null;
 
