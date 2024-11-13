@@ -86,10 +86,10 @@ public class GameService {
         Game game = gameRepository.findById(id);
         if (game == null) {
             throw new Exception("No game exists with this ID: " + id);
-        } else {
-            return game;
         }
+        return game;
     }
+    
 
     /**
      * Find Game by name

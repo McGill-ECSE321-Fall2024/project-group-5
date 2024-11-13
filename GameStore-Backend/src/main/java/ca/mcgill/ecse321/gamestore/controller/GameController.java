@@ -20,7 +20,6 @@ import ca.mcgill.ecse321.gamestore.dto.GameResponseDto;
 import ca.mcgill.ecse321.gamestore.model.Game;
 import ca.mcgill.ecse321.gamestore.service.GameService;
 
-
 @RestController
 @RequestMapping("/api/games")
 public class GameController {
@@ -30,38 +29,36 @@ public class GameController {
 
     /**
      * POST: Create a new game
-     * Endpoint: /api/games/create
-     */ 
-    @PostMapping("/create")
-    public GameResponseDto createGame(@RequestBody GameRequestDto gameRequestDto) {
+     * Endpoint: /api/games
+     */
+    @PostMapping("/newgame")
+    public ResponseEntity<GameResponseDto> createGame(@RequestBody GameRequestDto gameRequestDto) {
         Game game = gameService.addGame(
             gameRequestDto.getName(),
             gameRequestDto.getPrice(),
             gameRequestDto.getDescription(),
-            Game.Category.valueOf(gameRequestDto.getCategory().name()),  // Convert CategoryReqDto to Game.Category
-            Game.GameConsole.valueOf(gameRequestDto.getGameConsole().name()),  // Convert GameConsoleReqDto to Game.GameConsole
+            Game.Category.valueOf(gameRequestDto.getCategory().name()),
+            Game.GameConsole.valueOf(gameRequestDto.getGameConsole().name()),
             gameRequestDto.isInCatalog()
         );
-        
-        // Return a GameResponseDto wrapping the newly created Game
-        return new GameResponseDto(game);
+        return new ResponseEntity<>(new GameResponseDto(game), HttpStatus.CREATED);
     }
-
-
 
     /**
      * GET: Retrieve a game by ID
      * Endpoint: /api/games/{id}
-     */
+    */
     @GetMapping("/get/{id}")
     public ResponseEntity<GameResponseDto> getGameById(@PathVariable int id) {
         try {
             Game game = gameService.getGameById(id);
-            return new ResponseEntity<>(new GameResponseDto(game), HttpStatus.OK); // Return GameResponseDto
+            return new ResponseEntity<>(new GameResponseDto(game), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            e.printStackTrace();  // Log the stack trace for debugging
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);  // Return 500 if something goes wrong
         }
     }
+          
 
     /**
      * GET: Retrieve all games
@@ -83,17 +80,16 @@ public class GameController {
     @PutMapping("/update/{id}")
     public ResponseEntity<GameResponseDto> updateGame(@PathVariable int id, @RequestBody GameRequestDto gameRequestDto) {
         try {
-            // Convert DTO enums to entity enums
             Game updatedGame = gameService.updateGame(
                 id,
                 gameRequestDto.getName(),
                 gameRequestDto.getPrice(),
                 gameRequestDto.getDescription(),
-                Game.Category.valueOf(gameRequestDto.getCategory().name()),  // Convert CategoryReqDto to Game.Category
-                Game.GameConsole.valueOf(gameRequestDto.getGameConsole().name()),  // Convert GameConsoleReqDto to Game.GameConsole
+                Game.Category.valueOf(gameRequestDto.getCategory().name()),
+                Game.GameConsole.valueOf(gameRequestDto.getGameConsole().name()),
                 gameRequestDto.isInCatalog()
             );
-            return new ResponseEntity<>(new GameResponseDto(updatedGame), HttpStatus.OK); // Return GameResponseDto
+            return new ResponseEntity<>(new GameResponseDto(updatedGame), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
