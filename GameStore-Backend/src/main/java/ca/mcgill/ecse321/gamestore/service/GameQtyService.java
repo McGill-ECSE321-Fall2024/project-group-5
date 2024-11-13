@@ -42,7 +42,7 @@ public class GameQtyService {
     public GameQty getGameQtyById(int id) {
         GameQty gameQty = gameQtyRepository.findById(id);
         if (gameQty == null) {
-            throw new IllegalArgumentException("No Qty with this Id exists.");
+            throw new IllegalArgumentException("Game quantity not found for this id.");
         }
         return gameQty;
     }
@@ -51,9 +51,6 @@ public class GameQtyService {
     public List<GameQty> getGameQtiesByTransactionId(int transactionId) {
         List<GameQty> gameQties = new ArrayList<>();
         gameQtyRepository.findByTransaction_TransactionId(transactionId).forEach(gameQties::add);
-        if (gameQties == null || gameQties.isEmpty()) {
-            throw new IllegalArgumentException("No GameQties associated with this Transaction.");
-        }
         return gameQties;
     }
 
@@ -61,7 +58,7 @@ public class GameQtyService {
     public GameQty deleteGameQty(int id) {
         GameQty gameQty = gameQtyRepository.findById(id);
         if (gameQty == null) {
-            throw new IllegalArgumentException("GameQty object does not exist for this Id.");
+            throw new IllegalArgumentException("Game quantity not found for this id.");
         }
 
         gameQtyRepository.delete(gameQty);

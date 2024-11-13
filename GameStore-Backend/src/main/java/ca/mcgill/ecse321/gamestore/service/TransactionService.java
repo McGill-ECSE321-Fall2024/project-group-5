@@ -47,9 +47,6 @@ public class TransactionService {
     public List<Transaction> getTransactionsByCustomerId(int customerId) {
         List<Transaction> transactions = new ArrayList<>();
         transactionRepository.findByCustomerAccount_Id(customerId).forEach(transactions::add);
-        if (transactions == null || transactions.isEmpty()) {
-            throw new IllegalArgumentException("No transactions associated with this customer.");
-        }
         return transactions;
     }
 
@@ -57,9 +54,6 @@ public class TransactionService {
     public List<Transaction> getTransactionsByIsPaid(boolean isPaid) {
         List<Transaction> transactions = new ArrayList<>();
         transactionRepository.findByIsPaid(isPaid).forEach(transactions::add);
-        if (transactions == null || transactions.isEmpty()) {
-            throw new IllegalArgumentException("No unpaid transactions.");
-        }
         return transactions;
     }
 
@@ -67,9 +61,6 @@ public class TransactionService {
     public List<Transaction> getTransactionsByDeliveryStatus(boolean deliveryStatus) {
         List<Transaction> transactions = new ArrayList<>();
         transactionRepository.findByDeliveryStatus(deliveryStatus).forEach(transactions::add);
-        if (transactions == null || transactions.isEmpty()) {
-            throw new IllegalArgumentException("No undelivered transactions.");
-        }
         return transactions;
     }
 
@@ -77,7 +68,7 @@ public class TransactionService {
     public Transaction deleteTransaction(int id) {
         Transaction transaction = transactionRepository.findTransactiontByTransactionId(id);
         if (transaction == null) {
-            throw new IllegalArgumentException("No transaction for this id.");
+            throw new IllegalArgumentException("Transaction not found for this Id.");
         }
 
         transactionRepository.delete(transaction);
