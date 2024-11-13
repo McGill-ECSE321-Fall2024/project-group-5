@@ -29,7 +29,7 @@ public class GameController {
 
     /**
      * POST: Create a new game
-     * Endpoint: /api/games
+     * Endpoint: /api/games/newgame
      */
     @PostMapping("/newgame")
     public ResponseEntity<GameResponseDto> createGame(@RequestBody GameRequestDto gameRequestDto) {
@@ -46,23 +46,30 @@ public class GameController {
 
     /**
      * GET: Retrieve a game by ID
-     * Endpoint: /api/games/{id}
+     * Endpoint: /api/games/get/{id}
+    * @throws Exception 
     */
     @GetMapping("/get/{id}")
-    public ResponseEntity<GameResponseDto> getGameById(@PathVariable int id) {
-        try {
-            Game game = gameService.getGameById(id);
-            return new ResponseEntity<>(new GameResponseDto(game), HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();  // Log the stack trace for debugging
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);  // Return 500 if something goes wrong
+    public ResponseEntity<GameResponseDto> getGameById(@PathVariable int id) throws Exception {
+    // Game game = gameService.getGameById(id);
+    // return new ResponseEntity<>(new GameResponseDto(game), HttpStatus.OK);
+    try {
+        Game game = gameService.getGameById(id);
+        if (game == null) {  // Check if the game is null and return NOT_FOUND
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        return new ResponseEntity<>(new GameResponseDto(game), HttpStatus.OK);
+    } catch (Exception e) {
+        e.printStackTrace();  // Log stack trace for debugging
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);  // Return 500 if something goes wrong
     }
+}
+
           
 
     /**
      * GET: Retrieve all games
-     * Endpoint: /api/games
+     * Endpoint: /api/games/get/allgames
      */
     @GetMapping("/get/allgames")
     public ResponseEntity<List<GameResponseDto>> getAllGames() {
@@ -75,7 +82,7 @@ public class GameController {
 
     /**
      * PUT: Update an existing game by ID
-     * Endpoint: /api/games/{id}
+     * Endpoint: /api/games//update/{id}
      */
     @PutMapping("/update/{id}")
     public ResponseEntity<GameResponseDto> updateGame(@PathVariable int id, @RequestBody GameRequestDto gameRequestDto) {
@@ -97,7 +104,7 @@ public class GameController {
 
     /**
      * DELETE: Delete a game by ID
-     * Endpoint: /api/games/{id}
+     * Endpoint: /api/games/delete/{id}
      */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteGame(@PathVariable int id) {
@@ -108,6 +115,7 @@ public class GameController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
 
     /**
      * GET: Retrieve games by category

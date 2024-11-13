@@ -84,9 +84,9 @@ public class GameService {
      */
     public Game getGameById(int id) throws Exception {
         Game game = gameRepository.findById(id);
-        if (game == null) {
-            throw new Exception("No game exists with this ID: " + id);
-        }
+        // if (game == null) {
+        //     throw new Exception("No game exists with this ID: " + id);
+        // }
         return game;
     }
     
@@ -176,12 +176,12 @@ public class GameService {
      */
     @Transactional
     public void deleteGameById(int id) throws Exception {
-        Game game = getGameById(id); // Ensure game exists before deleting
-        if (game == null) {
-            throw new IllegalArgumentException("No game exist for this id.");
+        if (!gameRepository.existsById(id)) {
+            throw new Exception("Game not found with ID: " + id);
         }
         gameRepository.deleteById(id);
     }
+    
 
     /**
      * Helper method to validate game details
