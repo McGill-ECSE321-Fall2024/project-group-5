@@ -14,7 +14,7 @@ public class Game {
   // ------------------------
 
   public enum Category {
-    Horror, Puzzle, Action, ActionjAdventure, Sports, Strategy, RPG, Multiplayer, Simulation, Survival, Party, Shooter,
+    Horror, Puzzle, Action, ActionAdventure, Sports, Strategy, RPG, Multiplayer, Simulation, Survival, Party, Shooter,
     Casual, Platformer, BattleRoyale, Sandbox, MMO
   }
 
@@ -58,6 +58,13 @@ public class Game {
   // INTERFACE
   // ------------------------
 
+  public boolean setId(int aId) {
+    boolean wasSet = false;
+    id = aId;
+    wasSet = true;
+    return wasSet;
+  }
+  
   public boolean setName(String aName) {
     boolean wasSet = false;
     name = aName;

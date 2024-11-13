@@ -5,7 +5,7 @@ import java.util.List;
 public class GameRequestDto {
 
     public enum CategoryReqDto {
-        Horror, Puzzle, Action, ActionjAdventure, Sports, Strategy, RPG, Multiplayer, Simulation, Survival, Party, Shooter,
+        Horror, Puzzle, Action, ActionAdventure, Sports, Strategy, RPG, Multiplayer, Simulation, Survival, Party, Shooter,
         Casual, Platformer, BattleRoyale, Sandbox, MMO
     }
     
