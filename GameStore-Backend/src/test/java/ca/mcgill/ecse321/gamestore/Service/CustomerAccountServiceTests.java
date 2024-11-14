@@ -111,10 +111,9 @@ public class CustomerAccountServiceTests {
             return invocation.getArgument(0);
         });
 
-        // Mock findAll to return a list of predefined accounts
-        when(repo.findAll()).thenAnswer((InvocationOnMock invocation) -> Arrays.asList(CA1, CA2, CA3));
     }
 
+        // 
     @BeforeEach
     public void setUp() {
         // Clear the map to avoid duplicate username errors
