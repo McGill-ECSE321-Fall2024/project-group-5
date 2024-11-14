@@ -121,7 +121,7 @@ public class GameController {
      * PUT: Update an existing game by ID
      * Endpoint: /api/games//update/{id}
      */
-    @PutMapping("/updategame/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<String> updateGame(@PathVariable int id, @RequestBody GameRequestDto gameRequestDto) {
         // Validate each field before calling the service
         if (gameRequestDto.getName() == null || gameRequestDto.getName().isEmpty()) {
