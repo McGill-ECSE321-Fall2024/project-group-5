@@ -34,6 +34,10 @@ tasks.named('test') {
 	}
 	finalizedBy jacocoTestCoverageVerification
 }
+
+tasks.named('jacocoTestReport') {
+    //dependsOn test // tests are required to run before generating the report
+}
 tasks.named('jacocoTestCoverageVerification') {
 	violationRules {
 		rule {
@@ -43,4 +47,46 @@ tasks.named('jacocoTestCoverageVerification') {
 		}
 	}
 	//dependsOn test // tests are required to run before checking code coverage.
+}
+
+tasks.register('integrationTests', Test) {
+	description = 'Runs the integration tests.'
+	group = 'verification'
+	useJUnitPlatform()
+	testLogging {
+		exceptionFormat "full"
+		events "passed", "failed", "skipped"
+	}
+
+	include '**/Integration/**'
+
+	finalizedBy jacocoTestCoverageVerification
+}
+
+tasks.register('serviceTests', Test) {
+	description = 'Runs the integration tests.'
+	group = 'verification'
+	useJUnitPlatform()
+	testLogging {
+		exceptionFormat "full"
+		events "passed", "failed", "skipped"
+	}
+
+	include '**/Service/**'
+
+	finalizedBy jacocoTestCoverageVerification
+}
+
+tasks.register('repositoryTests', Test) {
+	description = 'Runs the integration tests.'
+	group = 'verification'
+	useJUnitPlatform()
+	testLogging {
+		exceptionFormat "full"
+		events "passed", "failed", "skipped"
+	}
+
+	include '**/Repository/**'
+
+	finalizedBy jacocoTestCoverageVerification
 }
