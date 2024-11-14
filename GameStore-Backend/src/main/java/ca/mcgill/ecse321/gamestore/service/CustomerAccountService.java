@@ -280,7 +280,8 @@ public class CustomerAccountService {
     public CustomerAccount updateCustomerAccount(int aId, String aUsername, String aPassword, String aName)
             throws Exception {
         // check for duplicate username
-        if (!accountService.checkUsernameAvailability(aUsername)) {
+        if (!accountService.checkUsernameAvailability(aUsername)
+                || !(customerAccountRepository.findByUsername(aUsername) == null)) {
             throw new Exception("An account with this username already exits");
         }
         // Attempt to update account

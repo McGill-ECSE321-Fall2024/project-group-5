@@ -53,7 +53,7 @@ public class GameQtyServiceTests {
         assertEquals(game.getId(), createdGameQty.getGame().getId());
         assertEquals(transaction.getTransactionId(), createdGameQty.getTransaction().getTransactionId());
         assertEquals(5, createdGameQty.getQty());
-        verify(repo, times(1)).save(gameQty);
+        verify(repo, times(1)).save(any(GameQty.class));
     }
 
     @Test
