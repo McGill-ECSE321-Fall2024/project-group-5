@@ -56,7 +56,7 @@ public class GameController {
 
         try {
             // If all checks pass, create the game
-            Game game = gameService.addGame(
+            gameService.addGame(
                 gameRequestDto.getName(),
                 gameRequestDto.getPrice(),
                 gameRequestDto.getDescription(),
@@ -64,6 +64,8 @@ public class GameController {
                 Game.GameConsole.valueOf(gameRequestDto.getGameConsole().name()),
                 gameRequestDto.isInCatalog()
             );
+
+          
 
             // Return the created game with status CREATED (201)
             return new ResponseEntity<>("Game created successfully", HttpStatus.CREATED);
@@ -144,7 +146,7 @@ public class GameController {
 
         try {
             // If all checks pass, update the game
-            Game updatedGame = gameService.updateGame(
+            gameService.updateGame(
                 id,
                 gameRequestDto.getName(),
                 gameRequestDto.getPrice(),
