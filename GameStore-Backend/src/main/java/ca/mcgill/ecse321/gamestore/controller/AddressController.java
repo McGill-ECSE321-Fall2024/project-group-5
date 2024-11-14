@@ -14,14 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/addresses")  // Base URL for Address-related endpoints
+@RequestMapping("/addresses") // Base URL for Address-related endpoints
 public class AddressController {
 
     @Autowired
     private AddressService addressService;
 
     // Get all addresses
-    @GetMapping
+    @GetMapping("/get")
     public ResponseEntity<List<AddressResponseDto>> getAllAddresses() {
         Iterable<Address> addresses = addressService.getAllAddresses();
         List<AddressResponseDto> addressDtos = new ArrayList<>();
@@ -32,7 +32,7 @@ public class AddressController {
     }
 
     // Get address by ID
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public ResponseEntity<AddressResponseDto> getAddressById(@PathVariable("id") int id) {
         Address address = addressService.getAddressById(id);
         if (address == null) {
@@ -43,7 +43,7 @@ public class AddressController {
     }
 
     // Create a new address
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<AddressResponseDto> createAddress(@RequestBody AddressRequestDto addressRequestDto) {
         Address address = new Address();
         address.setAddress(addressRequestDto.getAddress());
@@ -58,7 +58,7 @@ public class AddressController {
     }
 
     // Update an existing address
-    @PutMapping("/{id}")
+    @PutMapping("update/{id}")
     public ResponseEntity<AddressResponseDto> updateAddress(
             @PathVariable("id") int id,
             @RequestBody AddressRequestDto addressRequestDto) {
@@ -78,7 +78,7 @@ public class AddressController {
     }
 
     // Delete an address
-    @DeleteMapping("/{id}")
+    @DeleteMapping("delete/{id}")
     public ResponseEntity<Void> deleteAddress(@PathVariable("id") int id) {
         boolean isDeleted = addressService.deleteAddress(id);
         if (isDeleted) {
@@ -87,5 +87,5 @@ public class AddressController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    
+
 }
