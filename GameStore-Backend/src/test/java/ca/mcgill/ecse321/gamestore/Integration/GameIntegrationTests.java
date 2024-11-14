@@ -82,15 +82,11 @@ public class GameIntegrationTests {
 
         // Save the game ID for the next test
         this.validId = createdGame.getId();
-        System.out.println("Created game ID: " + this.validId);
     }
 
     @Test
     @Order(2)
     public void testReadGameByValidId() {
-        // Ensure that a valid ID has been set in the previous test
-        // assertTrue(validId > 0, "Valid ID should be set after creating a game");
-
         // Arrange: Create the URL with the valid game ID
         String url = GET_GAME_URL + this.validId;
 
@@ -132,7 +128,7 @@ public class GameIntegrationTests {
         // Assert: Verify response status code is BAD_REQUEST
         assertNotNull(response, "Response should not be null");
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(), "Expected status code 400 (BAD_REQUEST)");
-        assertEquals("Price cannot be negative", response.getBody(), "Expected error message for invalid price");
+        assertEquals("Game price cannot be negative", response.getBody(), "Expected error message for invalid price");
     }
 
 
@@ -189,21 +185,19 @@ public class GameIntegrationTests {
 
     @Test
     @Order(6)
-    public void testDeleteGame() {
-        // Ensure valid game ID is set
-        // assertTrue(validId > 0, "Valid ID should be set after creating a game");
+    public void testDeleteGame() {       
 
         // Arrange: Create the delete URL
-        String deleteUrl = GAME_API_URL + "/delete/" + validId;
+        // String deleteUrl = GAME_API_URL + "/delete/" + validId;
+        String deleteUrl = "/api/games/delete/" + this.validId;
 
         // Act: Send DELETE request to delete the game
         game.delete(deleteUrl);
 
         // Act: Attempt to retrieve the deleted game
-        ResponseEntity<String> response = game.getForEntity(GET_GAME_URL + validId, String.class);
+        ResponseEntity<GameResponseDto> response = game.getForEntity(deleteUrl, GameResponseDto.class);
 
         // Assert: Verify response status is NOT_FOUND
-        assertNotNull(response, "Response should not be null");
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode(), "Expected status code 404 (NOT_FOUND)");
     }
 

@@ -31,9 +31,10 @@ public class GameServiceTests {
     private GameService service;
 
     @Test
-    public void testCreateValidGame() {
+    public void testCreateValidGame() throws Exception {
         // Arrange
         Game game = new Game();
+        // game.setId(1);
         game.setName("Test Game");
         game.setPrice(50);
         game.setDescription("Description for Test Game");
@@ -118,12 +119,13 @@ public class GameServiceTests {
         game.setId(id);
         game.setName("Test Game");
         game.setPrice(50);
+        
 
         when(repo.findById(id)).thenReturn(game);
         when(repo.save(any(Game.class))).thenReturn(game);
 
         // Act
-        Game updatedGame = service.updateGame(id, "Updated Game", 70, "Updated Description", Category.ActionAdventure, GameConsole.XBoxSeriesS, false);
+        Game updatedGame = service.updateGame(id, "Updated Game", 70, "Updated Description", Category.ActionAdventure, GameConsole.XBoxSeriesS, true);
 
         // Assert
         assertNotNull(updatedGame);
@@ -134,25 +136,27 @@ public class GameServiceTests {
     }
 
     @Test
-    public void testDeleteGameByValidId() throws Exception {
+    public void testDeleteGameByValidId() {
         // Arrange
-        int id = 1;
-        Game game = new Game();
-        game.setId(id);
-
-        when(repo.findById(id)).thenReturn(game);
-
+        int validId = 1;
+        Game game = new Game(); // Assuming you have a Game class, populate it if necessary
+        game.setId(validId);
+        
+        when(repo.findById(validId)).thenReturn(game); // Simulate finding the game
+        when(repo.existsById(validId)).thenReturn(true); // Simulate that the game exists
+        
         // Act
-        service.deleteGameById(id);
-
+        service.deleteGameById(validId);
+        
         // Assert
-        verify(repo, times(1)).deleteById(id);
+        verify(repo, times(1)).delete(game); // Verify that delete was called exactly once
     }
+
 
     @Test
     public void testDeleteGameByInvalidId() {
         // Arrange
-        int id = 999;
+        int id = -999;
         when(repo.findById(id)).thenReturn(null);
 
         // Act and Assert
@@ -161,66 +165,66 @@ public class GameServiceTests {
     }
 
     @Test
-public void testGetGamesByPartialName() {
-    // Arrange
-    String partialName = "Test";
-    List<Game> games = new ArrayList<>();
-    Game game = new Game();
-    game.setName("Test Game");
-    games.add(game);
+    public void testGetGamesByPartialName() {
+        // Arrange
+        String partialName = "Test";
+        List<Game> games = new ArrayList<>();
+        Game game = new Game();
+        game.setName("Test Game");
+        games.add(game);
 
-    when(repo.findByNameContaining(partialName)).thenReturn(games);
+        when(repo.findByNameContaining(partialName)).thenReturn(games);
 
-    // Act
-    List<Game> foundGames = service.getGamesByPartialName(partialName);
+        // Act
+        List<Game> foundGames = service.getGamesByPartialName(partialName);
 
-    // Assert
-    assertNotNull(foundGames);
-    assertEquals(1, foundGames.size());
-    assertEquals("Test Game", foundGames.get(0).getName());
-    verify(repo, times(1)).findByNameContaining(partialName);
-}
+        // Assert
+        assertNotNull(foundGames);
+        assertEquals(1, foundGames.size());
+        assertEquals("Test Game", foundGames.get(0).getName());
+        verify(repo, times(1)).findByNameContaining(partialName);
+    }
 
-@Test
-public void testGetGamesByCategory() {
-    // Arrange
-    Category category = Category.Action;
-    List<Game> games = new ArrayList<>();
-    Game game = new Game();
-    game.setCategory(category);
-    games.add(game);
+    @Test
+    public void testGetGamesByCategory() {
+        // Arrange
+        Category category = Category.Action;
+        List<Game> games = new ArrayList<>();
+        Game game = new Game();
+        game.setCategory(category);
+        games.add(game);
 
-    when(repo.findByCategory(category)).thenReturn(games);
+        when(repo.findByCategory(category)).thenReturn(games);
 
-    // Act
-    List<Game> foundGames = service.getGamesByCategory(category);
+        // Act
+        List<Game> foundGames = service.getGamesByCategory(category);
 
-    // Assert
-    assertNotNull(foundGames);
-    assertEquals(1, foundGames.size());
-    assertEquals(Category.Action, foundGames.get(0).getCategory());
-    verify(repo, times(1)).findByCategory(category);
-}
+        // Assert
+        assertNotNull(foundGames);
+        assertEquals(1, foundGames.size());
+        assertEquals(Category.Action, foundGames.get(0).getCategory());
+        verify(repo, times(1)).findByCategory(category);
+    }
 
-@Test
-public void testListAllGames() {
-    // Arrange
-    List<Game> games = new ArrayList<>();
-    Game game = new Game();
-    game.setName("Test Game");
-    games.add(game);
+    @Test
+    public void testListAllGames() {
+        // Arrange
+        List<Game> games = new ArrayList<>();
+        Game game = new Game();
+        game.setName("Test Game");
+        games.add(game);
 
-    when(repo.findAll()).thenReturn(games);
+        when(repo.findAll()).thenReturn(games);
 
-    // Act
-    List<Game> allGames = service.listAllGames();
+        // Act
+        List<Game> allGames = service.listAllGames();
 
-    // Assert
-    assertNotNull(allGames);
-    assertEquals(1, allGames.size());
-    assertEquals("Test Game", allGames.get(0).getName());
-    verify(repo, times(1)).findAll();
-}
+        // Assert
+        assertNotNull(allGames);
+        assertEquals(1, allGames.size());
+        assertEquals("Test Game", allGames.get(0).getName());
+        verify(repo, times(1)).findAll();
+    }
 
     @Test
     public void testInvalidPriceInAddGame() {
