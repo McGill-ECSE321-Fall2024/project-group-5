@@ -1,4 +1,4 @@
-package ca.mcgill.ecse321.gamestore.service;
+package ca.mcgill.ecse321.gamestore.Service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -14,6 +14,8 @@ import org.mockito.MockitoAnnotations;
 
 import ca.mcgill.ecse321.gamestore.dao.StaffAccountRepository;
 import ca.mcgill.ecse321.gamestore.model.StaffAccount;
+import ca.mcgill.ecse321.gamestore.service.AccountService;
+import ca.mcgill.ecse321.gamestore.service.StaffAccountService;
 
 public class StaffAccountServiceTests {
 
@@ -31,11 +33,10 @@ public class StaffAccountServiceTests {
         MockitoAnnotations.openMocks(this);
     }
 
-        @Test
+    @Test
     public void testCreateStaffAccount() {
         StaffAccount savedAccount = new StaffAccount();
         savedAccount.setUsername("staff123");
-        
 
         when(staffAccountRepository.save(any(StaffAccount.class))).thenReturn(savedAccount);
 
@@ -50,11 +51,11 @@ public class StaffAccountServiceTests {
     public void testUpdatePassword() {
         StaffAccount account = new StaffAccount();
         int id = 2;
-        
+
         when(staffAccountRepository.findById(id)).thenReturn(java.util.Optional.of(account));
-        when(accountService.isValidPassword("UpdatedPassword2!")).thenReturn("");
-        when(accountService.generateSalt(8)).thenReturn("newSalt");
-        when(accountService.hashPassword("UpdatedPassword2!", "newSalt")).thenReturn("hashedPassword");
+        when(AccountService.isValidPassword("UpdatedPassword2!")).thenReturn("");
+        when(AccountService.generateSalt(8)).thenReturn("newSalt");
+        when(AccountService.hashPassword("UpdatedPassword2!", "newSalt")).thenReturn("hashedPassword");
 
         staffAccountService.updatePassword(1, "UpdatedPassword2!");
 
@@ -75,7 +76,7 @@ public class StaffAccountServiceTests {
     public void testGetStaffAccountById() {
         StaffAccount account = new StaffAccount();
         account.setUsername("staff123");
-        int id =2 ;
+        int id = 2;
 
         when(staffAccountRepository.findById(id)).thenReturn(java.util.Optional.of(account));
 

@@ -1,4 +1,4 @@
-package ca.mcgill.ecse321.gamestore.service;
+package ca.mcgill.ecse321.gamestore.Service;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ import ca.mcgill.ecse321.gamestore.dao.ReviewRepository;
 import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
 import ca.mcgill.ecse321.gamestore.model.Game;
 import ca.mcgill.ecse321.gamestore.model.Review;
+import ca.mcgill.ecse321.gamestore.service.ReviewService;
 
 public class ReviewServiceTests {
 
@@ -47,71 +48,64 @@ public class ReviewServiceTests {
         MockitoAnnotations.openMocks(this);
     }
 
-    
     @Test
-public void testCreateReview() {
-    // Arrange
-    CustomerAccount customer = mock(CustomerAccount.class);
-    Game game = mock(Game.class);
-    var savedReview = new Review();
+    public void testCreateReview() {
+        // Arrange
+        CustomerAccount customer = mock(CustomerAccount.class);
+        Game game = mock(Game.class);
+        var savedReview = new Review();
 
-    // Mock the IDs for the customer and game
-    when(customer.getId()).thenReturn(1);
-    when(game.getId()).thenReturn(1);
+        // Mock the IDs for the customer and game
+        when(customer.getId()).thenReturn(1);
+        when(game.getId()).thenReturn(1);
 
+        // Mock the saved review
+        savedReview.setLikeCount(10);
+        savedReview.setDislikeCount(3);
+        when(reviewRepository.save(any(Review.class))).thenReturn(savedReview);
 
-    // Mock the saved review
-    savedReview.setLikeCount(10);
-    savedReview.setDislikeCount(3);
-    when(reviewRepository.save(any(Review.class))).thenReturn(savedReview);
+        // Act
+        Review result = reviewService.createReview(
+                Date.valueOf("2024-01-01"),
+                "Amazing game!",
+                10,
+                3,
+                4.5f,
+                false,
+                1,
+                1);
 
-    // Act
-    Review result = reviewService.createReview(
-        Date.valueOf("2024-01-01"),
-        "Amazing game!",
-        10,
-        3,
-        4.5f,
-        false,
-        1,
-        1
-    );
-
-    // Assert
-    assertNotNull(result);
-    assertEquals(10, result.getLikeCount());
-    assertEquals(3, result.getDislikeCount());
-    verify(reviewRepository, times(1)).save(any(Review.class));
-    verify(customerAccountRepository, times(1)).findById(1);
-    verify(gameRepository, times(1)).findById(1);
-}
-
-
+        // Assert
+        assertNotNull(result);
+        assertEquals(10, result.getLikeCount());
+        assertEquals(3, result.getDislikeCount());
+        verify(reviewRepository, times(1)).save(any(Review.class));
+        verify(customerAccountRepository, times(1)).findById(1);
+        verify(gameRepository, times(1)).findById(1);
+    }
 
     @Test
-public void testUpdateReview() {
-    // Arrange
-    Review review = new Review();
-    review.setLikeCount(10); // Existing like count
-    review.setDislikeCount(3); // Existing dislike count
+    public void testUpdateReview() {
+        // Arrange
+        Review review = new Review();
+        review.setLikeCount(10); // Existing like count
+        review.setDislikeCount(3); // Existing dislike count
 
-    // Mock the behavior of getId()
-    when(review.getId()).thenReturn(1);
+        // Mock the behavior of getId()
+        when(review.getId()).thenReturn(1);
 
-    // Mock the repository call
-    when(reviewRepository.findById(1)).thenReturn(Optional.of(review));
+        // Mock the repository call
+        when(reviewRepository.findById(1)).thenReturn(Optional.of(review));
 
-    // Act
-    Review result = reviewService.updateReview(1, 20, 5); // Corrected the method call syntax
+        // Act
+        Review result = reviewService.updateReview(1, 20, 5); // Corrected the method call syntax
 
-    // Assert
-    assertNotNull(result);
-    assertEquals(20, result.getLikeCount());
-    assertEquals(5, result.getDislikeCount());
-    verify(reviewRepository, times(1)).save(review);
-}
-
-
+        // Assert
+        assertNotNull(result);
+        assertEquals(20, result.getLikeCount());
+        assertEquals(5, result.getDislikeCount());
+        verify(reviewRepository, times(1)).save(review);
+    }
 
     @Test
     public void testUpdateReviewNotFound() {
@@ -177,7 +171,6 @@ public void testUpdateReview() {
         assertEquals(2, result.size());
         verify(reviewRepository, times(1)).findByGame_Id(1);
     }
-
 
     @Test
     public void testGetReviewsByCustomerAccountId() {

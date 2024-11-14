@@ -46,8 +46,7 @@ public class GameStoreObjectServiceTests {
     public void testReadGameStoreObjectByValidId() {
         // Arrange
         GameStoreObject gameStoreObject = new GameStoreObject("Return Policy");
-        gameStoreObject.setId(1);
-        when(repo.findById(1)).thenReturn(Optional.of(gameStoreObject));
+        when(repo.findById(gameStoreObject.getId())).thenReturn(Optional.of(gameStoreObject));
 
         // Act
         GameStoreObject foundObject = service.getGameStoreObjectById(1);
@@ -75,11 +74,10 @@ public class GameStoreObjectServiceTests {
     public void testDeleteGameStoreObjectById() {
         // Arrange
         GameStoreObject gameStoreObject = new GameStoreObject("Return Policy");
-        gameStoreObject.setId(1);
-        when(repo.existsById(1)).thenReturn(true);
+        when(repo.existsById(gameStoreObject.getId())).thenReturn(true);
 
         // Act
-        service.deleteGameStoreObjectById(1);
+        service.deleteGameStoreObject(gameStoreObject.getId());
 
         // Assert
         verify(repo, times(1)).deleteById(1);
@@ -92,7 +90,7 @@ public class GameStoreObjectServiceTests {
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> {
-            service.deleteGameStoreObjectById(999);
+            service.deleteGameStoreObject(999);
         });
         verify(repo, times(0)).deleteById(999);
     }

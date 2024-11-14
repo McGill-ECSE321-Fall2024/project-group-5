@@ -1,4 +1,4 @@
-package ca.mcgill.ecse321.gamestore.integration;
+package ca.mcgill.ecse321.gamestore.Integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -36,18 +36,19 @@ public class PromotionCodeIntegrationTests {
         // Arrange
         PromotionCodeRequestDto request = new PromotionCodeRequestDto();
         request.setCode("PROMO10");
-        request.setDiscount(10);
+        request.setDiscountValue(10);
 
         // Act
-        ResponseEntity<PromotionCodeResponseDto> response = client.postForEntity("/promotion-code/create", request, PromotionCodeResponseDto.class);
+        ResponseEntity<PromotionCodeResponseDto> response = client.postForEntity("/promotion-code/create", request,
+                PromotionCodeResponseDto.class);
 
         // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         PromotionCodeResponseDto createdPromotionCode = response.getBody();
         assertNotNull(createdPromotionCode);
-        assertEquals("PROMO10", createdPromotionCode.getCode());
-        assertEquals(10, createdPromotionCode.getDiscount());
+        assertEquals("PROMO10", createdPromotionCode.getName());
+        assertEquals(10, createdPromotionCode.getDiscountValue());
         assertNotNull(createdPromotionCode.getId());
         assertTrue(createdPromotionCode.getId() > 0, "Response should have a positive ID.");
 
@@ -68,8 +69,8 @@ public class PromotionCodeIntegrationTests {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         PromotionCodeResponseDto promotionCode = response.getBody();
         assertNotNull(promotionCode);
-        assertEquals("PROMO10", promotionCode.getCode());
-        assertEquals(10, promotionCode.getDiscount());
+        assertEquals("PROMO10", promotionCode.getName());
+        assertEquals(10, promotionCode.getDiscountValue());
         assertEquals(this.validId, promotionCode.getId());
     }
 }

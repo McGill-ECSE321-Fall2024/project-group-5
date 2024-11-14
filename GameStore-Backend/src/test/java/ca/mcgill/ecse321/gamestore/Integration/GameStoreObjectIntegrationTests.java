@@ -1,4 +1,4 @@
-package ca.mcgill.ecse321.gamestore.integration;
+package ca.mcgill.ecse321.gamestore.Integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -35,15 +35,13 @@ public class GameStoreObjectIntegrationTests {
     @Order(1)
     public void testCreateValidGameStoreObject() {
         // Arrange
-        GameStoreObjectRequestDto request = new GameStoreObjectRequestDto();
-        request.setPolicy(VALID_POLICY);
+        GameStoreObjectRequestDto request = new GameStoreObjectRequestDto(VALID_POLICY);
 
         // Act
         ResponseEntity<GameStoreObjectResponseDto> response = client.postForEntity(
                 "/gamestore-object/create",
                 request,
-                GameStoreObjectResponseDto.class
-        );
+                GameStoreObjectResponseDto.class);
 
         // Assert
         assertNotNull(response);
@@ -66,8 +64,7 @@ public class GameStoreObjectIntegrationTests {
         // Act
         ResponseEntity<GameStoreObjectResponseDto> response = client.getForEntity(
                 url,
-                GameStoreObjectResponseDto.class
-        );
+                GameStoreObjectResponseDto.class);
 
         // Assert
         assertNotNull(response);
@@ -78,6 +75,7 @@ public class GameStoreObjectIntegrationTests {
         assertEquals(this.validId, gameStoreObject.getId());
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(3)
     public void testReadGameStoreObjectByInvalidId() {
@@ -87,8 +85,7 @@ public class GameStoreObjectIntegrationTests {
         // Act
         ResponseEntity<String> response = client.getForEntity(
                 url,
-                String.class
-        );
+                String.class);
 
         // Assert
         assertNotNull(response);

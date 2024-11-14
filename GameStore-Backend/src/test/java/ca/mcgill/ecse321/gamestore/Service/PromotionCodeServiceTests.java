@@ -1,4 +1,4 @@
-package ca.mcgill.ecse321.gamestore.service;
+package ca.mcgill.ecse321.gamestore.Service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import ca.mcgill.ecse321.gamestore.model.PromotionCode;
+import ca.mcgill.ecse321.gamestore.service.PromotionCodeService;
 import ca.mcgill.ecse321.gamestore.dao.PromotionCodeRepository;
 
 @SpringBootTest
@@ -34,8 +35,8 @@ public class PromotionCodeServiceTests {
         // Arrange
         PromotionCode promotionCode = new PromotionCode();
         promotionCode.setCode("PROMO10");
-        promotionCode.setDiscount(10);
-        promotionCode.setExpiryDate(Date.valueOf(LocalDate.now().plusDays(30)));
+        promotionCode.setPercentageValue(10);
+        promotionCode.setExpirationDate(Date.valueOf(LocalDate.now().plusDays(30)));
 
         when(repo.save(any(PromotionCode.class))).thenReturn(promotionCode);
 
@@ -45,7 +46,7 @@ public class PromotionCodeServiceTests {
         // Assert
         assertNotNull(created);
         assertEquals("PROMO10", created.getCode());
-        assertEquals(10, created.getDiscount());
+        assertEquals(10, created.getPercentageValue());
         verify(repo, times(1)).save(any(PromotionCode.class));
     }
 
@@ -53,31 +54,30 @@ public class PromotionCodeServiceTests {
     public void testReadPromotionCodeByValidId() {
         // Arrange
         PromotionCode promotionCode = new PromotionCode();
-        promotionCode.setId(1);
         promotionCode.setCode("PROMO10");
-        promotionCode.setDiscount(10);
-        when(repo.findById(1L)).thenReturn(Optional.of(promotionCode));
+        promotionCode.setPercentageValue(10);
+        when(repo.findById(promotionCode.getId())).thenReturn(Optional.of(promotionCode));
 
         // Act
-        PromotionCode found = service.getPromotionCode(1L);
+        PromotionCode found = service.getPromotionCodeById(promotionCode.getId());
 
         // Assert
         assertNotNull(found);
-        assertEquals(1, found.getId());
+        assertEquals(promotionCode.getId(), found.getId());
         assertEquals("PROMO10", found.getCode());
-        assertEquals(10, found.getDiscount());
-        verify(repo, times(1)).findById(1L);
+        assertEquals(10, found.getPercentageValue());
+        verify(repo, times(1)).findById(promotionCode.getId());
     }
 
     @Test
     public void testReadPromotionCodeByInvalidId() {
         // Arrange
-        when(repo.findById(999L)).thenReturn(Optional.empty());
+        when(repo.findById(999)).thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> {
-            service.getPromotionCode(999L);
+            service.getPromotionCodeById(999);
         });
-        verify(repo, times(1)).findById(999L);
+        verify(repo, times(1)).findById(999);
     }
 }
