@@ -13,17 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.mcgill.ecse321.gamestore.controller.utilities.AuthenticationUtility;
 import ca.mcgill.ecse321.gamestore.dto.CustomerAccountRequestDto;
 import ca.mcgill.ecse321.gamestore.dto.CustomerAccountResponseDto;
-import ca.mcgill.ecse321.gamestore.dto.GameQtyResponseDto;
 import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
-import ca.mcgill.ecse321.gamestore.model.Game;
-import ca.mcgill.ecse321.gamestore.model.GameQty;
-import ca.mcgill.ecse321.gamestore.model.Transaction;
 import ca.mcgill.ecse321.gamestore.service.CustomerAccountService;
 import jakarta.servlet.http.HttpServletRequest;
 
