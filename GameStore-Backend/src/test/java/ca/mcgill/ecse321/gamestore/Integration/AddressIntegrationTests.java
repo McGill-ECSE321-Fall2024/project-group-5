@@ -42,7 +42,8 @@ public class AddressIntegrationTests {
         request.setCustomerName("Alice");
 
         // Act
-        ResponseEntity<AddressResponseDto> response = client.postForEntity("/addresses", request, AddressResponseDto.class);
+        ResponseEntity<AddressResponseDto> response = client.postForEntity("/addresses", request,
+                AddressResponseDto.class);
 
         // Assert
         assertNotNull(response);
@@ -70,6 +71,6 @@ public class AddressIntegrationTests {
         AddressResponseDto address = response.getBody();
         assertNotNull(address);
         assertEquals(this.validId, address.getId());
-        assertEquals("1234 Elm Street", address.getName());  // Adjust according to the response DTO
+        assertEquals("1234 Elm Street", address.getName()); // Adjust according to the response DTO
     }
 }

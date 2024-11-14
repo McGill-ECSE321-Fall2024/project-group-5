@@ -46,13 +46,12 @@ public class GameServiceTests {
 
         // Act
         Game createdGame = service.addGame(
-            "Test Game", 
-            50, 
-            "Description for Test Game", 
-            Category.Action, 
-            GameConsole.PS5, 
-            true
-        );
+                "Test Game",
+                50,
+                "Description for Test Game",
+                Category.Action,
+                GameConsole.PS5,
+                true);
 
         // Assert
         assertNotNull(createdGame);
@@ -94,7 +93,7 @@ public class GameServiceTests {
     }
 
     @Test
-    public void testReadGameByName() throws Exception {
+    public void testReadGameByValidName() throws Exception {
         // Arrange
         String name = "Test Game";
         Game game = new Game();
@@ -119,13 +118,13 @@ public class GameServiceTests {
         game.setId(id);
         game.setName("Test Game");
         game.setPrice(50);
-        
 
         when(repo.findById(id)).thenReturn(game);
         when(repo.save(any(Game.class))).thenReturn(game);
 
         // Act
-        Game updatedGame = service.updateGame(id, "Updated Game", 70, "Updated Description", Category.ActionAdventure, GameConsole.XBoxSeriesS, true);
+        Game updatedGame = service.updateGame(id, "Updated Game", 70, "Updated Description", Category.ActionAdventure,
+                GameConsole.XBoxSeriesS, true);
 
         // Assert
         assertNotNull(updatedGame);
@@ -141,17 +140,16 @@ public class GameServiceTests {
         int validId = 1;
         Game game = new Game(); // Assuming you have a Game class, populate it if necessary
         game.setId(validId);
-        
+
         when(repo.findById(validId)).thenReturn(game); // Simulate finding the game
         when(repo.existsById(validId)).thenReturn(true); // Simulate that the game exists
-        
+
         // Act
         service.deleteGameById(validId);
-        
+
         // Assert
         verify(repo, times(1)).delete(game); // Verify that delete was called exactly once
     }
-
 
     @Test
     public void testDeleteGameByInvalidId() {
@@ -229,8 +227,8 @@ public class GameServiceTests {
     @Test
     public void testInvalidPriceInAddGame() {
         // Arrange & Act & Assert
-        Exception e = assertThrows(IllegalArgumentException.class, () -> 
-            service.addGame("Test Game", -10, "Description", Category.Action, GameConsole.PS5, true));
+        Exception e = assertThrows(IllegalArgumentException.class,
+                () -> service.addGame("Test Game", -10, "Description", Category.Action, GameConsole.PS5, true));
         assertEquals("Game price cannot be negative", e.getMessage());
     }
 }

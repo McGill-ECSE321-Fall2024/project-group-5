@@ -8,7 +8,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -113,21 +112,16 @@ public class CustomerAccountServiceTests {
 
     }
 
-        // 
     @BeforeEach
     public void setUp() {
         // Clear the map to avoid duplicate username errors
         Account.accountsByUsername.clear();
-        System.out.println("BeforeEach");
-        System.out.println(Account.accountsByUsername);
     }
 
     @AfterEach
     public void cleanUp() {
         // Clear the map to avoid duplicate username errors
         Account.accountsByUsername.clear();
-        System.out.println("BeforeEach");
-        System.out.println(Account.accountsByUsername);
     }
 
     @AfterEach
@@ -149,9 +143,6 @@ public class CustomerAccountServiceTests {
         CA3.setUsername("user3");
         CA3.setRandomPassword(salt3);
         CA3.setName(null);
-
-        System.out.println("AfterEach");
-        System.out.println(Account.accountsByUsername);
     }
 
     @Test
@@ -564,7 +555,7 @@ public class CustomerAccountServiceTests {
     }
 
     @Test
-    public void testDeleteAccountWithId() {
+    public void testDeleteAccountWithValidId() {
         String errorMessage = "";
         CustomerAccount account = null;
 
@@ -600,7 +591,7 @@ public class CustomerAccountServiceTests {
     }
 
     @Test
-    public void testUpdateCustomerAccount() {
+    public void testUpdateCustomerAccountWithValidId() {
         String errorMessage = "";
         CustomerAccount account = null;
 
@@ -624,7 +615,7 @@ public class CustomerAccountServiceTests {
     }
 
     @Test
-    public void testUpdateCustomerAccountInvalidID() {
+    public void testUpdateCustomerAccountInvalidId() {
         String errorMessage = "";
         CustomerAccount account = null;
 
@@ -641,7 +632,7 @@ public class CustomerAccountServiceTests {
     }
 
     @Test
-    public void testUpdateCustomerAccountInvalidPassword() {
+    public void testUpdateCustomerAccount_nullPassword() {
         String errorMessage = "";
         CustomerAccount account = null;
 
@@ -658,7 +649,7 @@ public class CustomerAccountServiceTests {
     }
 
     @Test
-    public void testUpdateCustomerAccount_EmptyPassword() {
+    public void testUpdateCustomerAccount_emptyPassword() {
         String errorMessage = "";
         CustomerAccount account = null;
 

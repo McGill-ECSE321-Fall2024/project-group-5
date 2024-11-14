@@ -54,7 +54,7 @@ public class AddressServiceTests {
     }
 
     @Test
-    public void testGetAddressByIdValid() {
+    public void testGetAddressByValidId() {
         // Arrange
         int id = 1;
         Address address = new Address();
@@ -79,7 +79,7 @@ public class AddressServiceTests {
     }
 
     @Test
-    public void testGetAddressByIdInvalid() {
+    public void testGetAddressByInvalidId() {
         // Arrange
         int id = 1;
 

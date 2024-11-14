@@ -34,6 +34,7 @@ public class CustomerAccountController {
      * 
      * @param id the ID of the CustomerAccount to retrieve
      * @return CustomerAccountResponseDto representation of the CustomerAccount
+     * @vivianeltain
      */
     @GetMapping("/getWithId/{id}")
     public ResponseEntity<CustomerAccountResponseDto> getCustomerAccountById(@PathVariable int id) {
@@ -53,6 +54,7 @@ public class CustomerAccountController {
      *                                  CustomerAccount details
      * @return CustomerAccountResponseDto representation of the newly created
      *         CustomerAccount
+     * @vivianeltain
      */
     @PostMapping("/create")
     public ResponseEntity<CustomerAccountResponseDto> createCustomerAccount(
@@ -76,6 +78,7 @@ public class CustomerAccountController {
      * @param customerAccountRequestDto the CustomerAccountRequestDto containing
      *                                  updated details
      * @return CustomerAccountResponseDto representing the updated CustomerAccount
+     * @vivianeltain
      */
     @PutMapping("/update/{id}")
     public ResponseEntity<CustomerAccountResponseDto> updateCustomerAccount(
@@ -96,6 +99,7 @@ public class CustomerAccountController {
      * 
      * @param id the ID of the CustomerAccount to delete
      * @return a message confirming the deletion of the CustomerAccount
+     * @vivianeltain
      */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<CustomerAccountResponseDto> deleteCustomerAccount(@PathVariable int id) {
@@ -107,6 +111,13 @@ public class CustomerAccountController {
         }
     }
 
+    /**
+     * GET endpoint to get all customer accounts in repository
+     * 
+     * @param request
+     * @return List<CustomerAccountResponseDto> representation of all the
+     *         CustomerAccount
+     */
     @GetMapping("/get")
     public ResponseEntity<?> getAllCustomerAccounts(HttpServletRequest request) {
         try {
@@ -120,12 +131,26 @@ public class CustomerAccountController {
                 .collect(Collectors.toList()));
     }
 
+    /**
+     * GET endpoint to retrieve a CustomerAccount by its email.
+     * 
+     * @param anEmail the email of the CustomerAccount to retrieve
+     * @return CustomerAccountResponseDto representation of the CustomerAccount
+     * @vivianeltain
+     */
     @GetMapping("/getWithEmail/{email}")
     public CustomerAccountResponseDto findCustomerAccountByEmail(@PathVariable String anEmail) throws Exception {
         CustomerAccount customerAccount = customerAccountService.getCustomerAccountByEmail(anEmail);
         return new CustomerAccountResponseDto(customerAccount);
     }
 
+    /**
+     * GET endpoint to retrieve a CustomerAccount by its username.
+     * 
+     * @param aUsername the username of the CustomerAccount to retrieve
+     * @return CustomerAccountResponseDto representation of the CustomerAccount
+     * @vivianeltain
+     */
     @GetMapping("/getWithUsername/{username}")
     public CustomerAccountResponseDto findCustomerAccountByUsername(@PathVariable String aUsername) throws Exception {
         CustomerAccount customerAccount = customerAccountService.getCustomerAccountByUsername(aUsername);
