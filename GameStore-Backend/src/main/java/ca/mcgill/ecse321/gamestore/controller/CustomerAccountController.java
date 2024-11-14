@@ -37,7 +37,6 @@ public class CustomerAccountController {
      */
     @GetMapping("/getWithId/{id}")
     public ResponseEntity<CustomerAccountResponseDto> getCustomerAccountById(@PathVariable int id) {
-
         CustomerAccount customerAccount;
         try {
             customerAccount = customerAccountService.getCustomerAccountByID(id);
@@ -59,7 +58,6 @@ public class CustomerAccountController {
     public ResponseEntity<CustomerAccountResponseDto> createCustomerAccount(
             @RequestBody CustomerAccountRequestDto customerAccountRequestDto) {
         // Assuming service method handles validation for uniqueness and other checks
-
         CustomerAccount createdCustomerAccount;
         try {
             createdCustomerAccount = customerAccountService.createCustomerAccount(
