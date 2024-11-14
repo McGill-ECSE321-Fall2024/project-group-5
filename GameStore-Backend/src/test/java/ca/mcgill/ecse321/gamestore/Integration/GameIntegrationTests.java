@@ -26,7 +26,6 @@ import ca.mcgill.ecse321.gamestore.dto.GameResponseDto;
 import ca.mcgill.ecse321.gamestore.model.Game.Category; // Assuming Category is an enum
 import ca.mcgill.ecse321.gamestore.model.Game.GameConsole; // Assuming GameConsole is an enum
 
-
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(Lifecycle.PER_CLASS)
@@ -58,8 +57,7 @@ public class GameIntegrationTests {
                 VALID_DESCRIPTION,
                 CategoryReqDto.ActionAdventure,
                 GameConsoleReqDto.PC,
-                VALID_IN_CATALOG
-        );
+                VALID_IN_CATALOG);
 
         // Act: Send POST request to create the game
         ResponseEntity<GameResponseDto> response = game.postForEntity(CREATE_GAME_URL, request, GameResponseDto.class);
@@ -76,7 +74,7 @@ public class GameIntegrationTests {
         assertEquals(VALID_PRICE, createdGame.getPrice(), "Game price should match");
         assertEquals(VALID_DESCRIPTION, createdGame.getDescription(), "Game description should match");
         assertEquals(VALID_IN_CATALOG, createdGame.isInCatalog(), "Game catalog status should match");
-        
+
         assertNotNull(createdGame.getId(), "Game ID should be set after creation");
         assertTrue(createdGame.getId() > 0, "Game ID should be positive");
 
@@ -108,19 +106,17 @@ public class GameIntegrationTests {
         assertEquals(this.validId, retrievedGame.getId(), "Game ID should match the created game ID");
     }
 
-
     @Test
     @Order(3)
     public void testCreateGameWithInvalidPrice() {
         // Arrange: Create a GameRequestDto with invalid price (negative value)
         GameRequestDto request = new GameRequestDto(
                 VALID_NAME,
-                -10,  // Invalid price
+                -10, // Invalid price
                 VALID_DESCRIPTION,
                 CategoryReqDto.ActionAdventure,
                 GameConsoleReqDto.PC,
-                VALID_IN_CATALOG
-        );
+                VALID_IN_CATALOG);
 
         // Act: Send POST request to create the game
         ResponseEntity<String> response = game.postForEntity(CREATE_GAME_URL, request, String.class);
@@ -131,12 +127,11 @@ public class GameIntegrationTests {
         assertEquals("Game price cannot be negative", response.getBody(), "Expected error message for invalid price");
     }
 
-
     @Test
     @Order(4)
     public void testGetGameByInvalidId() {
         // Arrange: Use a non-existent game ID
-        int invalidId = -1;  // Invalid ID
+        int invalidId = -1; // Invalid ID
 
         String url = GET_GAME_URL + invalidId;
 
@@ -161,7 +156,7 @@ public class GameIntegrationTests {
                 "Updated description of the game.",
                 CategoryReqDto.ActionAdventure,
                 GameConsoleReqDto.PC,
-                false  // Update catalog status to false
+                false // Update catalog status to false
         );
 
         String updateUrl = GAME_API_URL + "/update/" + validId;
@@ -179,7 +174,8 @@ public class GameIntegrationTests {
         GameResponseDto updatedGame = response.getBody();
         assertNotNull(updatedGame, "Game response body should not be null");
         assertEquals("Updated Game Name", updatedGame.getName(), "Game name should be updated");
-        assertEquals("Updated description of the game.", updatedGame.getDescription(), "Game description should be updated");
+        assertEquals("Updated description of the game.", updatedGame.getDescription(),
+                "Game description should be updated");
         assertEquals(false, updatedGame.isInCatalog(), "Game catalog status should be updated");
     }
 
@@ -201,6 +197,7 @@ public class GameIntegrationTests {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode(), "Expected status code 404 (NOT_FOUND)");
     }
 
+    @SuppressWarnings({ "null", "rawtypes" })
     @Test
     @Order(7)
     public void testGetAllGames() {
@@ -219,5 +216,3 @@ public class GameIntegrationTests {
     }
 
 }
-
-

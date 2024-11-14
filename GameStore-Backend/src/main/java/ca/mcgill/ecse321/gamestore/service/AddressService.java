@@ -1,7 +1,5 @@
 package ca.mcgill.ecse321.gamestore.service;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ca.mcgill.ecse321.gamestore.model.Address;

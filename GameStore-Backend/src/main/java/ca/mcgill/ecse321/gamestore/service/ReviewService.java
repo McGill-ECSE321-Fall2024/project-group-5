@@ -80,9 +80,11 @@ public class ReviewService {
     }
 
     @Transactional
-    public void deleteReview(int reviewId){
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("Review not found"));
+    public void deleteReview(int reviewId) {
+        Review review = reviewRepository.findById(reviewId).get();
+        if (review == null) {
+            throw new IllegalArgumentException("Review not found");
+        }
         reviewRepository.deleteById(reviewId);
     }
 }

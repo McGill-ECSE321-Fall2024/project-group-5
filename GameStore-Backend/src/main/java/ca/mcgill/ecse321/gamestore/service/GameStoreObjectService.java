@@ -17,12 +17,11 @@ public class GameStoreObjectService {
 
     @Transactional
     public GameStoreObject createGameStoreObject(String policy) {
-        if (policy == null) {
+        if (policy == null || policy.isEmpty()) {
             throw new IllegalArgumentException("Policy cannot be null or empty");
         }
 
         GameStoreObject gameStoreObject = new GameStoreObject();
-        gameStoreObject.setPolicy(policy);
         gameStoreObject.setPolicy(policy);
 
         return gameStoreObjectRepository.save(gameStoreObject);
@@ -37,7 +36,6 @@ public class GameStoreObjectService {
     @Transactional
     public GameStoreObject updateGameStoreObject(int id, String policy) {
         GameStoreObject gameStoreObject = getGameStoreObjectById(id);
-
         if (policy != null) {
             gameStoreObject.setPolicy(policy);
         }
