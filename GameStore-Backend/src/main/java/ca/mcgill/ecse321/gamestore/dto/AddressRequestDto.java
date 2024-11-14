@@ -14,7 +14,7 @@ public class AddressRequestDto {
     // Default constructor
     public AddressRequestDto() {}
 
-    // Constructor to initialize from Address model
+    // Constructor
     public AddressRequestDto(Address model) {
         this.id = model.getId();
         this.address = model.getAddress();

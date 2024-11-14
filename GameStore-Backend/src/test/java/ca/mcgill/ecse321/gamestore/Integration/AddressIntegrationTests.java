@@ -24,6 +24,7 @@ import ca.mcgill.ecse321.gamestore.dto.AddressResponseDto;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(Lifecycle.PER_CLASS)
 public class AddressIntegrationTests {
+
     @Autowired
     private TestRestTemplate client;
 
@@ -71,5 +72,48 @@ public class AddressIntegrationTests {
         assertNotNull(address);
         assertEquals(this.validId, address.getId());
         assertEquals("1234 Elm Street", address.getName());  // Adjust according to the response DTO
+    }
+
+    @Test
+    @Order(3)
+    public void testDeleteAddress() {
+        // Act
+        client.delete("/addresses/" + this.validId);
+
+        // Assert
+        ResponseEntity<AddressResponseDto> response = client.getForEntity("/addresses/" + this.validId, AddressResponseDto.class);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    @Order(4)
+    public void testCreateAddressWithInvalidData() {
+        // Arrange
+        AddressRequestDto request = new AddressRequestDto();
+        request.setAddress("");  // Empty address
+        request.setCity("Montreal");
+        request.setProvince("Quebec");
+        request.setCountry("Canada");
+        request.setPostalCode("H3A 1A1");
+        request.setCustomerName("Alice");
+
+        // Act
+        ResponseEntity<AddressResponseDto> response = client.postForEntity("/addresses", request, AddressResponseDto.class);
+
+        // Assert
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    @Test
+    @Order(5)
+    public void testGetAddressWithNonExistentId() {
+        // Arrange
+        int nonExistentId = 999999;  // ID that doesn't exist
+
+        // Act
+        ResponseEntity<AddressResponseDto> response = client.getForEntity("/addresses/" + nonExistentId, AddressResponseDto.class);
+
+        // Assert
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }
