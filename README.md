@@ -20,3 +20,14 @@ The main features of the web application are listed as follows:
 | Romain Teyssier| [rom618](https://github.com/rom618) | Project Lead, Software Developer | Computer Engineering | U3 |
 | Caroline Thom | [carolinethom2](https://github.com/carolinethom2)  | Software Developer | Mechanical Engineering | U4 |
 | Reswanth Reji Pillai | [jumpman786](https://github.com/jumpman786)  | Software Developer | Software Engineering | U2 |
+
+### Deliverable Contributions 
+#### Contribution 
+| Team Member | Deliverable 1 | Deliverable 2 |  Deliverable 3 |
+|-------------|---------------|---------------| ---------------|
+| Ana-Maria Floarea | 18   | 35 | 0 |
+| Alisha Malik | 13   | 30 | 0 |
+| Viviane-Laura Tain   | 19   | 38 | 0 |
+| Romain Teyssier| 20   | 45 | 0 |
+| Caroline Thom | 19   | 32 | 0 |
+| Reswanth Reji Pillai | 18   | 30 | 0 |
