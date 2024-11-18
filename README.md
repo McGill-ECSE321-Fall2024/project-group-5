@@ -22,7 +22,6 @@ The main features of the web application are listed as follows:
 | Reswanth Reji Pillai | [jumpman786](https://github.com/jumpman786)  | Software Developer | Software Engineering | U2 |
 
 ### Deliverable Contributions 
-#### Contribution 
 | Team Member | Deliverable 1 | Deliverable 2 |  Deliverable 3 |
 |-------------|---------------|---------------| ---------------|
 | Ana-Maria Floarea | 18   | 35 | 0 |
