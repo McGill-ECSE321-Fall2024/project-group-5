@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import ca.mcgill.ecse321.gamestore.model.Account;
 import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
 import ca.mcgill.ecse321.gamestore.dao.CustomerAccountRepository;
 import jakarta.transaction.Transactional;
@@ -161,7 +160,7 @@ public class CustomerAccountService {
         if (username.trim().length() == 0) {
             throw new Exception("Username must not be empty");
         }
-        if (accountService.checkUsernameAvailability(username)) {
+        if (!accountService.checkUsernameAvailability(username)) {
             throw new Exception("Username is already taken");
         }
         // Check that email follows proper format
@@ -248,17 +247,22 @@ public class CustomerAccountService {
      * @vivianeltain
      */
     private boolean containsSpecialCharacterExceptDashAndApostrophe(String string) {
-        char dash = 145;
-        char apostrophe = 146;
+        List<Character> allowedSpecialChars = new ArrayList<>();
+        allowedSpecialChars.add('-'); // dash
+        allowedSpecialChars.add('\''); // apostrophe
+        allowedSpecialChars.add(' '); // blank space
 
+        // Check each character in the string
         for (int i = 0; i < string.length(); i++) {
             char character = string.charAt(i);
-            if (!Character.isLetterOrDigit(character) && (character != dash || character != apostrophe)) {
+            // If it's not a letter, digit, or one of the allowed special characters, return
+            // true
+            if (!Character.isLetterOrDigit(character) && !allowedSpecialChars.contains(character)) {
                 return true;
             }
         }
+        // No invalid special characters found
         return false;
-
     }
 
     /**
@@ -273,31 +277,33 @@ public class CustomerAccountService {
      * @throws Exception
      * @vivianeltain
      */
-    public CustomerAccount updateCustomerAccount(int id, String username, String password, String name)
+    public CustomerAccount updateCustomerAccount(int aId, String aUsername, String aPassword, String aName)
             throws Exception {
         // check for duplicate username
-        if (!accountService.checkUsernameAvailability(username)) {
+        if (!accountService.checkUsernameAvailability(aUsername)
+                || !(customerAccountRepository.findByUsername(aUsername) == null)) {
             throw new Exception("An account with this username already exits");
         }
         // Attempt to update account
-        CustomerAccount customerAccount = customerAccountRepository.findById(id);
+        CustomerAccount customerAccount = customerAccountRepository.findById(aId);
         if (customerAccount == null) {
             throw new Exception("No account associated with this id exists");
         }
         // Check that new password is valid
-        String passwordValidation = AccountService.isValidPassword(password);
+        String passwordValidation = AccountService.isValidPassword(aPassword);
         if (!passwordValidation.isEmpty()) {
             throw new Exception(passwordValidation);
         }
         // Check that new name is valid
-        if (name != null && !isValidName(name).isEmpty()) {
-            throw new Exception(isValidName(name));
+        if (aName != null && !isValidName(aName).isEmpty()) {
+            throw new Exception(isValidName(aName));
         }
         String salt = AccountService.generateSalt(8);
-        String hashedPassword = AccountService.hashPassword(password, salt);
+        String hashedPassword = AccountService.hashPassword(aPassword, salt);
         customerAccount.setPasswordHash(hashedPassword);
         customerAccount.setRandomPassword(salt);
-        customerAccount.setName(name);
+        customerAccount.setUsername(aUsername);
+        customerAccount.setName(aName);
         customerAccountRepository.save(customerAccount);
         return customerAccount;
     }

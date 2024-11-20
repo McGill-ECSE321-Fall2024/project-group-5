@@ -1,11 +1,9 @@
 package ca.mcgill.ecse321.gamestore.dto;
 
-import java.util.List;
-
 public class GameRequestDto {
 
     public enum CategoryReqDto {
-        Horror, Puzzle, Action, ActionjAdventure, Sports, Strategy, RPG, Multiplayer, Simulation, Survival, Party, Shooter,
+        Horror, Puzzle, Action, ActionAdventure, Sports, Strategy, RPG, Multiplayer, Simulation, Survival, Party, Shooter,
         Casual, Platformer, BattleRoyale, Sandbox, MMO
     }
     
@@ -26,8 +24,8 @@ public class GameRequestDto {
     private GameRequestDto() {
     }
 
-    public GameRequestDto(int gameID, String aName, int aPrice, String aDescription, CategoryReqDto aCategory, GameConsoleReqDto aGameConsole, boolean isInCatalog, GameQtyRequestDto aGameQty, List<ReviewResponseDto> aReviewList) {
-        this.gameID = gameID;
+    public GameRequestDto(String aName, int aPrice, String aDescription, CategoryReqDto aCategory, GameConsoleReqDto aGameConsole, boolean isInCatalog) {
+        // this.gameID = gameID;
         this.name = aName;
         this.price = aPrice;
         this.description = aDescription;

@@ -59,7 +59,7 @@ public class TransactionServiceTests {
         assertEquals(transaction.getTotalPrice(), createdTransaction.getTotalPrice());
         assertEquals(transaction.getUserAgreementCheck(), createdTransaction.getUserAgreementCheck());
         assertEquals(transaction.getTransactionId(), createdTransaction.getTransactionId());
-        verify(transactionRepository, times(1)).save(transaction);
+        verify(transactionRepository, times(1)).save(any(Transaction.class));
     }
 
     @Test
@@ -242,6 +242,8 @@ public class TransactionServiceTests {
         transaction.setCustomerAccount(customerAccount);
 
         when(transactionRepository.save(any(Transaction.class))).thenReturn(transaction);
+        when(transactionRepository.findTransactiontByTransactionId(transaction.getTransactionId()))
+                .thenReturn(transaction);
 
         double setTotalPrice = 32;
         boolean setIsPaid = true;

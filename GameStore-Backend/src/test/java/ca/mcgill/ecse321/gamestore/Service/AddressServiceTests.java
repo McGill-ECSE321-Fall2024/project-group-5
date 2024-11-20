@@ -2,10 +2,13 @@ package ca.mcgill.ecse321.gamestore.Service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -51,7 +54,7 @@ public class AddressServiceTests {
     }
 
     @Test
-    public void testGetAddressByIdValid() {
+    public void testGetAddressByValidId() {
         // Arrange
         int id = 1;
         Address address = new Address();
@@ -76,17 +79,16 @@ public class AddressServiceTests {
     }
 
     @Test
-    public void testGetAddressByIdInvalid() {
+    public void testGetAddressByInvalidId() {
         // Arrange
         int id = 1;
 
         when(addressRepository.findById(id)).thenReturn(java.util.Optional.empty());
 
-        // Act
-        Address foundAddress = addressService.getAddressById(id);
-
-        // Assert
-        assertEquals(null, foundAddress);
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> addressService.deleteAddress(id));
+        assertEquals("Address with ID 1 not found.", e.getMessage());
     }
 
     @Test
@@ -125,7 +127,6 @@ public class AddressServiceTests {
     @Test
     public void testDeleteAddress() {
         // Arrange
-        int id = 1;
         Address address = new Address();
         address.setAddress("123 Main St");
         address.setCity("Montreal");
@@ -133,26 +134,25 @@ public class AddressServiceTests {
         address.setCountry("Canada");
         address.setPostalCode("H3A 1A1");
 
-        when(addressRepository.existsById(id)).thenReturn(true);
+        when(addressRepository.findById(address.getId())).thenReturn(Optional.of(address));
 
         // Act
-        boolean deleted = addressService.deleteAddress(id);
+        boolean deleted = addressService.deleteAddress(address.getId());
 
         // Assert
         assertEquals(true, deleted);
-        verify(addressRepository, times(1)).deleteById(id);
+        verify(addressRepository, times(1)).deleteById(address.getId());
     }
 
     @Test
     public void testDeleteAddressNotFound() {
         // Arrange
         int id = 999;
-        when(addressRepository.existsById(id)).thenReturn(false);
+        when(addressRepository.findById(id)).thenReturn(java.util.Optional.empty());
 
-        // Act
-        boolean deleted = addressService.deleteAddress(id);
-
-        // Assert
-        assertEquals(false, deleted);
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> addressService.deleteAddress(id));
+        assertEquals("Address with ID 999 not found.", e.getMessage());
     }
 }

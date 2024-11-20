@@ -15,7 +15,6 @@ public class PaymentInformationRequestDto {
     @SuppressWarnings("unused")
     private PaymentInformationRequestDto() {}
 
-    // Parameterized constructor
     public PaymentInformationRequestDto(String cardholderName, int cardNumber, String expirationDate, int cvc, CardType cardType, int customerAccountId) {
         this.cardholderName = cardholderName;
         this.cardNumber = cardNumber;

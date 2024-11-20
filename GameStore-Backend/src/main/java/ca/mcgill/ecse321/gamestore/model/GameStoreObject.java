@@ -12,9 +12,6 @@ public class GameStoreObject {
   // ------------------------
 
   // GameStoreObject Attributes
-  private String name;
-  private String description;
-  private double price;
   private String policy;
 
   @Id
@@ -27,40 +24,13 @@ public class GameStoreObject {
   public GameStoreObject() {
   }
 
-  public GameStoreObject(String name, String description, double price, String policy) {
-    this.name = name;
-    this.description = description;
-    this.price = price;
+  public GameStoreObject(String policy) {
     this.policy = policy;
   }
 
   // ------------------------
   // INTERFACE
   // ------------------------
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public double getPrice() {
-    return price;
-  }
-
-  public void setPrice(double price) {
-    this.price = price;
-  }
 
   public boolean setPolicy(String policy) {
     boolean wasSet = false;
@@ -83,9 +53,6 @@ public class GameStoreObject {
   @Override
   public String toString() {
     return super.toString() + "[" +
-        "name" + ":" + getName() + "," +
-        "description" + ":" + getDescription() + "," +
-        "price" + ":" + getPrice() + "," +
         "policy" + ":" + getPolicy() + "," +
         "id" + ":" + getId() + "]";
   }

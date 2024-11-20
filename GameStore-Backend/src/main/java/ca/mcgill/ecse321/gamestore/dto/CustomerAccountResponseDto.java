@@ -5,7 +5,6 @@ import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
 public class CustomerAccountResponseDto {
     private int id;
     private String username;
-    private String password;
     private String emailAddress;
     private String name;
 
@@ -41,16 +40,6 @@ public class CustomerAccountResponseDto {
             return wasSet;
         }
         this.username = aUsername;
-        wasSet = true;
-        return wasSet;
-    }
-
-    public boolean setPassword(String aPassword) {
-        boolean wasSet = false;
-        if (aPassword == null) {
-            return wasSet;
-        }
-        this.password = aPassword;
         wasSet = true;
         return wasSet;
     }

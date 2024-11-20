@@ -10,7 +10,7 @@ public class GameQtyRequestDto {
     private GameQtyRequestDto() {
     }
 
-    public GameQtyRequestDto(int aQty, TransactionRequestDto aTransaction, GameResponseDto aGame) {
+    public GameQtyRequestDto(int aQty, TransactionResponseDto aTransaction, GameResponseDto aGame) {
         qty = aQty;
         setGame(aGame);
         setTransaction(transaction);

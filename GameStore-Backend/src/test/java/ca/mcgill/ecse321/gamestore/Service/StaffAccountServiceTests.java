@@ -2,41 +2,100 @@ package ca.mcgill.ecse321.gamestore.Service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.mockito.MockitoAnnotations;
 
-import java.sql.Date;
-import java.time.LocalDate;
-
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import ca.mcgill.ecse321.gamestore.model.StaffAccount;
-import ca.mcgill.ecse321.gamestore.service.StaffAccountService;
 import ca.mcgill.ecse321.gamestore.dao.StaffAccountRepository;
+import ca.mcgill.ecse321.gamestore.model.StaffAccount;
+import ca.mcgill.ecse321.gamestore.service.AccountService;
+import ca.mcgill.ecse321.gamestore.service.StaffAccountService;
 
-@SpringBootTest
 public class StaffAccountServiceTests {
+
     @Mock
-    private StaffAccountRepository repo;
+    private StaffAccountRepository staffAccountRepository;
+
+    @Mock
+    private AccountService accountService;
+
     @InjectMocks
-    private StaffAccountService service;
+    private StaffAccountService staffAccountService;
 
-    @SuppressWarnings("null")
-    @Test
-    public void testCreateValidStaffAccount() {
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testReadStaffAccountByValidId() {
+    public void testCreateStaffAccount() {
+        StaffAccount savedAccount = new StaffAccount();
+        savedAccount.setUsername("staff123");
+
+        when(staffAccountRepository.save(any(StaffAccount.class))).thenReturn(savedAccount);
+
+        StaffAccount result = staffAccountService.createStaffAccount("staff123", "strongPassword123", "John Doe");
+
+        assertNotNull(result);
+        assertEquals("staff123", result.getUsername());
+        verify(staffAccountRepository, times(1)).save(any(StaffAccount.class));
     }
 
     @Test
-    public void testReadStaffAccountByInvalidId() {
+    public void testUpdatePassword() {
+        StaffAccount account = new StaffAccount();
+        int id = 2;
+
+        when(staffAccountRepository.findById(id)).thenReturn(java.util.Optional.of(account));
+        when(AccountService.isValidPassword("UpdatedPassword2!")).thenReturn("");
+        when(AccountService.generateSalt(8)).thenReturn("newSalt");
+        when(AccountService.hashPassword("UpdatedPassword2!", "newSalt")).thenReturn("hashedPassword");
+
+        staffAccountService.updatePassword(1, "UpdatedPassword2!");
+
+        assertEquals("hashedPassword", account.getPasswordHash());
+        verify(staffAccountRepository, times(1)).save(account);
+    }
+
+    @Test
+    public void testDeleteStaffAccount() {
+        when(staffAccountRepository.existsById(1)).thenReturn(true);
+
+        staffAccountService.deleteStaffAccount(1);
+
+        verify(staffAccountRepository, times(1)).deleteById(1);
+    }
+
+    @Test
+    public void testGetStaffAccountById() {
+        StaffAccount account = new StaffAccount();
+        account.setUsername("staff123");
+        int id = 2;
+
+        when(staffAccountRepository.findById(id)).thenReturn(java.util.Optional.of(account));
+
+        StaffAccount result = staffAccountService.getStaffAccountById(1);
+
+        assertNotNull(result);
+        assertEquals("staff123", result.getUsername());
+    }
+
+    @Test
+    public void testGetStaffAccountByUsername() {
+        StaffAccount account = new StaffAccount();
+        account.setUsername("staff123");
+
+        when(staffAccountRepository.findStaffAccountByUsername("staff123")).thenReturn(account);
+
+        StaffAccount result = staffAccountService.getStaffAccountByUsername("staff123");
+
+        assertNotNull(result);
+        assertEquals("staff123", result.getUsername());
     }
 }

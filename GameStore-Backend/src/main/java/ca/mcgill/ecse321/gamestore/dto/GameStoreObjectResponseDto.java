@@ -4,9 +4,7 @@ import ca.mcgill.ecse321.gamestore.model.GameStoreObject;
 
 public class GameStoreObjectResponseDto {
     private int id;
-    private String name;
-    private String description;
-    private double price;
+    private String policy;
 
     // Default constructor for Jackson
     @SuppressWarnings("unused")
@@ -14,41 +12,24 @@ public class GameStoreObjectResponseDto {
     }
 
     public GameStoreObjectResponseDto(GameStoreObject model) {
-        this.id = model.getId();
-        this.name = model.getName();
-        this.description = model.getDescription();
-        this.price = model.getPrice();
+        id = model.getId();
+        policy = model.getPolicy();
     }
 
     public int getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public double getPrice() {
-        return price;
+    public String getPolicy() {
+        return policy;
     }
 
     public void setId(int id) {
         this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPolicy(String policy) {
+        this.policy = policy;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
 }

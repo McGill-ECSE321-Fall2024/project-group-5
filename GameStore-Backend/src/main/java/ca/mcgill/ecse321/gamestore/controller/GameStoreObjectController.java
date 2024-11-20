@@ -16,11 +16,7 @@ public class GameStoreObjectController {
 
     @PostMapping("/create")
     public GameStoreObjectResponseDto createGameStoreObject(@RequestBody GameStoreObjectRequestDto requestDto) {
-        GameStoreObject gameStoreObject = gameStoreObjectService.createGameStoreObject(
-                requestDto.getName(),
-                requestDto.getDescription(),
-                requestDto.getPrice()
-        );
+        GameStoreObject gameStoreObject = gameStoreObjectService.createGameStoreObject(requestDto.getPolicy());
         return new GameStoreObjectResponseDto(gameStoreObject);
     }
 
@@ -30,18 +26,15 @@ public class GameStoreObjectController {
         return new GameStoreObjectResponseDto(gameStoreObject);
     }
 
-    @PutMapping("/{id}/update")
-    public GameStoreObjectResponseDto updateGameStoreObject(@PathVariable int id, @RequestBody GameStoreObjectRequestDto requestDto) {
+    @PutMapping("/update/{id}")
+    public GameStoreObjectResponseDto updateGameStoreObject(@PathVariable int id,
+            @RequestBody GameStoreObjectRequestDto requestDto) {
         GameStoreObject gameStoreObject = gameStoreObjectService.updateGameStoreObject(
-                id,
-                requestDto.getName(),
-                requestDto.getDescription(),
-                requestDto.getPrice()
-        );
+                id, requestDto.getPolicy());
         return new GameStoreObjectResponseDto(gameStoreObject);
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/delete/{id}")
     public void deleteGameStoreObject(@PathVariable int id) {
         gameStoreObjectService.deleteGameStoreObject(id);
     }
