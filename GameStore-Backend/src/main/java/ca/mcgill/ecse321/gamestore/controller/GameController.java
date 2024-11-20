@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -108,10 +110,29 @@ public class GameController {
      */
     @GetMapping("/get/allgames")
     public ResponseEntity<List<GameResponseDto>> getAllGames() {
-        List<Game> games = gameService.listAllGames();
-        List<GameResponseDto> gameDtos = games.stream()
-                .map(GameResponseDto::new)
-                .collect(Collectors.toList());
+        try {
+            // Fetch the list of all games from the game service
+            List<Game> games = gameService.listAllGames();
+            
+            // If no games are found, return NOT_FOUND (404) status
+            if (games == null || games.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            
+            // Convert the list of Game entities to a list of GameResponseDto
+            List<GameResponseDto> gameDtos = games.stream()
+                    .map(GameResponseDto::new)
+                    .collect(Collectors.toList());
+            
+            // Return the list of GameResponseDto wrapped in ResponseEntity with OK status (200)
+            return new ResponseEntity<>(gameDtos, HttpStatus.OK);
+        } catch (Exception e) {
+            // Log the error (optional)
+            // e.printStackTrace();
+            
+            // Return INTERNAL_SERVER_ERROR (500) if something goes wrong
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
