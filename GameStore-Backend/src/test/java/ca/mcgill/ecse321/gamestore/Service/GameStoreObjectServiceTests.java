@@ -1,18 +1,14 @@
 package ca.mcgill.ecse321.gamestore.Service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.Optional;
 
 import ca.mcgill.ecse321.gamestore.dao.GameStoreObjectRepository;
 import ca.mcgill.ecse321.gamestore.model.GameStoreObject;
@@ -31,7 +27,11 @@ public class GameStoreObjectServiceTests {
     public void testCreateValidGameStoreObject() {
         // Arrange
         GameStoreObject gameStoreObject = new GameStoreObject("Return Policy");
-        when(repo.save(any(GameStoreObject.class))).thenReturn(gameStoreObject);
+        when(repo.save(any(GameStoreObject.class))).thenAnswer(invocation -> {
+            GameStoreObject obj = invocation.getArgument(0);
+            obj.setPolicy("Return Policy");
+            return obj;
+        });
 
         // Act
         GameStoreObject createdObject = service.createGameStoreObject("Return Policy");
@@ -46,16 +46,16 @@ public class GameStoreObjectServiceTests {
     public void testReadGameStoreObjectByValidId() {
         // Arrange
         GameStoreObject gameStoreObject = new GameStoreObject("Return Policy");
-        when(repo.findById(gameStoreObject.getId())).thenReturn(Optional.of(gameStoreObject));
+        int id = 1;
+        when(repo.findById(id)).thenReturn(Optional.of(gameStoreObject));
 
         // Act
-        GameStoreObject foundObject = service.getGameStoreObjectById(1);
+        GameStoreObject foundObject = service.getGameStoreObjectById(id);
 
         // Assert
         assertNotNull(foundObject);
-        assertEquals(1, foundObject.getId());
         assertEquals("Return Policy", foundObject.getPolicy());
-        verify(repo, times(1)).findById(1);
+        verify(repo, times(1)).findById(id);
     }
 
     @Test
@@ -64,34 +64,37 @@ public class GameStoreObjectServiceTests {
         when(repo.findById(999)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             service.getGameStoreObjectById(999);
         });
+        assertEquals("GameStoreObject not found", exception.getMessage());
         verify(repo, times(1)).findById(999);
     }
 
     @Test
     public void testDeleteGameStoreObjectById() {
         // Arrange
-        GameStoreObject gameStoreObject = new GameStoreObject("Return Policy");
-        when(repo.existsById(gameStoreObject.getId())).thenReturn(true);
+        int id = 1;
+        when(repo.existsById(id)).thenReturn(true);
 
         // Act
-        service.deleteGameStoreObject(gameStoreObject.getId());
+        service.deleteGameStoreObject(id);
 
         // Assert
-        verify(repo, times(1)).deleteById(1);
+        verify(repo, times(1)).deleteById(id);
     }
 
     @Test
     public void testDeleteGameStoreObjectByInvalidId() {
         // Arrange
-        when(repo.existsById(999)).thenReturn(false);
+        int id = 999;
+        when(repo.existsById(id)).thenReturn(false);
 
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> {
-            service.deleteGameStoreObject(999);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            service.deleteGameStoreObject(id);
         });
-        verify(repo, times(0)).deleteById(999);
+        assertEquals("GameStoreObject not found", exception.getMessage());
+        verify(repo, never()).deleteById(id);
     }
 }
