@@ -1,14 +1,15 @@
 <template>
-  <main>
+  <main class="cart">
     <h1>Your Cart</h1>
-    <div v-if="cart.length">
+    <div v-if="cart.length" class="cart-items">
       <div v-for="game in cart" :key="game.id" class="cart-item">
+        <img :src="game.image" :alt="game.name" />
         <h3>{{ game.name }}</h3>
-        <p>Price: ${{ game.price }}</p>
+        <p>${{ game.price }}</p>
         <button @click="removeFromCart(game)">Remove</button>
       </div>
       <h2>Total: ${{ totalPrice }}</h2>
-      <button @click="checkout">Checkout</button>
+      <button class="checkout-btn" @click="checkout">Checkout</button>
     </div>
     <p v-else>Your cart is empty.</p>
   </main>
@@ -20,14 +21,13 @@ export default {
   data() {
     return {
       cart: [
-        { id: 1, name: "Game 1", price: 59.99 },
-        { id: 2, name: "Game 2", price: 49.99 },
+        { id: 1, name: "Adventure Quest", price: 29.99, image: "/images/adventure-quest.jpg" },
       ],
     };
   },
   computed: {
     totalPrice() {
-      return this.cart.reduce((total, game) => total + game.price, 0);
+      return this.cart.reduce((total, game) => total + game.price, 0).toFixed(2);
     },
   },
   methods: {
@@ -35,12 +35,39 @@ export default {
       this.cart = this.cart.filter((item) => item.id !== game.id);
     },
     checkout() {
-      console.log("Proceeding to checkout.");
+      alert("Proceeding to checkout!");
     },
   },
 };
 </script>
 
 <style scoped>
-/* Add styles for the cart page here */
+.cart-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.cart-item img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin-right: 1rem;
+}
+
+.checkout-btn {
+  background-color: #ff4500;
+  color: white;
+  border: none;
+  padding: 1rem;
+  cursor: pointer;
+}
 </style>
