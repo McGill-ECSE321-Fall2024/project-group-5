@@ -21,9 +21,11 @@ public class GameStoreObjectService {
             throw new IllegalArgumentException("Policy cannot be null or empty");
         }
 
+        // Create a new GameStoreObject and set its attributes
         GameStoreObject gameStoreObject = new GameStoreObject();
         gameStoreObject.setPolicy(policy);
 
+        // Save the new object and return it
         return gameStoreObjectRepository.save(gameStoreObject);
     }
 
@@ -33,12 +35,21 @@ public class GameStoreObjectService {
         return gameStoreObject.orElseThrow(() -> new IllegalArgumentException("GameStoreObject not found"));
     }
 
+
     @Transactional
     public GameStoreObject updateGameStoreObject(int id, String policy) {
-        GameStoreObject gameStoreObject = getGameStoreObjectById(id);
-        if (policy != null) {
-            gameStoreObject.setPolicy(policy);
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID must be a positive integer.");
         }
+        if (policy == null || policy.isEmpty()) {
+            throw new IllegalArgumentException("Policy cannot be null or empty.");
+        }
+
+        // Fetch the object to update
+        GameStoreObject gameStoreObject = getGameStoreObjectById(id);
+
+        // Update the policy and save the object
+        gameStoreObject.setPolicy(policy);
         return gameStoreObjectRepository.save(gameStoreObject);
     }
 
