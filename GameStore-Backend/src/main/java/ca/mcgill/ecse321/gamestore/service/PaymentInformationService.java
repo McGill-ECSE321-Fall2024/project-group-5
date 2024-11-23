@@ -29,6 +29,29 @@ public class PaymentInformationService {
      */
     @Transactional
     public PaymentInformation createPaymentInformation(PaymentInformationRequestDto requestDTO) {
+        validateRequest(requestDTO);
+    
+        // Ensure the expiration date is in the future
+        validateExpirationDate(requestDTO.getExpirationDate());
+    
+        // Retrieve the CustomerAccount
+        CustomerAccount customerAccount = customerAccountRepository.findById(requestDTO.getCustomerAccountId());
+    
+        // Create PaymentInformation object
+        PaymentInformation paymentInformation = new PaymentInformation(
+                requestDTO.getCardholderName(),
+                requestDTO.getCardNumber(),
+                Date.valueOf(requestDTO.getExpirationDate()),
+                requestDTO.getCvc(),
+                requestDTO.getCardType(),
+                customerAccount
+        );
+    
+        // Save to the repository
+        return paymentInformationRepository.save(paymentInformation);
+    }
+    
+    private void validateRequest(PaymentInformationRequestDto requestDTO) {
         if (requestDTO == null) {
             throw new IllegalArgumentException("Request DTO cannot be null.");
         }
@@ -47,23 +70,15 @@ public class PaymentInformationService {
         if (requestDTO.getCardType() == null) {
             throw new IllegalArgumentException("Card type cannot be null.");
         }
-
-        CustomerAccount customerAccount = customerAccountRepository.findById(requestDTO.getCustomerAccountId());
-        if (customerAccount == null) {
-            throw new IllegalArgumentException("Customer account with the provided ID does not exist.");
-        }
-
-        PaymentInformation paymentInformation = new PaymentInformation(
-                requestDTO.getCardholderName(),
-                requestDTO.getCardNumber(),
-                Date.valueOf(requestDTO.getExpirationDate()),
-                requestDTO.getCvc(),
-                requestDTO.getCardType(),
-                customerAccount
-        );
-
-        return paymentInformationRepository.save(paymentInformation);
     }
+    
+    private void validateExpirationDate(String expirationDate) {
+        Date parsedDate = Date.valueOf(expirationDate);
+        if (parsedDate.before(new Date(System.currentTimeMillis()))) {
+            throw new IllegalArgumentException("Expiration date must be in the future.");
+        }
+    }
+    
 
     /**
      * Retrieves PaymentInformation by its unique ID.
@@ -149,5 +164,6 @@ public class PaymentInformationService {
                 .orElseThrow(() -> new IllegalArgumentException("No PaymentInformation with the specified ID exists."));
 
         paymentInformationRepository.delete(paymentInformation);
+        
     }
 }

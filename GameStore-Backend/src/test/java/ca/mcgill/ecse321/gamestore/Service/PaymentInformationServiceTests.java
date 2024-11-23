@@ -141,4 +141,86 @@ public class PaymentInformationServiceTests {
                 () -> paymentInformationService.deletePaymentInformation(999));
         assertEquals("No PaymentInformation with the specified ID exists.", e.getMessage());
     }
+
+    @Test
+    public void testCreatePaymentInformationWithNullRequest() {
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> paymentInformationService.createPaymentInformation(null));
+        assertEquals("Request DTO cannot be null.", e.getMessage());
+    }
+
+    @Test
+    public void testCreatePaymentInformationWithMissingFields() {
+        // Arrange
+        PaymentInformationRequestDto request = new PaymentInformationRequestDto(
+                null, 12345678, "2025-12-31", 123, CardType.Visa, 1); // Missing cardholder name
+    
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> paymentInformationService.createPaymentInformation(request));
+        assertEquals("Cardholder name cannot be null or empty.", e.getMessage());
+    }
+
+    @Test
+    public void testCreatePaymentInformationWithInvalidCardNumber() {
+        // Arrange
+        PaymentInformationRequestDto request = new PaymentInformationRequestDto(
+                "Alice", -1234, "2025-12-31", 123, CardType.Visa, 1); // Invalid card number
+    
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> paymentInformationService.createPaymentInformation(request));
+        assertEquals("Card number must be a positive integer.", e.getMessage());
+    }
+
+    @Test
+    public void testCreatePaymentInformationWithPastExpirationDate() {
+        // Arrange
+        PaymentInformationRequestDto request = new PaymentInformationRequestDto(
+                "Alice", 12345678, "2020-01-01", 123, CardType.Visa, 1); // Past date
+    
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> paymentInformationService.createPaymentInformation(request));
+        assertEquals("Expiration date must be in the future.", e.getMessage());
+    }
+    
+    @Test
+    public void testUpdateNonExistentPaymentInformation() {
+        // Arrange
+        PaymentInformationRequestDto request = new PaymentInformationRequestDto(
+                "Updated Name", 87654321, "2026-01-01", 456, CardType.Mastercard, 1);
+    
+        when(paymentInformationRepository.findById(999)).thenReturn(Optional.empty());
+    
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> paymentInformationService.updatePaymentInformation(999, request));
+        assertEquals("No PaymentInformation with the specified ID exists.", e.getMessage());
+    }
+
+    @Test
+    public void testUpdatePaymentInformationWithNullRequest() {
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> paymentInformationService.updatePaymentInformation(1, null));
+        assertEquals("No PaymentInformation with the specified ID exists.", e.getMessage());
+    }
+
+    @Test
+    public void testCreatePaymentInformationWithInvalidCardType() {
+        // Arrange
+        PaymentInformationRequestDto request = new PaymentInformationRequestDto(
+                "Alice", 12345678, "2025-12-31", 123, null, 1); // Null card type
+    
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> paymentInformationService.createPaymentInformation(request));
+        assertEquals("Card type cannot be null.", e.getMessage());
+    }
+    
+    
+    
+
 }
