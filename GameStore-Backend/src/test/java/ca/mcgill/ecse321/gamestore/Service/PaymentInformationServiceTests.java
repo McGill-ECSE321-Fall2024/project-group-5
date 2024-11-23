@@ -219,8 +219,4 @@ public class PaymentInformationServiceTests {
                 () -> paymentInformationService.createPaymentInformation(request));
         assertEquals("Card type cannot be null.", e.getMessage());
     }
-    
-    
-    
-
 }
