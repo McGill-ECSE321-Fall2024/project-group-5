@@ -164,7 +164,7 @@ public class AddressServiceTests {
         // Act and Assert
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
                 () -> addressService.createAddress(address));
-        assertEquals("All address attributes must be non-null.", e.getMessage());
+        assertEquals("All address attributes must be non-null and non-blank.", e.getMessage());
     }
 
     @Test
@@ -175,7 +175,7 @@ public class AddressServiceTests {
         // Act and Assert
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
                 () -> addressService.createAddress(address));
-        assertEquals("All address attributes must be non-null.", e.getMessage());
+        assertEquals("All address attributes must be non-null and non-blank.", e.getMessage());
     }
 
     @Test
@@ -240,4 +240,38 @@ public class AddressServiceTests {
                 () -> addressService.updateAddress(id, updatedAddress));
         assertEquals("All updated address attributes must be non-null.", e.getMessage());
     }
+
+    @Test
+    public void testCreateAddressWithInvalidCountry() {
+        // Arrange
+        Address address = new Address();
+        address.setAddress("123 Main St");
+        address.setCity("Montreal");
+        address.setProvince("QC");
+        address.setCountry("USA"); // Invalid country
+        address.setPostalCode("H3A 1A1");
+
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> addressService.createAddress(address));
+        assertEquals("Only addresses in Canada are supported.", e.getMessage());
+    }
+
+    @Test
+    public void testCreateAddressWithInvalidPostalCode() {
+        // Arrange
+        Address address = new Address();
+        address.setAddress("123 Main St");
+        address.setCity("Montreal");
+        address.setProvince("QC");
+        address.setCountry("Canada");
+        address.setPostalCode("123"); // Invalid postal code
+    
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> addressService.createAddress(address));
+        assertEquals("Invalid postal code format.", e.getMessage());
+    }
+    
+
 }

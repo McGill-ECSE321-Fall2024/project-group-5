@@ -20,23 +20,30 @@ public class AddressService {
      * @throws IllegalArgumentException if any address attribute is null or if the country is not "Canada"
      */
 
-    @Transactional
-    public Address createAddress(Address address) {
-        if (address == null ||
-                address.getAddress() == null ||
-                address.getCity() == null ||
-                address.getProvince() == null ||
-                address.getCountry() == null ||
-                address.getPostalCode() == null) {
-            throw new IllegalArgumentException("All address attributes must be non-null.");
-        }
-
-        if ("Canada" != address.getCountry()) {
-            throw new IllegalArgumentException("Only addresses in Canada are supported.");
-        }
-
-        return addressRepository.save(address);
-    }
+     @Transactional
+     public Address createAddress(Address address) {
+         if (address == null ||
+                 address.getAddress() == null || address.getAddress().isBlank() ||
+                 address.getCity() == null || address.getCity().isBlank() ||
+                 address.getProvince() == null || address.getProvince().isBlank() ||
+                 address.getCountry() == null || address.getCountry().isBlank() ||
+                 address.getPostalCode() == null || address.getPostalCode().isBlank()) {
+             throw new IllegalArgumentException("All address attributes must be non-null and non-blank.");
+         }
+     
+         // Validate postal code format (Canadian format: A1A 1A1)
+         if (!address.getPostalCode().matches("[A-Za-z]\\d[A-Za-z] \\d[A-Za-z]\\d")) {
+             throw new IllegalArgumentException("Invalid postal code format.");
+         }
+     
+         // Validate country
+         if (!"Canada".equals(address.getCountry())) {
+             throw new IllegalArgumentException("Only addresses in Canada are supported.");
+         }
+     
+         return addressRepository.save(address);
+     }
+     
 
      /**
      * Updates an existing Address entry.
