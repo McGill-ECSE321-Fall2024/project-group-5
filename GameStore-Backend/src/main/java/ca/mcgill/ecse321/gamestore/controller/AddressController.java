@@ -58,17 +58,21 @@ public class AddressController {
      * @return AddressResponseDto representing the created address
      */
     @PostMapping("/create")
-    public ResponseEntity<AddressResponseDto> createAddress(@RequestBody AddressRequestDto addressRequestDto) {
-        Address address = new Address();
-        address.setAddress(addressRequestDto.getAddress());
-        address.setCity(addressRequestDto.getCity());
-        address.setProvince(addressRequestDto.getProvince());
-        address.setCountry(addressRequestDto.getCountry());
-        address.setPostalCode(addressRequestDto.getPostalCode());
-        // Save the new address
-        Address createdAddress = addressService.createAddress(address);
-        AddressResponseDto addressDto = new AddressResponseDto(createdAddress);
-        return new ResponseEntity<>(addressDto, HttpStatus.CREATED);
+    public ResponseEntity<?> createAddress(@RequestBody AddressRequestDto addressRequestDto) {
+       try {
+            Address address = new Address();
+            address.setAddress(addressRequestDto.getAddress());
+            address.setCity(addressRequestDto.getCity());
+            address.setProvince(addressRequestDto.getProvince());
+            address.setCountry(addressRequestDto.getCountry());
+            address.setPostalCode(addressRequestDto.getPostalCode());
+            // Save the new address
+            Address createdAddress = addressService.createAddress(address);
+            AddressResponseDto addressDto = new AddressResponseDto(createdAddress);
+            return new ResponseEntity<>(addressDto, HttpStatus.CREATED);
+       } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+       }
     }
 
     /**
@@ -79,7 +83,7 @@ public class AddressController {
      * @return AddressResponseDto representing the updated address
      */
     @PutMapping("update/{id}")
-    public ResponseEntity<AddressResponseDto> updateAddress(
+    public ResponseEntity<?> updateAddress(
             @PathVariable("id") int id,
             @RequestBody AddressRequestDto addressRequestDto) {
         Address updatedAddress = new Address();

@@ -19,6 +19,8 @@ public class AddressService {
      * @return the created Address object
      * @throws IllegalArgumentException if any address attribute is null or if the country is not "Canada"
      */
+
+    @Transactional
     public Address createAddress(Address address) {
         if (address == null ||
                 address.getAddress() == null ||
@@ -29,11 +31,63 @@ public class AddressService {
             throw new IllegalArgumentException("All address attributes must be non-null.");
         }
 
-        if (!"CANADA".equalsIgnoreCase(address.getCountry())) {
+        if ("Canada" != address.getCountry()) {
             throw new IllegalArgumentException("Only addresses in Canada are supported.");
         }
 
         return addressRepository.save(address);
+    }
+
+     /**
+     * Updates an existing Address entry.
+     * 
+     * @param id the ID of the Address to update
+     * @param updatedAddress the Address object containing updated information
+     * @return the updated Address object
+     * @throws IllegalArgumentException if the Address with the given ID is not found or if any updated attribute is null
+     */
+    @Transactional
+    public Address updateAddress(int id, Address updatedAddress) {
+        Address existingAddress = addressRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Address with ID " + id + " not found."));
+
+        if (updatedAddress == null ||
+                updatedAddress.getAddress() == null ||
+                updatedAddress.getCity() == null ||
+                updatedAddress.getProvince() == null ||
+                updatedAddress.getCountry() == null ||
+                updatedAddress.getPostalCode() == null) {
+            throw new IllegalArgumentException("All updated address attributes must be non-null.");
+        }
+
+        existingAddress.setAddress(updatedAddress.getAddress());
+        existingAddress.setCity(updatedAddress.getCity());
+        existingAddress.setProvince(updatedAddress.getProvince());
+        existingAddress.setCountry(updatedAddress.getCountry());
+        existingAddress.setPostalCode(updatedAddress.getPostalCode());
+
+        return addressRepository.save(existingAddress);
+    }
+
+    /**
+     * Deletes an Address entry by ID.
+     * 
+     * @param id the ID of the Address to delete
+     * @return true if the deletion was successful, otherwise false
+     * @throws IllegalArgumentException if the Address with the given ID is not found
+     */
+    @Transactional
+    public boolean deleteAddress(int id) {
+        // Check if the address exists by id
+        if (addressRepository.findById(id).isEmpty()) {
+            throw new IllegalArgumentException("Address with ID " + id + " not found.");
+        }
+
+        // If address exists, delete it
+        addressRepository.deleteById(id);
+
+        // Return true to indicate the deletion was successful
+        return true;
     }
 
     /**
@@ -43,6 +97,7 @@ public class AddressService {
      * @return the Address object with the given ID
      * @throws IllegalArgumentException if the Address with the given ID is not found
      */
+    @Transactional
     public Address getAddressById(int id) {
         return addressRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Address with ID " + id + " not found."));
@@ -105,57 +160,5 @@ public class AddressService {
      */
     public Iterable<Address> getAddressesByCustomerId(int customerId) {
         return addressRepository.findByCustomerAccount_Id(customerId);
-    }
-
-    /**
-     * Updates an existing Address entry.
-     * 
-     * @param id the ID of the Address to update
-     * @param updatedAddress the Address object containing updated information
-     * @return the updated Address object
-     * @throws IllegalArgumentException if the Address with the given ID is not found or if any updated attribute is null
-     */
-    @Transactional
-    public Address updateAddress(int id, Address updatedAddress) {
-        Address existingAddress = addressRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Address with ID " + id + " not found."));
-
-        if (updatedAddress == null ||
-                updatedAddress.getAddress() == null ||
-                updatedAddress.getCity() == null ||
-                updatedAddress.getProvince() == null ||
-                updatedAddress.getCountry() == null ||
-                updatedAddress.getPostalCode() == null) {
-            throw new IllegalArgumentException("All updated address attributes must be non-null.");
-        }
-
-        existingAddress.setAddress(updatedAddress.getAddress());
-        existingAddress.setCity(updatedAddress.getCity());
-        existingAddress.setProvince(updatedAddress.getProvince());
-        existingAddress.setCountry(updatedAddress.getCountry());
-        existingAddress.setPostalCode(updatedAddress.getPostalCode());
-
-        return addressRepository.save(existingAddress);
-    }
-
-    /**
-     * Deletes an Address entry by ID.
-     * 
-     * @param id the ID of the Address to delete
-     * @return true if the deletion was successful, otherwise false
-     * @throws IllegalArgumentException if the Address with the given ID is not found
-     */
-    @Transactional
-    public boolean deleteAddress(int id) {
-        // Check if the address exists by id
-        if (addressRepository.findById(id).isEmpty()) {
-            throw new IllegalArgumentException("Address with ID " + id + " not found.");
-        }
-
-        // If address exists, delete it
-        addressRepository.deleteById(id);
-
-        // Return true to indicate the deletion was successful
-        return true;
     }
 }
