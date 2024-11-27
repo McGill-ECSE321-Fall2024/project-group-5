@@ -35,7 +35,13 @@ public class GameService {
           */
     @Transactional
     public Game addGame(String name, int price, String description, Category category, GameConsole gameConsole, boolean inCatalog) {
-        validateGameDetails(name, price, category, gameConsole, inCatalog);
+        validateGameDetails(name, price, description, category, gameConsole, inCatalog);
+        // Check if a game with the same name already exists
+        Game existingGame = gameRepository.findByName(name);
+        if (existingGame != null) {
+            throw new IllegalArgumentException("A game with this name already exists");
+        }
+
         Game game = new Game();
         game.setName(name);
         game.setPrice(price);
@@ -62,7 +68,7 @@ public class GameService {
      */
     @Transactional
     public Game updateGame(int id, String name, int price, String description, Category category, GameConsole gameConsole, boolean inCatalog) {
-        validateGameDetails(name, price, category, gameConsole, inCatalog);
+        validateGameDetails(name, price, description, category, gameConsole, inCatalog);
         Game game = getGameById(id);
         game.setName(name);
         game.setPrice(price);
@@ -199,24 +205,28 @@ public class GameService {
      *
      * @param name        - Game name
      * @param price       - Game price
+     * @param description - Game description
      * @param category    - Game category
      * @param gameConsole - Game console
      * @throws IllegalArgumentException if any field is invalid
      */
-    private void validateGameDetails(String name, int price, Category category, GameConsole gameConsole, boolean inCatalog) {
+    private void validateGameDetails(String name, int price, String description, Category category, GameConsole gameConsole, boolean inCatalog) {
         if (!StringUtils.hasText(name)) {
             throw new IllegalArgumentException("Game name cannot be null or empty");
         }
         if (price < 0) {
             throw new IllegalArgumentException("Game price cannot be negative");
         }
+        if (description == null) {
+            throw new IllegalArgumentException("Game description cannot be null or empty");
+        }
+
         if (category == null) {
             throw new IllegalArgumentException("Category cannot be null");
         }
         if (gameConsole == null) {
             throw new IllegalArgumentException("Game console cannot be null");
         }
-
         if (inCatalog == false) {
             throw new IllegalArgumentException("Game is not in catalog");
         }
