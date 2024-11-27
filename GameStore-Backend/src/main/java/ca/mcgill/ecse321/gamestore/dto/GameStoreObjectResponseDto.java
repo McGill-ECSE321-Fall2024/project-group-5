@@ -7,13 +7,11 @@ public class GameStoreObjectResponseDto {
     private String policy;
 
     // Default constructor for Jackson
-    @SuppressWarnings("unused")
-    private GameStoreObjectResponseDto() {
-    }
+    public GameStoreObjectResponseDto() {}
 
     public GameStoreObjectResponseDto(GameStoreObject model) {
-        id = model.getId();
-        policy = model.getPolicy();
+        this.id = model.getId();
+        this.policy = model.getPolicy();
     }
 
     public int getId() {
@@ -31,5 +29,4 @@ public class GameStoreObjectResponseDto {
     public void setPolicy(String policy) {
         this.policy = policy;
     }
-
 }

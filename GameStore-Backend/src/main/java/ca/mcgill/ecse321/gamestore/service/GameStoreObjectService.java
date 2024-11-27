@@ -18,37 +18,29 @@ public class GameStoreObjectService {
     @Transactional
     public GameStoreObject createGameStoreObject(String policy) {
         if (policy == null || policy.isEmpty()) {
-            throw new IllegalArgumentException("Policy cannot be null or empty");
+            throw new IllegalArgumentException("Policy cannot be null or empty.");
         }
 
-        // Create a new GameStoreObject and set its attributes
         GameStoreObject gameStoreObject = new GameStoreObject();
         gameStoreObject.setPolicy(policy);
-
-        // Save the new object and return it
+        System.out.println("Creating GameStoreObject with policy: " + policy);
         return gameStoreObjectRepository.save(gameStoreObject);
     }
 
     @Transactional
     public GameStoreObject getGameStoreObjectById(int id) {
-        Optional<GameStoreObject> gameStoreObject = gameStoreObjectRepository.findById(id);
-        return gameStoreObject.orElseThrow(() -> new IllegalArgumentException("GameStoreObject not found"));
+        return gameStoreObjectRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("GameStoreObject not found"));
     }
-
 
     @Transactional
     public GameStoreObject updateGameStoreObject(int id, String policy) {
-        if (id <= 0) {
-            throw new IllegalArgumentException("ID must be a positive integer.");
-        }
         if (policy == null || policy.isEmpty()) {
             throw new IllegalArgumentException("Policy cannot be null or empty.");
         }
 
-        // Fetch the object to update
-        GameStoreObject gameStoreObject = getGameStoreObjectById(id);
-
-        // Update the policy and save the object
+        System.out.println("Updating GameStoreObject with ID: " + id + " to new policy: " + policy);
+        GameStoreObject gameStoreObject = getGameStoreObjectById(id); // Throws exception if not found
         gameStoreObject.setPolicy(policy);
         return gameStoreObjectRepository.save(gameStoreObject);
     }
