@@ -17,44 +17,52 @@ public class GameStoreObjectController {
     private GameStoreObjectService gameStoreObjectService;
 
     @PostMapping("/create")
-    public ResponseEntity<GameStoreObjectResponseDto> createGameStoreObject(
-            @RequestBody GameStoreObjectRequestDto requestDto) {
+    public ResponseEntity<Object> createGameStoreObject(@RequestBody GameStoreObjectRequestDto requestDto) {
+        if (requestDto.getPolicy() == null || requestDto.getPolicy().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Policy cannot be empty");
+        }
+
         try {
             GameStoreObject gameStoreObject = gameStoreObjectService.createGameStoreObject(requestDto.getPolicy());
             return ResponseEntity.status(HttpStatus.CREATED).body(new GameStoreObjectResponseDto(gameStoreObject));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GameStoreObjectResponseDto> getGameStoreObjectById(@PathVariable int id) {
+    public ResponseEntity<Object> getGameStoreObjectById(@PathVariable int id) {
         try {
             GameStoreObject gameStoreObject = gameStoreObjectService.getGameStoreObjectById(id);
             return ResponseEntity.status(HttpStatus.OK).body(new GameStoreObjectResponseDto(gameStoreObject));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("GameStoreObject not found");
         }
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<GameStoreObjectResponseDto> updateGameStoreObject(@PathVariable int id,
+    public ResponseEntity<Object> updateGameStoreObject(
+            @PathVariable int id,
             @RequestBody GameStoreObjectRequestDto requestDto) {
+        if (requestDto.getPolicy() == null || requestDto.getPolicy().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Policy cannot be empty");
+        }
+
         try {
             GameStoreObject gameStoreObject = gameStoreObjectService.updateGameStoreObject(id, requestDto.getPolicy());
             return ResponseEntity.status(HttpStatus.OK).body(new GameStoreObjectResponseDto(gameStoreObject));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("GameStoreObject not found");
         }
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteGameStoreObject(@PathVariable int id) {
+    public ResponseEntity<Object> deleteGameStoreObject(@PathVariable int id) {
         try {
             gameStoreObjectService.deleteGameStoreObject(id);
-            return ResponseEntity.status(HttpStatus.OK).build();
+            return ResponseEntity.status(HttpStatus.OK).body("GameStoreObject deleted successfully");
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("GameStoreObject not found");
         }
     }
 }
