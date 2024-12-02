@@ -70,7 +70,7 @@ public class CustomerAccountRequestDto {
         if (aName == null) {
             return wasSet;
         }
-        this.emailAddress = aName;
+        this.name = aName;
         wasSet = true;
         return wasSet;
     }

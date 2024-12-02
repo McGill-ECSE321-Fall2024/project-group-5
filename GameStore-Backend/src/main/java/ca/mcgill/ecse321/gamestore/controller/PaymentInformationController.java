@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/paymentInformation")
+@RequestMapping("/api/payment-information")
 public class PaymentInformationController {
 
     @Autowired
@@ -46,7 +46,7 @@ public class PaymentInformationController {
      * @return a list of PaymentInformationResponseDto objects representing the
      *         PaymentInformation entries
      */
-    @GetMapping("/getByCustomerAccount/{id}")
+    @GetMapping("/get-by-customer-account/{id}")
     public List<PaymentInformationResponseDto> getPaymentInformationsByCustomerAccountId(
             @PathVariable int customerAccountId) {
         List<PaymentInformation> paymentInformations = (List<PaymentInformation>) paymentInformationService

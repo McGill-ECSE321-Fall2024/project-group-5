@@ -26,7 +26,7 @@ import ca.mcgill.ecse321.gamestore.service.GameService;
 import ca.mcgill.ecse321.gamestore.service.TransactionService;
 
 @RestController
-@RequestMapping("/api/gameQty")
+@RequestMapping("/api/game_qty")
 public class GameQtyController {
     @Autowired
     private GameQtyService gameQtyService;
@@ -59,7 +59,7 @@ public class GameQtyController {
      * @param transactionId the ID of the transaction
      * @return a list of GameQtyResponseDto objects representing the GameQtys
      */
-    @GetMapping("/getByTransaction/{id}")
+    @GetMapping("/get_by_transaction/{id}")
     public ResponseEntity<List<GameQtyResponseDto>> findGameQtiesByTransactionId(@PathVariable int transactionId) {
         List<GameQty> gameQties = gameQtyService.getGameQtiesByTransactionId(transactionId);
         List<GameQtyResponseDto> responseDtos = gameQties.stream()

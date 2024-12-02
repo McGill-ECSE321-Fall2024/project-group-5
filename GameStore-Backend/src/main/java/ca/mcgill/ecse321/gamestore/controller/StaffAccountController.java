@@ -16,7 +16,7 @@ import ca.mcgill.ecse321.gamestore.model.StaffAccount;
 import ca.mcgill.ecse321.gamestore.service.StaffAccountService;
 
 @RestController
-@RequestMapping("/staffAccounts")
+@RequestMapping("/staff-accounts")
 public class StaffAccountController {
 
     @Autowired
@@ -27,8 +27,7 @@ public class StaffAccountController {
         StaffAccount staffAccount = staffAccountService.createStaffAccount(
                 requestDto.getUsername(),
                 requestDto.getPassword(),
-                requestDto.getName()
-        );
+                requestDto.getName());
         return new StaffAccountResponseDto(staffAccount);
     }
 
