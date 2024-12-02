@@ -33,7 +33,7 @@ public class GameStoreObjectIntegrationTests {
         GameStoreObjectRequestDto request = new GameStoreObjectRequestDto(VALID_POLICY);
 
         ResponseEntity<GameStoreObjectResponseDto> response = client.postForEntity(
-                "/api/gamestoreobjects/create",
+                "/api/game-store-object/create",
                 request,
                 GameStoreObjectResponseDto.class);
 
@@ -45,11 +45,12 @@ public class GameStoreObjectIntegrationTests {
         validId = createdObject.getId();
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(2)
     public void testReadGameStoreObjectByValidId() {
         ResponseEntity<GameStoreObjectResponseDto> response = client.getForEntity(
-                "/api/gamestoreobjects/" + validId,
+                "/api/game-store-object/" + validId,
                 GameStoreObjectResponseDto.class);
 
         assertNotNull(response);
@@ -59,10 +60,11 @@ public class GameStoreObjectIntegrationTests {
         assertEquals(VALID_POLICY, response.getBody().getPolicy());
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(3)
     public void testReadGameStoreObjectByInvalidId() {
-        ResponseEntity<String> response = client.getForEntity("/api/gamestoreobjects/999", String.class);
+        ResponseEntity<String> response = client.getForEntity("/api/game-store-object/999", String.class);
 
         assertNotNull(response);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -70,12 +72,13 @@ public class GameStoreObjectIntegrationTests {
         assertTrue(response.getBody().contains("not found")); // Match backend error message
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(4)
     public void testUpdateGameStoreObject() {
         GameStoreObjectRequestDto request = new GameStoreObjectRequestDto(UPDATED_POLICY);
         ResponseEntity<GameStoreObjectResponseDto> response = client.exchange(
-                "/api/gamestoreobjects/update/" + validId,
+                "/api/game-store-object/update/" + validId,
                 org.springframework.http.HttpMethod.PUT,
                 new org.springframework.http.HttpEntity<>(request),
                 GameStoreObjectResponseDto.class);
@@ -90,7 +93,7 @@ public class GameStoreObjectIntegrationTests {
     @Order(5)
     public void testDeleteGameStoreObject() {
         ResponseEntity<Void> response = client.exchange(
-                "/api/gamestoreobjects/delete/" + validId,
+                "/api/game-store-object/delete/" + validId,
                 org.springframework.http.HttpMethod.DELETE,
                 null,
                 Void.class);
@@ -98,16 +101,17 @@ public class GameStoreObjectIntegrationTests {
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        ResponseEntity<String> getResponse = client.getForEntity("/api/gamestoreobjects/" + validId, String.class);
+        ResponseEntity<String> getResponse = client.getForEntity("/api/game-store-object/" + validId, String.class);
         assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(6)
     public void testInvalidUpdate() {
         GameStoreObjectRequestDto request = new GameStoreObjectRequestDto(UPDATED_POLICY);
         ResponseEntity<String> response = client.exchange(
-                "/api/gamestoreobjects/update/999",
+                "/api/game-store-object/update/999",
                 org.springframework.http.HttpMethod.PUT,
                 new org.springframework.http.HttpEntity<>(request),
                 String.class);
@@ -118,13 +122,14 @@ public class GameStoreObjectIntegrationTests {
         assertTrue(response.getBody().contains("not found")); // Match backend error message
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(7)
     public void testEmptyPolicy() {
         GameStoreObjectRequestDto request = new GameStoreObjectRequestDto("");
 
         ResponseEntity<String> response = client.postForEntity(
-                "/api/gamestoreobjects/create",
+                "/api/game-store-object/create",
                 request,
                 String.class);
 

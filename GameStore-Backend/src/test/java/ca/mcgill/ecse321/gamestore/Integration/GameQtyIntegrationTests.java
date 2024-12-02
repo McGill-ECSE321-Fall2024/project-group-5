@@ -93,7 +93,7 @@ public class GameQtyIntegrationTests {
                 GameQtyRequestDto request = new GameQtyRequestDto(GAME_QTY, transaction, game);
 
                 // Act
-                ResponseEntity<GameQtyResponseDto> response = client.postForEntity("api/gameQty/create", request,
+                ResponseEntity<GameQtyResponseDto> response = client.postForEntity("api/game-qty/create", request,
                                 GameQtyResponseDto.class);
 
                 // Assert
@@ -123,14 +123,14 @@ public class GameQtyIntegrationTests {
                                 new TransactionResponseDto(transactionModel),
                                 new GameResponseDto(gameModel));
 
-                ResponseEntity<GameQtyResponseDto> createResponse = client.postForEntity("api/gameQty/create", request,
+                ResponseEntity<GameQtyResponseDto> createResponse = client.postForEntity("api/game-qty/create", request,
                                 GameQtyResponseDto.class);
                 GameQtyResponseDto createdGameQty = createResponse.getBody();
                 assertNotNull(createdGameQty);
 
                 // Act
                 ResponseEntity<GameQtyResponseDto> response = client.getForEntity(
-                                "api/gameQty/get/" + createdGameQty.getId(),
+                                "api/game-qty/get/" + createdGameQty.getId(),
                                 GameQtyResponseDto.class);
 
                 // Assert
@@ -158,14 +158,14 @@ public class GameQtyIntegrationTests {
                                 new TransactionResponseDto(transactionModel),
                                 new GameResponseDto(gameModel));
 
-                ResponseEntity<GameQtyResponseDto> createResponse = client.postForEntity("api/gameQty/create", request,
+                ResponseEntity<GameQtyResponseDto> createResponse = client.postForEntity("api/game-qty/create", request,
                                 GameQtyResponseDto.class);
                 GameQtyResponseDto createdGameQty = createResponse.getBody();
                 assertNotNull(createdGameQty);
 
                 // Act
                 ResponseEntity<GameQtyResponseDto[]> response = client.getForEntity(
-                                "api/gameQty/getByTransaction/" + transactionModel.getTransactionId(),
+                                "api/gameQty/get-by-transaction/" + transactionModel.getTransactionId(),
                                 GameQtyResponseDto[].class);
 
                 // Assert
@@ -192,7 +192,7 @@ public class GameQtyIntegrationTests {
                                 new TransactionResponseDto(transactionModel),
                                 new GameResponseDto(gameModel));
 
-                ResponseEntity<GameQtyResponseDto> createResponse = client.postForEntity("api/gameQty/create", request,
+                ResponseEntity<GameQtyResponseDto> createResponse = client.postForEntity("api/game-qty/create", request,
                                 GameQtyResponseDto.class);
                 GameQtyResponseDto createdGameQty = createResponse.getBody();
                 assertNotNull(createdGameQty);
@@ -201,11 +201,11 @@ public class GameQtyIntegrationTests {
                 createdGameQty.setQty(3);
 
                 // Act
-                client.put("api/gameQty/update", createdGameQty);
+                client.put("api/game-qty/update", createdGameQty);
 
                 // Assert
                 ResponseEntity<GameQtyResponseDto> updatedResponse = client
-                                .getForEntity("api/gameQty/get/" + createdGameQty.getId(), GameQtyResponseDto.class);
+                                .getForEntity("api/game-qty/get/" + createdGameQty.getId(), GameQtyResponseDto.class);
                 assertEquals(HttpStatus.OK, updatedResponse.getStatusCode());
                 assertEquals(3, updatedResponse.getBody().getQty());
         }
@@ -225,17 +225,17 @@ public class GameQtyIntegrationTests {
                                 new TransactionResponseDto(transactionModel),
                                 new GameResponseDto(gameModel));
 
-                ResponseEntity<GameQtyResponseDto> createResponse = client.postForEntity("api/gameQty/create", request,
+                ResponseEntity<GameQtyResponseDto> createResponse = client.postForEntity("api/game-qty/create", request,
                                 GameQtyResponseDto.class);
                 GameQtyResponseDto createdGameQty = createResponse.getBody();
                 assertNotNull(createdGameQty);
 
                 // Act
-                client.delete("api/gameQty/delete/" + createdGameQty.getId());
+                client.delete("api/game-qty/delete/" + createdGameQty.getId());
 
                 // Assert
                 ResponseEntity<GameQtyResponseDto> response = client.getForEntity(
-                                "api/gameQty/get/" + createdGameQty.getId(),
+                                "api/game-qty/get/" + createdGameQty.getId(),
                                 GameQtyResponseDto.class);
                 assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         }

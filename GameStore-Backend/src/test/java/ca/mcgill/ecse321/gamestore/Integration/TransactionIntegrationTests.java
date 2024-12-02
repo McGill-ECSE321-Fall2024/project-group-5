@@ -136,7 +136,8 @@ public class TransactionIntegrationTests {
 
         // Act
         ResponseEntity<TransactionResponseDto[]> response = client
-                .getForEntity("api/transaction/findByCustomer/" + accountModel.getId(), TransactionResponseDto[].class);
+                .getForEntity("api/transaction/find-by-customer/" + accountModel.getId(),
+                        TransactionResponseDto[].class);
 
         // Assert
         assertNotNull(response);
@@ -150,7 +151,7 @@ public class TransactionIntegrationTests {
     @Order(5)
     public void testFindTransactionsByIsPaid() {
         // Act
-        ResponseEntity<TransactionResponseDto[]> response = client.getForEntity("api/transaction/findByIsPaid/false",
+        ResponseEntity<TransactionResponseDto[]> response = client.getForEntity("api/transaction/find-by-is-paid/false",
                 TransactionResponseDto[].class);
 
         // Assert
@@ -165,7 +166,7 @@ public class TransactionIntegrationTests {
     public void testFindTransactionsByDeliveryStatus() {
         // Act
         ResponseEntity<TransactionResponseDto[]> response = client
-                .getForEntity("api/transaction/findByDeliveryStatus/false", TransactionResponseDto[].class);
+                .getForEntity("api/transaction/find-by-delivery-status/false", TransactionResponseDto[].class);
 
         // Assert
         assertNotNull(response);
