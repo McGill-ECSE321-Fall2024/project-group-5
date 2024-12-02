@@ -2,7 +2,9 @@ package ca.mcgill.ecse321.gamestore.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 
 @Entity
 public class GameStoreObject {
@@ -15,7 +17,8 @@ public class GameStoreObject {
   private String policy;
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "game_store_object_seq")
+  @SequenceGenerator(name = "game_store_object_seq", sequenceName = "game_store_object_seq", allocationSize = 1)
   private int id;
 
   // ------------------------

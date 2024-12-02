@@ -4,19 +4,17 @@ public class GameStoreObjectRequestDto {
     private String policy;
 
     // Default constructor for Jackson
-    @SuppressWarnings("unused")
-    private GameStoreObjectRequestDto() {
-    }
+    public GameStoreObjectRequestDto() {}
 
-    public GameStoreObjectRequestDto(String aPolicy) {
-        policy = aPolicy;
+    public GameStoreObjectRequestDto(String policy) {
+        this.policy = policy;
     }
 
     public String getPolicy() {
         return policy;
     }
 
-    public void setPolicy(String aPolicy) {
-        policy = aPolicy;
+    public void setPolicy(String policy) {
+        this.policy = policy;
     }
 }

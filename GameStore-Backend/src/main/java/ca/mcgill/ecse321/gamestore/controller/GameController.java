@@ -110,11 +110,29 @@ public class GameController {
      */
     @GetMapping("/get/allgames")
     public ResponseEntity<List<GameResponseDto>> getAllGames() {
-        List<Game> games = gameService.listAllGames();
-        List<GameResponseDto> gameDtos = games.stream()
-                .map(GameResponseDto::new)
-                .collect(Collectors.toList());
-        return new ResponseEntity<>(gameDtos, HttpStatus.OK);
+        try {
+            // Fetch the list of all games from the game service
+            List<Game> games = gameService.listAllGames();
+            
+            // If no games are found, return NOT_FOUND (404) status
+            if (games == null || games.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            
+            // Convert the list of Game entities to a list of GameResponseDto
+            List<GameResponseDto> gameDtos = games.stream()
+                    .map(GameResponseDto::new)
+                    .collect(Collectors.toList());
+            
+            // Return the list of GameResponseDto wrapped in ResponseEntity with OK status (200)
+            return new ResponseEntity<>(gameDtos, HttpStatus.OK);
+        } catch (Exception e) {
+            // Log the error (optional)
+            // e.printStackTrace();
+            
+            // Return INTERNAL_SERVER_ERROR (500) if something goes wrong
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -188,12 +206,10 @@ public class GameController {
      * Endpoint: /api/games/category/{category}
      */
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<GameResponseDto>> getGamesByCategory(@PathVariable Game.Category category) {
-        List<Game> games = gameService.getGamesByCategory(category);
-        List<GameResponseDto> gameDtos = games.stream()
+    public List<GameResponseDto> getGamesByCategory(@PathVariable Game.Category category) {
+        return gameService.getGamesByCategory(category).stream()
                 .map(GameResponseDto::new)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(gameDtos, HttpStatus.OK);
     }
 
     /**
@@ -201,11 +217,9 @@ public class GameController {
      * Endpoint: /api/games/console/{console}
      */
     @GetMapping("/console/{console}")
-    public ResponseEntity<List<GameResponseDto>> getGamesByConsole(@PathVariable Game.GameConsole console) {
-        List<Game> games = gameService.getGamesByGameConsole(console);
-        List<GameResponseDto> gameDtos = games.stream()
+    public List<GameResponseDto> getGamesByConsole(@PathVariable Game.GameConsole console) {
+        return gameService.getGamesByGameConsole(console).stream()
                 .map(GameResponseDto::new)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(gameDtos, HttpStatus.OK);
     }
 }
