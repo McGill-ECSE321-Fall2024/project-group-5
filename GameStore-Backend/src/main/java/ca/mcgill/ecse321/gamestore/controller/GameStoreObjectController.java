@@ -10,7 +10,7 @@ import ca.mcgill.ecse321.gamestore.service.GameStoreObjectService;
 import ca.mcgill.ecse321.gamestore.model.GameStoreObject;
 
 @RestController
-@RequestMapping("/api/gamestoreobjects")
+@RequestMapping("/api/game-store-object")
 public class GameStoreObjectController {
 
     @Autowired

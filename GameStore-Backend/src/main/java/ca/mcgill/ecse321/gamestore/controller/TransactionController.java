@@ -66,7 +66,7 @@ public class TransactionController {
      * @return a list of TransactionResponseDto objects representing the
      *         Transactions
      */
-    @GetMapping("/getByCustomer/{id}")
+    @GetMapping("/get-by-customer/{id}")
     public ResponseEntity<List<TransactionResponseDto>> findTransactionsByCustomerId(@PathVariable int customerId) {
         List<Transaction> transactions = transactionService.getTransactionsByCustomerId(customerId);
 
@@ -87,7 +87,7 @@ public class TransactionController {
      * @return a list of TransactionResponseDto objects representing the
      *         Transactions
      */
-    @GetMapping("/getByIsPaid/{isPaid}")
+    @GetMapping("/get-by-is-paid/{isPaid}")
     public ResponseEntity<List<TransactionResponseDto>> findTransactionsByIsPaid(@PathVariable boolean isPaid) {
         List<Transaction> transactions = transactionService.getTransactionsByIsPaid(isPaid);
 
@@ -108,7 +108,7 @@ public class TransactionController {
      * @return a list of TransactionResponseDto objects representing the
      *         Transactions
      */
-    @GetMapping("/getByDeliveryStatus/{deliveryStatus}")
+    @GetMapping("/get-by-delivery-status/{deliveryStatus}")
     public ResponseEntity<List<TransactionResponseDto>> findTransactionByDeliveryStatus(
             @PathVariable boolean deliveryStatus) {
         List<Transaction> transactions = transactionService.getTransactionsByDeliveryStatus(deliveryStatus);

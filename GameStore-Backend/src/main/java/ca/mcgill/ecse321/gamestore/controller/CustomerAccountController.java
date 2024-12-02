@@ -24,7 +24,7 @@ import ca.mcgill.ecse321.gamestore.service.CustomerAccountService;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/api/customerAccount")
+@RequestMapping("/api/customer-account")
 public class CustomerAccountController {
 
     @Autowired
@@ -37,7 +37,7 @@ public class CustomerAccountController {
      * @return CustomerAccountResponseDto representation of the CustomerAccount
      * @vivianeltain
      */
-    @GetMapping("/getWithId/{id}")
+    @GetMapping("/get-with-id/{id}")
     public ResponseEntity<CustomerAccountResponseDto> getCustomerAccountById(@PathVariable int id) {
         CustomerAccount customerAccount;
         try {
@@ -140,7 +140,7 @@ public class CustomerAccountController {
      * @return CustomerAccountResponseDto representation of the CustomerAccount
      * @vivianeltain
      */
-    @GetMapping("/getWithEmail/{email}")
+    @GetMapping("/get-with-email/{email}")
     public CustomerAccountResponseDto findCustomerAccountByEmail(@PathVariable String anEmail) throws Exception {
         CustomerAccount customerAccount = customerAccountService.getCustomerAccountByEmail(anEmail);
         return new CustomerAccountResponseDto(customerAccount);
@@ -153,7 +153,7 @@ public class CustomerAccountController {
      * @return CustomerAccountResponseDto representation of the CustomerAccount
      * @vivianeltain
      */
-    @GetMapping("/getWithUsername/{username}")
+    @GetMapping("/get-with-username/{username}")
     public CustomerAccountResponseDto findCustomerAccountByUsername(@PathVariable String aUsername) throws Exception {
         CustomerAccount customerAccount = customerAccountService.getCustomerAccountByUsername(aUsername);
         return new CustomerAccountResponseDto(customerAccount);
