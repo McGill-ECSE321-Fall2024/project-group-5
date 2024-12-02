@@ -1,3 +1,5 @@
+package ca.mcgill.ecse321.gamestore.controller;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,8 @@ public class GameStoreObjectController {
     private GameStoreObjectService gameStoreObjectService;
 
     @PostMapping("/create")
-    public ResponseEntity<GameStoreObjectResponseDto> createGameStoreObject(@RequestBody GameStoreObjectRequestDto requestDto) {
+    public ResponseEntity<GameStoreObjectResponseDto> createGameStoreObject(
+            @RequestBody GameStoreObjectRequestDto requestDto) {
         try {
             GameStoreObject gameStoreObject = gameStoreObjectService.createGameStoreObject(requestDto.getPolicy());
             return ResponseEntity.status(HttpStatus.CREATED).body(new GameStoreObjectResponseDto(gameStoreObject));

@@ -91,7 +91,8 @@ public class CustomerAccountIntegrationTests {
         @Test
         public void testReadCustomerAccountByValidId() {
                 // Arrange
-                CustomerAccount createdCustomerAccount = new CustomerAccount(VALID_USERNAME, VALID);
+                CustomerAccount createdCustomerAccount = new CustomerAccount(VALID_USERNAME, VALID_PASSWORD,
+                                VALID_EMAIL, VALID_NAME, VALID_EMAIL);
 
                 // Save to the DB
                 customerRepository.save(createdCustomerAccount);
