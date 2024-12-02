@@ -46,9 +46,9 @@ public class CustomerAccountServiceTests {
     String hashedPassword2 = AccountService.hashPassword(password2, salt2);
     String hashedPassword3 = AccountService.hashPassword(password3, salt3);
 
-    private final CustomerAccount CA1 = new CustomerAccount("user1", hashedPassword1, salt1, "p1@gmail.com");
-    private final CustomerAccount CA2 = new CustomerAccount("user2", hashedPassword2, salt2, "p2@gmail.com");
-    private final CustomerAccount CA3 = new CustomerAccount("user3", hashedPassword3, salt3, "p3@gmail.com");
+    private final CustomerAccount CA1 = new CustomerAccount("user1", hashedPassword1, salt1, "p1@gmail.com", null);
+    private final CustomerAccount CA2 = new CustomerAccount("user2", hashedPassword2, salt2, "p2@gmail.com", null);
+    private final CustomerAccount CA3 = new CustomerAccount("user3", hashedPassword3, salt3, "p3@gmail.com", null);
 
     // Test data
     private static final int TEST_ID = 999;
@@ -265,7 +265,7 @@ public class CustomerAccountServiceTests {
         CustomerAccount createdCustomerAccount = null;
         try {
             // Act
-            createdCustomerAccount = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, TEST_PASSWORD);
+            createdCustomerAccount = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, TEST_PASSWORD, TEST_NAME);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -289,7 +289,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.createCustomerAccount(TEST_USERNAME, CA1.getEmailAddress(), TEST_PASSWORD);
+            account = service.createCustomerAccount(TEST_USERNAME, CA1.getEmailAddress(), TEST_PASSWORD, TEST_NAME);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -306,7 +306,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.createCustomerAccount(TEST_USERNAME, null, TEST_PASSWORD);
+            account = service.createCustomerAccount(TEST_USERNAME, null, TEST_PASSWORD, TEST_NAME);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -323,7 +323,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.createCustomerAccount(TEST_USERNAME, "", TEST_PASSWORD);
+            account = service.createCustomerAccount(TEST_USERNAME, "", TEST_PASSWORD, TEST_NAME);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -340,7 +340,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.createCustomerAccount(TEST_USERNAME, "test", TEST_PASSWORD);
+            account = service.createCustomerAccount(TEST_USERNAME, "test", TEST_PASSWORD, TEST_NAME);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -357,7 +357,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.createCustomerAccount(TEST_USERNAME, "test@.com", TEST_PASSWORD);
+            account = service.createCustomerAccount(TEST_USERNAME, "test@.com", TEST_PASSWORD, TEST_NAME);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -374,7 +374,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.createCustomerAccount(TEST_USERNAME, "test@test.", TEST_PASSWORD);
+            account = service.createCustomerAccount(TEST_USERNAME, "test@test.", TEST_PASSWORD, TEST_NAME);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -391,7 +391,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.createCustomerAccount(TEST_USERNAME, "@test.com", TEST_PASSWORD);
+            account = service.createCustomerAccount(TEST_USERNAME, "@test.com", TEST_PASSWORD, TEST_NAME);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -408,7 +408,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, null);
+            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, null, TEST_NAME);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -425,7 +425,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "         ");
+            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "         ", TEST_NAME);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -442,7 +442,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "1234");
+            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "1234", TEST_NAME);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -459,7 +459,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "hellohello");
+            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "hellohello", TEST_NAME);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -476,7 +476,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "hellohello1");
+            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "hellohello1", TEST_NAME);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -493,7 +493,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "12341234!");
+            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "12341234!", TEST_NAME);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -510,7 +510,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "TESTTEST!2");
+            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "TESTTEST!2", TEST_NAME);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -527,7 +527,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "testtest!2");
+            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "testtest!2", TEST_NAME);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -544,7 +544,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "Test Test!2");
+            account = service.createCustomerAccount(TEST_USERNAME, TEST_EMAIL, "Test Test!2", TEST_NAME);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }

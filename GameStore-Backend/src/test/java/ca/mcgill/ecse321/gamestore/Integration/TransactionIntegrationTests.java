@@ -43,6 +43,7 @@ public class TransactionIntegrationTests {
     @Autowired
     private TestRestTemplate client;
 
+    private final String VALID_USERNAME = "Alice";
     private final String VALID_NAME = "Alice";
     private final String VALID_EMAIL = "alice@mail.mcgill.ca";
     private final String VALID_PASSWORD = "Password123%";
@@ -59,8 +60,8 @@ public class TransactionIntegrationTests {
     public void testCreateValidTransaction() throws Exception {
         // Arrange
         // create and persist necessary objects for creation of Transaction
-        CustomerAccount accountModel = customerAccountService.createCustomerAccount(VALID_NAME, VALID_EMAIL,
-                VALID_PASSWORD);
+        CustomerAccount accountModel = customerAccountService.createCustomerAccount(VALID_USERNAME, VALID_EMAIL,
+                VALID_PASSWORD, VALID_NAME);
         TransactionRequestDto request = new TransactionRequestDto(0, false, false, false, null, null, null);
         CustomerAccountResponseDto account = new CustomerAccountResponseDto(accountModel);
         request.setCustomerAccount(account);

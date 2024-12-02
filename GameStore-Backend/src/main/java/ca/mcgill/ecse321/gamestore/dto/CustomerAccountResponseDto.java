@@ -15,6 +15,8 @@ public class CustomerAccountResponseDto {
 
     public CustomerAccountResponseDto(CustomerAccount model) {
         this.id = model.getId();
+        this.username = model.getUsername();
+        this.emailAddress = model.getEmailAddress();
         this.name = model.getName();
     }
 
@@ -59,7 +61,7 @@ public class CustomerAccountResponseDto {
         if (aName == null) {
             return wasSet;
         }
-        this.emailAddress = aName;
+        this.name = aName;
         wasSet = true;
         return wasSet;
     }

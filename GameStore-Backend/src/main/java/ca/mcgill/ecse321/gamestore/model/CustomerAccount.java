@@ -29,10 +29,11 @@ public class CustomerAccount extends Account {
   public CustomerAccount() {
   }
 
-  public CustomerAccount(String aUsername, String aPasswordHash, String aRandomPassword, String aEmailAddress) {
+  public CustomerAccount(String aUsername, String aPasswordHash, String aRandomPassword, String aEmailAddress,
+      String aName) {
     super(aUsername, aPasswordHash, aRandomPassword);
     emailAddress = aEmailAddress;
-    name = null;
+    name = aName;
   }
 
   // ------------------------

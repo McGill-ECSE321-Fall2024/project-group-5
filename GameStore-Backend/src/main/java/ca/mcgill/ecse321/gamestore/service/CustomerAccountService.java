@@ -142,6 +142,51 @@ public class CustomerAccountService {
         return "";
     }
 
+    // /**
+    // * Create CustomerAccount with given parameters
+    // *
+    // * @param username - CustomerAccount username
+    // * @param email - CustomerAccount email
+    // * @param password - CustomerAccount password
+    // * @return Newly created CustomerAccount
+    // * @throws Exception
+    // * @vivianeltain
+    // */
+    // @Transactional
+    // public CustomerAccount createCustomerAccount(String username, String email,
+    // String password) throws Exception {
+    // if (username == null) {
+    // throw new Exception("Username must not be null");
+    // }
+    // if (username.trim().length() == 0) {
+    // throw new Exception("Username must not be empty");
+    // }
+    // if (!accountService.checkUsernameAvailability(username)) {
+    // throw new Exception("Username is already taken");
+    // }
+    // // Check that email follows proper format
+    // String emailValidation = isValidEmail(email);
+    // if (!emailValidation.isEmpty()) {
+    // throw new Exception(emailValidation);
+    // }
+    // // Check that account with the same email doesn't already exist
+    // if (customerAccountRepository.findByEmailAddress(email) != null) {
+    // throw new Exception("Account associated with given email already exists");
+    // }
+    // // check that password is valid
+    // if (!AccountService.isValidPassword(password).isEmpty()) {
+    // throw new Exception(AccountService.isValidPassword(password));
+    // }
+    // // Generate salt and hash password for data encryption
+    // String salt = AccountService.generateSalt(8);
+    // String hashedPassword = AccountService.hashPassword(password, salt);
+    // CustomerAccount customerAccount = new CustomerAccount(username,
+    // hashedPassword, salt, email, null);
+    // customerAccountRepository.save(customerAccount);
+
+    // return customerAccount;
+    // }
+
     /**
      * Create CustomerAccount with given parameters
      * 
@@ -153,7 +198,8 @@ public class CustomerAccountService {
      * @vivianeltain
      */
     @Transactional
-    public CustomerAccount createCustomerAccount(String username, String email, String password) throws Exception {
+    public CustomerAccount createCustomerAccount(String username, String email, String password, String name)
+            throws Exception {
         if (username == null) {
             throw new Exception("Username must not be null");
         }
@@ -176,10 +222,14 @@ public class CustomerAccountService {
         if (!AccountService.isValidPassword(password).isEmpty()) {
             throw new Exception(AccountService.isValidPassword(password));
         }
+
+        if (name != null && !isValidName(name).isEmpty()) {
+            throw new Exception(isValidName(name));
+        }
         // Generate salt and hash password for data encryption
         String salt = AccountService.generateSalt(8);
         String hashedPassword = AccountService.hashPassword(password, salt);
-        CustomerAccount customerAccount = new CustomerAccount(username, hashedPassword, salt, email);
+        CustomerAccount customerAccount = new CustomerAccount(username, hashedPassword, salt, email, name);
         customerAccountRepository.save(customerAccount);
 
         return customerAccount;

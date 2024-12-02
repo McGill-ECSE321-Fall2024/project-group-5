@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.mcgill.ecse321.gamestore.controller.utilities.AuthenticationUtility;
@@ -57,6 +58,7 @@ public class CustomerAccountController {
      * @vivianeltain
      */
     @PostMapping("/create")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<CustomerAccountResponseDto> createCustomerAccount(
             @RequestBody CustomerAccountRequestDto customerAccountRequestDto) {
         // Assuming service method handles validation for uniqueness and other checks
@@ -64,7 +66,7 @@ public class CustomerAccountController {
         try {
             createdCustomerAccount = customerAccountService.createCustomerAccount(
                     customerAccountRequestDto.getUsername(), customerAccountRequestDto.getEmailAddress(),
-                    customerAccountRequestDto.getPassword());
+                    customerAccountRequestDto.getPassword(), customerAccountRequestDto.getName());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
