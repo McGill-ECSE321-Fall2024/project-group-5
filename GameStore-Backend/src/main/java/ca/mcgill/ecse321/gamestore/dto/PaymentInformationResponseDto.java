@@ -8,6 +8,7 @@ import java.sql.Date;
 public class PaymentInformationResponseDto {
     private int id;
     private String cardholderName;
+    private int cardNumber;
     private CardType cardType;
     private Date expirationDate;
     private int customerAccountId;
@@ -21,6 +22,7 @@ public class PaymentInformationResponseDto {
     public PaymentInformationResponseDto(PaymentInformation paymentInformation) {
         this.id = paymentInformation.getId();
         this.cardholderName = paymentInformation.getCardholderName();
+        this.cardNumber= paymentInformation.getCardNumber();
         this.cardType = paymentInformation.getCardType();
         this.expirationDate = paymentInformation.getExpirationDate();
         if (paymentInformation.getCustomerAccount() == null) {
@@ -60,10 +62,16 @@ public class PaymentInformationResponseDto {
         return true;
     }
 
+    public boolean setCardNumber(int cardNumber){
+        this.cardNumber = cardNumber;
+        return true;
+    }
+
     public int getId() { return id; }
     public String getCardholderName() { return cardholderName; }
     public CardType getCardType() { return cardType; }
     public Date getExpirationDate() { return expirationDate; }
     public int getCustomerAccountId() { return customerAccountId; }
     public int getCvc() { return cvc; } // Add getter for CVC
+    public int getCardNumber() {return cardNumber;}
 }
