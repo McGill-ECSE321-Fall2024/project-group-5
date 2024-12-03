@@ -26,55 +26,57 @@ public class GameController {
 
     @Autowired
     private GameService gameService;
+    
 
     /**
      * POST: Create a new game
      * Endpoint: /api/games/newgame
      */
     @PostMapping("/new-game")
-    public ResponseEntity<String> createGame(@RequestBody GameRequestDto gameRequestDto) {
+    public ResponseEntity<GameResponseDto> createGame(@RequestBody GameRequestDto gameRequestDto) {
         // Validate each field before calling the service
         if (gameRequestDto.getName() == null || gameRequestDto.getName().isEmpty()) {
-            return ResponseEntity.badRequest().body("Game name cannot be null or empty");
+            return ResponseEntity.badRequest().build();  // Return 400 Bad Request if name is invalid
         }
 
         if (gameRequestDto.getPrice() < 0) {
-            return ResponseEntity.badRequest().body("Game price cannot be negative");
+            return ResponseEntity.badRequest().build();  // Return 400 Bad Request if price is negative
         }
 
         if (gameRequestDto.getDescription() == null || gameRequestDto.getDescription().isEmpty()) {
-            return ResponseEntity.badRequest().body("Game description cannot be null or empty");
+            return ResponseEntity.badRequest().build();  // Return 400 Bad Request if description is invalid
         }
 
         if (gameRequestDto.getCategory() == null) {
-            return ResponseEntity.badRequest().body("Game category cannot be null");
+            return ResponseEntity.badRequest().build();  // Return 400 Bad Request if category is invalid
         }
 
         if (gameRequestDto.getGameConsole() == null) {
-            return ResponseEntity.badRequest().body("Game console cannot be null");
+            return ResponseEntity.badRequest().build();  // Return 400 Bad Request if gameConsole is invalid
         }
 
         try {
-            // If all checks pass, create the game
-            gameService.addGame(
+            // Call the service layer to add the game
+            Game createdGame = gameService.addGame(
                     gameRequestDto.getName(),
                     gameRequestDto.getPrice(),
                     gameRequestDto.getDescription(),
                     Game.Category.valueOf(gameRequestDto.getCategory().name()),
                     Game.GameConsole.valueOf(gameRequestDto.getGameConsole().name()),
-                    gameRequestDto.isInCatalog());
+                    gameRequestDto.isInCatalog()
+            );
 
             // Return the created game with status CREATED (201)
-            return new ResponseEntity<>("Game created successfully", HttpStatus.CREATED);
+            return new ResponseEntity<>(new GameResponseDto(createdGame), HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            // If the service layer throws an exception, return BAD_REQUEST with the error
-            // message
-            return ResponseEntity.badRequest().body(e.getMessage());
+            // If the service layer throws an exception, return BAD_REQUEST with an error message
+            return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             // Catch any unexpected errors and return INTERNAL_SERVER_ERROR
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
     /**
      * GET: Retrieve a game by ID
@@ -91,9 +93,9 @@ public class GameController {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             Game game = gameService.getGameById(id);
-            if (game == null) { // Check if the game is null and return NOT_FOUND
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+            // if (game == null) { // Check if the game is null and return NOT_FOUND
+            //     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            // }
             return new ResponseEntity<>(new GameResponseDto(game), HttpStatus.OK);
         } catch (Exception e) {
             // e.printStackTrace(); // Log stack trace for debugging
@@ -138,31 +140,31 @@ public class GameController {
      * Endpoint: /api/games//update/{id}
      */
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> updateGame(@PathVariable int id, @RequestBody GameRequestDto gameRequestDto) {
+    public ResponseEntity<GameResponseDto> updateGame(@PathVariable int id, @RequestBody GameRequestDto gameRequestDto) {
         // Validate each field before calling the service
         if (gameRequestDto.getName() == null || gameRequestDto.getName().isEmpty()) {
-            return ResponseEntity.badRequest().body("Game name cannot be null or empty");
+            return ResponseEntity.badRequest().build();
         }
 
         if (gameRequestDto.getPrice() < 0) {
-            return ResponseEntity.badRequest().body("Price cannot be negative");
+            return ResponseEntity.badRequest().build();
         }
 
         if (gameRequestDto.getDescription() == null || gameRequestDto.getDescription().isEmpty()) {
-            return ResponseEntity.badRequest().body("Game description cannot be null or empty");
+            return ResponseEntity.badRequest().build();
         }
 
         if (gameRequestDto.getCategory() == null) {
-            return ResponseEntity.badRequest().body("Game category cannot be null");
+            return ResponseEntity.badRequest().build();
         }
 
         if (gameRequestDto.getGameConsole() == null) {
-            return ResponseEntity.badRequest().body("Game console cannot be null");
+            return ResponseEntity.badRequest().build();
         }
 
         try {
             // If all checks pass, update the game
-            gameService.updateGame(
+            Game updatedGame = gameService.updateGame(
                     id,
                     gameRequestDto.getName(),
                     gameRequestDto.getPrice(),
@@ -172,11 +174,11 @@ public class GameController {
                     gameRequestDto.isInCatalog());
 
             // Return the updated game with status OK (200)
-            return new ResponseEntity<>("Game updated successfully", HttpStatus.CREATED);
+            return new ResponseEntity<>(new GameResponseDto(updatedGame), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             // If the service layer throws an exception, return BAD_REQUEST with the error
             // message
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().build();
         } catch (Exception e) {
             // Catch any unexpected errors and return NOT_FOUND (404) if something goes
             // wrong

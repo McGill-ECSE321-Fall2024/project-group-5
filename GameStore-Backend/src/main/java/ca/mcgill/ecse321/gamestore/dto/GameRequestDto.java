@@ -93,4 +93,95 @@ public class GameRequestDto {
     }
 }
 
+// package ca.mcgill.ecse321.gamestore.dto;
+// import ca.mcgill.ecse321.gamestore.model.Game.Category; // Assuming Category is an enum
+// import ca.mcgill.ecse321.gamestore.model.Game.GameConsole; // Assuming GameConsole is an enum
+
+// public class GameRequestDto {
+
+//     private int gameID;
+//     private String name;
+//     private int price;
+//     private String description;
+//     private Category category; 
+//     private GameConsole gameConsole; 
+//     private boolean inCatalog;
+
+//     // Jackson needs a default constructor, but it doesn't need to be public
+//     @SuppressWarnings("unused")
+//     private GameRequestDto() {
+//     }
+
+//     public GameRequestDto(String aName, int aPrice, String aDescription, Category aCategory, GameConsole aGameConsole, boolean isInCatalog) {
+//         // this.gameID = gameID;
+//         this.name = aName;
+//         this.price = aPrice;
+//         this.description = aDescription;
+//         this.category = aCategory; //check enum
+//         this.gameConsole = aGameConsole; //check enum
+//         this.inCatalog = isInCatalog;
+//     }
+
+//     // Getters
+//     public int getGameID() {
+//         return gameID;
+//     }
+
+//     public String getName() {
+//         return name;
+//     }
+
+//     public int getPrice() {
+//         return price;
+//     }
+
+//     public String getDescription() {
+//         return description;
+//     }
+
+//     public Category getCategory() {
+//         return category;
+//     }
+
+//     public GameConsole getGameConsole() {
+//         return gameConsole;
+//     }
+
+//     public boolean isInCatalog() {
+//         return inCatalog;
+//     }
+
+//     // Setters
+//     public void setGameID(int gameID) {
+//         this.gameID = gameID;
+//     }
+
+//     public void setName(String name) {
+//         this.name = name;
+//     }
+
+//     public void setPrice(int price) {
+//         this.price = price;
+//     }
+
+//     public void setDescription(String description) {
+//         this.description = description;
+//     }
+
+//     public void setCategory(Category category) {
+//         this.category = category;
+//     }
+
+//     public void setGameConsole(GameConsole gameConsole) {
+//         this.gameConsole = gameConsole;
+//     }
+
+//     public void setInCatalog(boolean inCatalog) {
+//         this.inCatalog = inCatalog;
+//     }
+// }
+
+
+
+
 
