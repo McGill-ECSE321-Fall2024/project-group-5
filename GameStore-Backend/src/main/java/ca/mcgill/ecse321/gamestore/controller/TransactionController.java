@@ -5,6 +5,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,9 +50,12 @@ public class TransactionController {
      * @return TransactionResponseDto representation of the Transaction
      */
     @GetMapping("/get/{id}")
-    public TransactionResponseDto findTransactionById(@PathVariable int id) {
+    public ResponseEntity<TransactionResponseDto> findTransactionById(@PathVariable int id) {
         Transaction transaction = transactionService.findTransactionById(id);
-        return new TransactionResponseDto(transaction);
+        if (transaction == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(new TransactionResponseDto(transaction));
     }
 
     /**
@@ -61,8 +66,8 @@ public class TransactionController {
      * @return a list of TransactionResponseDto objects representing the
      *         Transactions
      */
-    @GetMapping("/getByCustomer/{id}")
-    public List<TransactionResponseDto> findTransactionsByCustomerId(@PathVariable int customerId) {
+    @GetMapping("/get-by-customer/{id}")
+    public ResponseEntity<List<TransactionResponseDto>> findTransactionsByCustomerId(@PathVariable int customerId) {
         List<Transaction> transactions = transactionService.getTransactionsByCustomerId(customerId);
 
         // code from chat GPT to convert List<Transaction> to
@@ -71,7 +76,7 @@ public class TransactionController {
                 .filter(Objects::nonNull) // Remove null transactions
                 .map(TransactionResponseDto::new) // Use the constructor directly
                 .collect(Collectors.toList());
-        return responseDtos;
+        return ResponseEntity.ok(responseDtos);
     }
 
     /**
@@ -82,8 +87,8 @@ public class TransactionController {
      * @return a list of TransactionResponseDto objects representing the
      *         Transactions
      */
-    @GetMapping("/getByIsPaid/{isPaid}")
-    public List<TransactionResponseDto> findTransactionsByIsPaid(@PathVariable boolean isPaid) {
+    @GetMapping("/get-by-is-paid/{isPaid}")
+    public ResponseEntity<List<TransactionResponseDto>> findTransactionsByIsPaid(@PathVariable boolean isPaid) {
         List<Transaction> transactions = transactionService.getTransactionsByIsPaid(isPaid);
 
         // code from chat GPT to convert List<Transaction> to
@@ -92,7 +97,7 @@ public class TransactionController {
                 .filter(Objects::nonNull) // Remove null transactions
                 .map(TransactionResponseDto::new) // Use the constructor directly
                 .collect(Collectors.toList());
-        return responseDtos;
+        return ResponseEntity.ok(responseDtos);
     }
 
     /**
@@ -103,8 +108,9 @@ public class TransactionController {
      * @return a list of TransactionResponseDto objects representing the
      *         Transactions
      */
-    @GetMapping("/getByDeliveryStatus/{deliveryStatus}")
-    public List<TransactionResponseDto> findTransactionByDeliveryStatus(@PathVariable boolean deliveryStatus) {
+    @GetMapping("/get-by-delivery-status/{deliveryStatus}")
+    public ResponseEntity<List<TransactionResponseDto>> findTransactionByDeliveryStatus(
+            @PathVariable boolean deliveryStatus) {
         List<Transaction> transactions = transactionService.getTransactionsByDeliveryStatus(deliveryStatus);
 
         // code from chat GPT to convert List<Transaction> to
@@ -113,7 +119,7 @@ public class TransactionController {
                 .filter(Objects::nonNull) // Remove null transactions
                 .map(TransactionResponseDto::new) // Use the constructor directly
                 .collect(Collectors.toList());
-        return responseDtos;
+        return ResponseEntity.ok(responseDtos);
     }
 
     /**
@@ -123,23 +129,31 @@ public class TransactionController {
      * @return TransactionResponseDto representing the newly created Transaction
      */
     @PostMapping("/create")
-    public TransactionResponseDto createTransaction(@RequestBody TransactionRequestDto transaction) {
+    public ResponseEntity<TransactionResponseDto> createTransaction(@RequestBody TransactionRequestDto transaction) {
         CustomerAccount customerAccount;
-        customerAccount = customerAccountService.findCustomerAccountById(transaction.getCustomerAccount().getId());
+        try {
+            customerAccount = customerAccountService.getCustomerAccountByID(transaction.getCustomerAccount().getId());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
         Transaction createdTransaction = transactionService.createTransaction(customerAccount);
-        return new TransactionResponseDto(createdTransaction);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new TransactionResponseDto(createdTransaction));
     }
 
     /**
      * DELETE endpoint to remove a Transaction by its ID.
      * 
      * @param id the ID of the Transaction to delete
-     * @return TransactionResponseDto representation of the deleted Transaction
+     * @return ResponseEntity with null body and an HTTP status
      */
     @DeleteMapping("/delete/{id}")
-    public TransactionResponseDto deleteTransaction(@PathVariable int id) {
-        Transaction transaction = transactionService.deletedTransaction(id);
-        return new TransactionResponseDto(transaction);
+    public ResponseEntity<Void> deleteTransaction(@PathVariable int id) {
+        try {
+            transactionService.deleteTransaction(id);
+            return ResponseEntity.noContent().build(); // 204 No Content if deletion is successful
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     /**
@@ -150,15 +164,24 @@ public class TransactionController {
      * @return TransactionResponseDto representing the updated Transaction
      */
     @PutMapping("/update")
-    public TransactionResponseDto updateTransaction(@RequestBody TransactionResponseDto transaction) {
+    public ResponseEntity<TransactionResponseDto> updateTransaction(@RequestBody TransactionResponseDto transaction) {
         PaymentInformation paymentInformation = paymentInformationService
-                .findPaymentInformationById(transaction.getPaymentInformation().getId());
-        Address address = addressService.findAddressById(transaction.getAddress().getId());
+                .getPaymentInformationById(transaction.getPaymentInformation().getId());
+        Address address = addressService.getAddressById(transaction.getAddress().getId());
 
-        Transaction updatedTransaction = transactionService.updateTransaction(transaction.getTransactionId(),
-                transaction.getTotalPrice(), transaction.getIsPaid(), transaction.getDeliveryStatus(),
-                transaction.getUserAgreementCheck(), address, paymentInformation);
+        if (paymentInformation == null || address == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
 
-        return new TransactionResponseDto(updatedTransaction);
+        Transaction updatedTransaction = transactionService.updateTransaction(
+                transaction.getTransactionId(),
+                transaction.getTotalPrice(),
+                transaction.getIsPaid(),
+                transaction.getDeliveryStatus(),
+                transaction.getUserAgreementCheck(),
+                address,
+                paymentInformation);
+
+        return ResponseEntity.ok(new TransactionResponseDto(updatedTransaction));
     }
 }

@@ -30,4 +30,8 @@ public class StaffAccountResponseDto {
     public void setName(String name) {
         this.name = name;
     }
+
+    public Object getUsername() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

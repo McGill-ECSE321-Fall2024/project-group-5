@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDate;
-
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -19,71 +19,224 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import ca.mcgill.ecse321.gamestore.dao.CustomerAccountRepository;
+import ca.mcgill.ecse321.gamestore.dao.GameRepository;
+import ca.mcgill.ecse321.gamestore.dao.TransactionRepository;
 import ca.mcgill.ecse321.gamestore.dto.GameQtyRequestDto;
 import ca.mcgill.ecse321.gamestore.dto.GameQtyResponseDto;
+import ca.mcgill.ecse321.gamestore.dto.GameResponseDto;
+import ca.mcgill.ecse321.gamestore.dto.TransactionResponseDto;
+import ca.mcgill.ecse321.gamestore.model.Game.Category;
+import ca.mcgill.ecse321.gamestore.model.Game.GameConsole;
+import ca.mcgill.ecse321.gamestore.service.CustomerAccountService;
+import ca.mcgill.ecse321.gamestore.service.GameService;
+import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
+import ca.mcgill.ecse321.gamestore.model.Game;
+import ca.mcgill.ecse321.gamestore.model.Transaction;
+import ca.mcgill.ecse321.gamestore.service.TransactionService;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(Lifecycle.PER_CLASS)
 public class GameQtyIntegrationTests {
-    @Autowired
-    private TestRestTemplate client;
+        @Autowired
+        private GameRepository gameRepository;
+        @Autowired
+        private TransactionRepository transactionRepository;
+        @Autowired
+        private CustomerAccountRepository customerAccountRepository;
 
-    private final String VALID_NAME = "Alice";
-    private final String VALID_EMAIL = "alice@mail.mcgill.ca";
-    private final String VALID_PASSWORD = "password123";
-    private final String INVALID_PASSWORD = "123";
-    private final int INVALID_ID = 0;
-    private int validId;
+        @Autowired
+        private GameService gameService;
+        @Autowired
+        private TransactionService transactionService;
+        @Autowired
+        private CustomerAccountService customerAccountService;
+        @Autowired
+        private TestRestTemplate client;
 
-    @Test
-    @Order(1)
-    public void testCreateValidGameQty() {
-        /*
-         * // Arrange
-         * GameQtyRequestDto request = new GameQtyRequestDto(VALID_NAME, VALID_EMAIL,
-         * VALID_PASSWORD);
-         * 
-         * // Act
-         * ResponseEntity<GameQtyResponseDto> response = client.postForEntity("/people",
-         * request, GameQtyResponseDto.class);
-         * 
-         * // Assert
-         * assertNotNull(response);
-         * assertEquals(HttpStatus.CREATED, response.getStatusCode());
-         * GameQtyResponseDto createdGameQty = response.getBody();
-         * assertNotNull(createdGameQty);
-         * assertEquals(VALID_NAME, createdGameQty.getName());
-         * assertEquals(VALID_EMAIL, createdGameQty.getEmail());
-         * assertNotNull(createdGameQty.getId());
-         * assertTrue(createdGameQty.getId() > 0,
-         * "Response should have a positive ID.");
-         * assertEquals(LocalDate.now(), createdGameQty.getCreationDate());
-         * 
-         * this.validId = createdGameQty.getId();
-         */
-    }
+        private final String VALID_USERNAME = "Alice";
+        private final String VALID_NAME = "Alice";
+        private final String VALID_EMAIL = "alice@mail.mcgill.ca";
+        private final String VALID_PASSWORD = "Password123%";
 
-    @Test
-    @Order(2)
-    public void testReadGameQtyByValidId() {
-        /*
-         * // Arrange
-         * String url = "/people/" + this.validId;
-         * 
-         * // Act
-         * ResponseEntity<GameQtyResponseDto> response = client.getForEntity(url,
-         * GameQtyResponseDto.class);
-         * 
-         * // Assert
-         * assertNotNull(response);
-         * assertEquals(HttpStatus.OK, response.getStatusCode());
-         * GameQtyResponseDto person = response.getBody();
-         * assertNotNull(person);
-         * assertEquals(VALID_NAME, person.getName());
-         * assertEquals(VALID_EMAIL, person.getEmail());
-         * assertEquals(this.validId, person.getId());
-         * assertEquals(LocalDate.now(), person.getCreationDate());
-         */
-    }
+        private final String VALID_GAME_NAME = "The Legend of Zelda";
+        private final int VALID_PRICE = 60;
+        private final String VALID_DESCRIPTION = "An epic action-adventure game set in a fantasy world.";
+        private final Category VALID_CATEGORY = Category.ActionAdventure;
+        private final GameConsole VALID_GAME_CONSOLE = GameConsole.PC;
+        private final boolean VALID_IN_CATALOG = true;
+
+        private final int GAME_QTY = 1;
+
+        @BeforeAll
+        @AfterAll
+        public void clearDatabase() {
+                transactionRepository.deleteAll();
+                customerAccountRepository.deleteAll();
+                gameRepository.deleteAll();
+        }
+
+        @Test
+        @Order(1)
+        public void testCreateValidGameQty() throws Exception {
+                // Arrange
+                // create and persist necessary objects for creation of GameQty
+                CustomerAccount accountModel = customerAccountService.createCustomerAccount(VALID_USERNAME, VALID_EMAIL,
+                                VALID_PASSWORD, VALID_NAME);
+                Transaction transactionModel = transactionService.createTransaction(accountModel);
+                TransactionResponseDto transaction = new TransactionResponseDto(transactionModel);
+                Game gameModel = gameService.addGame(VALID_GAME_NAME, VALID_PRICE, VALID_DESCRIPTION, VALID_CATEGORY,
+                                VALID_GAME_CONSOLE, VALID_IN_CATALOG);
+                GameResponseDto game = new GameResponseDto(gameModel);
+
+                GameQtyRequestDto request = new GameQtyRequestDto(GAME_QTY, transaction, game);
+
+                // Act
+                ResponseEntity<GameQtyResponseDto> response = client.postForEntity("api/game-qty/create", request,
+                                GameQtyResponseDto.class);
+
+                // Assert
+                assertNotNull(response);
+                assertEquals(HttpStatus.CREATED, response.getStatusCode());
+
+                GameQtyResponseDto createdGameQty = response.getBody();
+                assertNotNull(createdGameQty);
+                assertEquals(transaction.getTransactionId(), createdGameQty.getTransaction().getTransactionId());
+                assertEquals(game.getId(), createdGameQty.getGame().getId());
+                assertTrue(createdGameQty.getId() >= 0);
+        }
+
+        @SuppressWarnings("null")
+        @Test
+        @Order(2)
+        public void testReadGameQtyByValidId() throws Exception {
+                // Arrange
+                // Create and persist necessary objects for creation of GameQty
+                CustomerAccount accountModel = customerAccountService.createCustomerAccount(VALID_USERNAME, VALID_EMAIL,
+                                VALID_PASSWORD, VALID_NAME);
+                Transaction transactionModel = transactionService.createTransaction(accountModel);
+                Game gameModel = gameService.addGame(VALID_GAME_NAME, VALID_PRICE, VALID_DESCRIPTION, VALID_CATEGORY,
+                                VALID_GAME_CONSOLE, VALID_IN_CATALOG);
+
+                GameQtyRequestDto request = new GameQtyRequestDto(GAME_QTY,
+                                new TransactionResponseDto(transactionModel),
+                                new GameResponseDto(gameModel));
+
+                ResponseEntity<GameQtyResponseDto> createResponse = client.postForEntity("api/game-qty/create", request,
+                                GameQtyResponseDto.class);
+                GameQtyResponseDto createdGameQty = createResponse.getBody();
+                assertNotNull(createdGameQty);
+
+                // Act
+                ResponseEntity<GameQtyResponseDto> response = client.getForEntity(
+                                "api/game-qty/get/" + createdGameQty.getId(),
+                                GameQtyResponseDto.class);
+
+                // Assert
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK, response.getStatusCode());
+                assertEquals(createdGameQty.getId(), response.getBody().getId());
+                assertEquals(createdGameQty.getTransaction().getTransactionId(),
+                                response.getBody().getTransaction().getTransactionId());
+                assertEquals(createdGameQty.getGame().getId(), response.getBody().getGame().getId());
+        }
+
+        @SuppressWarnings("null")
+        @Test
+        @Order(3)
+        public void testReadGameQtyByTransaction() throws Exception {
+                // Arrange
+                // Create and persist necessary objects for creation of GameQty
+                CustomerAccount accountModel = customerAccountService.createCustomerAccount(VALID_USERNAME, VALID_EMAIL,
+                                VALID_PASSWORD, VALID_NAME);
+                Transaction transactionModel = transactionService.createTransaction(accountModel);
+                Game gameModel = gameService.addGame(VALID_GAME_NAME, VALID_PRICE, VALID_DESCRIPTION, VALID_CATEGORY,
+                                VALID_GAME_CONSOLE, VALID_IN_CATALOG);
+
+                GameQtyRequestDto request = new GameQtyRequestDto(GAME_QTY,
+                                new TransactionResponseDto(transactionModel),
+                                new GameResponseDto(gameModel));
+
+                ResponseEntity<GameQtyResponseDto> createResponse = client.postForEntity("api/game-qty/create", request,
+                                GameQtyResponseDto.class);
+                GameQtyResponseDto createdGameQty = createResponse.getBody();
+                assertNotNull(createdGameQty);
+
+                // Act
+                ResponseEntity<GameQtyResponseDto[]> response = client.getForEntity(
+                                "api/gameQty/get-by-transaction/" + transactionModel.getTransactionId(),
+                                GameQtyResponseDto[].class);
+
+                // Assert
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK, response.getStatusCode());
+                assertTrue(response.getBody().length > 0);
+                assertEquals(transactionModel.getTransactionId(),
+                                response.getBody()[0].getTransaction().getTransactionId());
+        }
+
+        @SuppressWarnings("null")
+        @Test
+        @Order(4)
+        public void testUpdateGameQty() throws Exception {
+                // Arrange
+                // Create and persist necessary objects for creation of GameQty
+                CustomerAccount accountModel = customerAccountService.createCustomerAccount(VALID_USERNAME, VALID_EMAIL,
+                                VALID_PASSWORD, VALID_NAME);
+                Transaction transactionModel = transactionService.createTransaction(accountModel);
+                Game gameModel = gameService.addGame(VALID_GAME_NAME, VALID_PRICE, VALID_DESCRIPTION, VALID_CATEGORY,
+                                VALID_GAME_CONSOLE, VALID_IN_CATALOG);
+
+                GameQtyRequestDto request = new GameQtyRequestDto(GAME_QTY,
+                                new TransactionResponseDto(transactionModel),
+                                new GameResponseDto(gameModel));
+
+                ResponseEntity<GameQtyResponseDto> createResponse = client.postForEntity("api/game-qty/create", request,
+                                GameQtyResponseDto.class);
+                GameQtyResponseDto createdGameQty = createResponse.getBody();
+                assertNotNull(createdGameQty);
+
+                // Update quantity to 3
+                createdGameQty.setQty(3);
+
+                // Act
+                client.put("api/game-qty/update", createdGameQty);
+
+                // Assert
+                ResponseEntity<GameQtyResponseDto> updatedResponse = client
+                                .getForEntity("api/game-qty/get/" + createdGameQty.getId(), GameQtyResponseDto.class);
+                assertEquals(HttpStatus.OK, updatedResponse.getStatusCode());
+                assertEquals(3, updatedResponse.getBody().getQty());
+        }
+
+        @Test
+        @Order(5)
+        public void testDeleteGameQty() throws Exception {
+                // Arrange
+                // Create and persist necessary objects for creation of GameQty
+                CustomerAccount accountModel = customerAccountService.createCustomerAccount(VALID_USERNAME, VALID_EMAIL,
+                                VALID_PASSWORD, VALID_NAME);
+                Transaction transactionModel = transactionService.createTransaction(accountModel);
+                Game gameModel = gameService.addGame(VALID_GAME_NAME, VALID_PRICE, VALID_DESCRIPTION, VALID_CATEGORY,
+                                VALID_GAME_CONSOLE, VALID_IN_CATALOG);
+
+                GameQtyRequestDto request = new GameQtyRequestDto(GAME_QTY,
+                                new TransactionResponseDto(transactionModel),
+                                new GameResponseDto(gameModel));
+
+                ResponseEntity<GameQtyResponseDto> createResponse = client.postForEntity("api/game-qty/create", request,
+                                GameQtyResponseDto.class);
+                GameQtyResponseDto createdGameQty = createResponse.getBody();
+                assertNotNull(createdGameQty);
+
+                // Act
+                client.delete("api/game-qty/delete/" + createdGameQty.getId());
+
+                // Assert
+                ResponseEntity<GameQtyResponseDto> response = client.getForEntity(
+                                "api/game-qty/get/" + createdGameQty.getId(),
+                                GameQtyResponseDto.class);
+                assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        }
 }

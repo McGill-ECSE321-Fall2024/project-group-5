@@ -1,34 +1,98 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.3.4'
-	id 'io.spring.dependency-management' version '1.1.6'
+    id 'java'
+    id 'org.springframework.boot' version '3.3.4'
+    id 'io.spring.dependency-management' version '1.1.6'
+    id 'jacoco'
 }
 
 group = 'ca.mcgill.ecse321'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(23)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(23)
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	runtimeOnly 'org.postgresql:postgresql'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    runtimeOnly 'org.postgresql:postgresql'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
-	testLogging {
-		exceptionFormat "full"
-		events "passed","failed","skipped"
-	}
+    useJUnitPlatform()
+    testLogging {
+        exceptionFormat "full"
+        events "passed", "failed", "skipped"
+    }
+    jvmArgs += "--enable-preview" // Enable preview features for tests
+    finalizedBy jacocoTestCoverageVerification
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs += "--enable-preview" // Enable preview features for compilation
+}
+
+tasks.named('jacocoTestReport') {
+    // dependsOn test // Tests are required to run before generating the report
+}
+
+tasks.named('jacocoTestCoverageVerification') {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.6
+            }
+        }
+    }
+    // dependsOn test // Tests are required to run before checking code coverage
+}
+
+tasks.register('integrationTests', Test) {
+    description = 'Runs the integration tests.'
+    group = 'verification'
+    useJUnitPlatform()
+    testLogging {
+        exceptionFormat "full"
+        events "passed", "failed", "skipped"
+    }
+    jvmArgs += "--enable-preview" // Enable preview features for integration tests
+    include '**/Integration/**'
+
+    finalizedBy jacocoTestCoverageVerification
+}
+
+tasks.register('serviceTests', Test) {
+    description = 'Runs the service tests.'
+    group = 'verification'
+    useJUnitPlatform()
+    testLogging {
+        exceptionFormat "full"
+        events "passed", "failed", "skipped"
+    }
+    jvmArgs += "--enable-preview" // Enable preview features for service tests
+    include '**/Service/**'
+
+    finalizedBy jacocoTestCoverageVerification
+}
+
+tasks.register('repositoryTests', Test) {
+    description = 'Runs the repository tests.'
+    group = 'verification'
+    useJUnitPlatform()
+    testLogging {
+        exceptionFormat "full"
+        events "passed", "failed", "skipped"
+    }
+    jvmArgs += "--enable-preview" // Enable preview features for repository tests
+    include '**/Repository/**'
+
+    finalizedBy jacocoTestCoverageVerification
 }

@@ -4,30 +4,29 @@ import ca.mcgill.ecse321.gamestore.model.GameStoreObject;
 
 public class GameStoreObjectResponseDto {
     private int id;
-    private String name;
+    private String policy;
 
-    // Jackson needs a default constructor, but it doesn't need to be public
-    @SuppressWarnings("unused")
-    private GameStoreObjectResponseDto() {
-    }
+    // Default constructor for Jackson
+    public GameStoreObjectResponseDto() {}
 
     public GameStoreObjectResponseDto(GameStoreObject model) {
         this.id = model.getId();
+        this.policy = model.getPolicy();
     }
 
     public int getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getPolicy() {
+        return policy;
     }
 
     public void setId(int id) {
         this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPolicy(String policy) {
+        this.policy = policy;
     }
 }

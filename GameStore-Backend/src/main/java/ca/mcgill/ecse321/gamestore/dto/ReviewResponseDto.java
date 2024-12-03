@@ -30,4 +30,24 @@ public class ReviewResponseDto {
     public void setName(String name) {
         this.name = name;
     }
+
+    public Object getDescription() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public float getRating() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public short getLikeCount() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public short getDislikeCount() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+
+
+    
 }

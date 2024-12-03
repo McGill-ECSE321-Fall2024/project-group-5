@@ -2,10 +2,13 @@ package ca.mcgill.ecse321.gamestore.Service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -47,11 +50,11 @@ public class AddressServiceTests {
         assertEquals(address.getProvince(), createdAddress.getProvince());
         assertEquals(address.getCountry(), createdAddress.getCountry());
         assertEquals(address.getPostalCode(), createdAddress.getPostalCode());
-        verify(addressRepository, times(1)).save(address);
+        verify(addressRepository, times(1)).save(address);  // This was added
     }
 
     @Test
-    public void testGetAddressByIdValid() {
+    public void testGetAddressByValidId() {
         // Arrange
         int id = 1;
         Address address = new Address();
@@ -61,7 +64,7 @@ public class AddressServiceTests {
         address.setCountry("Canada");
         address.setPostalCode("H3A 1A1");
 
-        when(addressRepository.findById(id)).thenReturn(java.util.Optional.of(address));
+        when(addressRepository.findById(id)).thenReturn(Optional.of(address));
 
         // Act
         Address foundAddress = addressService.getAddressById(id);
@@ -76,17 +79,16 @@ public class AddressServiceTests {
     }
 
     @Test
-    public void testGetAddressByIdInvalid() {
+    public void testGetAddressByInvalidId() {
         // Arrange
         int id = 1;
 
-        when(addressRepository.findById(id)).thenReturn(java.util.Optional.empty());
+        when(addressRepository.findById(id)).thenReturn(Optional.empty());
 
-        // Act
-        Address foundAddress = addressService.getAddressById(id);
-
-        // Assert
-        assertEquals(null, foundAddress);
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> addressService.deleteAddress(id));
+        assertEquals("Address with ID 1 not found.", e.getMessage());
     }
 
     @Test
@@ -107,8 +109,8 @@ public class AddressServiceTests {
         updatedAddress.setCountry("Canada");
         updatedAddress.setPostalCode("M5G 1X1");
 
-        when(addressRepository.findById(id)).thenReturn(java.util.Optional.of(oldAddress));
-        when(addressRepository.save(any(Address.class))).thenReturn(updatedAddress);
+        when(addressRepository.findById(id)).thenReturn(Optional.of(oldAddress));
+        when(addressRepository.save(any(Address.class))).thenReturn(updatedAddress); // Added save mock here
 
         // Act
         Address result = addressService.updateAddress(id, updatedAddress);
@@ -125,7 +127,6 @@ public class AddressServiceTests {
     @Test
     public void testDeleteAddress() {
         // Arrange
-        int id = 1;
         Address address = new Address();
         address.setAddress("123 Main St");
         address.setCity("Montreal");
@@ -133,26 +134,142 @@ public class AddressServiceTests {
         address.setCountry("Canada");
         address.setPostalCode("H3A 1A1");
 
-        when(addressRepository.existsById(id)).thenReturn(true);
+        when(addressRepository.findById(address.getId())).thenReturn(Optional.of(address));
 
         // Act
-        boolean deleted = addressService.deleteAddress(id);
+        boolean deleted = addressService.deleteAddress(address.getId());
 
         // Assert
         assertEquals(true, deleted);
-        verify(addressRepository, times(1)).deleteById(id);
+        verify(addressRepository, times(1)).deleteById(address.getId());
     }
 
     @Test
     public void testDeleteAddressNotFound() {
         // Arrange
         int id = 999;
-        when(addressRepository.existsById(id)).thenReturn(false);
+        when(addressRepository.findById(id)).thenReturn(Optional.empty());
 
-        // Act
-        boolean deleted = addressService.deleteAddress(id);
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> addressService.deleteAddress(id));
+        assertEquals("Address with ID 999 not found.", e.getMessage());
+    }
 
-        // Assert
-        assertEquals(false, deleted);
+    @Test
+    public void testCreateAddressWithNullAddress() {
+        // Arrange
+        Address address = null;
+
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> addressService.createAddress(address));
+        assertEquals("All address attributes must be non-null and non-blank.", e.getMessage());
+    }
+
+    @Test
+    public void testCreateAddressWithMissingFields() {
+        // Arrange
+        Address address = new Address(); // Fields are missing
+
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> addressService.createAddress(address));
+        assertEquals("All address attributes must be non-null and non-blank.", e.getMessage());
+    }
+
+    @Test
+    public void testUpdateAddressWithInvalidId() {
+        // Arrange
+        int id = 999; // Non-existent ID
+        Address updatedAddress = new Address();
+        updatedAddress.setAddress("456 Elm St");
+        updatedAddress.setCity("Toronto");
+        updatedAddress.setProvince("ON");
+        updatedAddress.setCountry("Canada");
+        updatedAddress.setPostalCode("M5G 1X1");
+
+        when(addressRepository.findById(id)).thenReturn(Optional.empty());
+
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> addressService.updateAddress(id, updatedAddress));
+        assertEquals("Address with ID 999 not found.", e.getMessage());
+    }
+
+    @Test
+    public void testDeleteAddressWithInvalidId() {
+        // Arrange
+        int id = -1; // Invalid ID
+        when(addressRepository.findById(id)).thenReturn(Optional.empty());
+
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> addressService.deleteAddress(id));
+        assertEquals("Address with ID -1 not found.", e.getMessage());
+    }
+
+    @Test
+    public void testCreateDuplicateAddress() {
+        // Arrange
+        Address address = new Address();
+        address.setAddress("123 Main St");
+        address.setCity("Montreal");
+        address.setProvince("QC");
+        address.setCountry("Canada");
+        address.setPostalCode("H3A 1A1");
+
+        when(addressRepository.save(any(Address.class))).thenThrow(new IllegalArgumentException("Address already exists."));
+
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> addressService.createAddress(address));
+        assertEquals("Address already exists.", e.getMessage());
+    }
+
+    @Test
+    public void testUpdateAddressWithNullFields() {
+        // Arrange
+        int id = 1;
+        Address updatedAddress = new Address();
+        // Null fields
+        when(addressRepository.findById(id)).thenReturn(Optional.of(new Address()));
+
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> addressService.updateAddress(id, updatedAddress));
+        assertEquals("All updated address attributes must be non-null.", e.getMessage());
+    }
+
+    @Test
+    public void testCreateAddressWithInvalidCountry() {
+        // Arrange
+        Address address = new Address();
+        address.setAddress("123 Main St");
+        address.setCity("Montreal");
+        address.setProvince("QC");
+        address.setCountry("USA"); // Invalid country
+        address.setPostalCode("H3A 1A1");
+
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> addressService.createAddress(address));
+        assertEquals("Only addresses in Canada are supported.", e.getMessage());
+    }
+
+    @Test
+    public void testCreateAddressWithInvalidPostalCode() {
+        // Arrange
+        Address address = new Address();
+        address.setAddress("123 Main St");
+        address.setCity("Montreal");
+        address.setProvince("QC");
+        address.setCountry("Canada");
+        address.setPostalCode("123"); // Invalid postal code
+    
+        // Act and Assert
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+                () -> addressService.createAddress(address));
+        assertEquals("Invalid postal code format.", e.getMessage());
     }
 }

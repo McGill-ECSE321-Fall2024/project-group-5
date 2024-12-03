@@ -1,16 +1,10 @@
 package ca.mcgill.ecse321.gamestore.Integration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.time.LocalDate;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,69 +18,124 @@ import ca.mcgill.ecse321.gamestore.dto.GameStoreObjectResponseDto;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@TestInstance(Lifecycle.PER_CLASS)
 public class GameStoreObjectIntegrationTests {
+
     @Autowired
     private TestRestTemplate client;
 
-    private final String VALID_NAME = "Alice";
-    private final String VALID_EMAIL = "alice@mail.mcgill.ca";
-    private final String VALID_PASSWORD = "password123";
-    private final String INVALID_PASSWORD = "123";
-    private final int INVALID_ID = 0;
-    private int validId;
+    private final String VALID_POLICY = "Return within 30 days.";
+    private final String UPDATED_POLICY = "Exchange within 15 days.";
+    private static int validId; // Shared across tests
 
     @Test
     @Order(1)
     public void testCreateValidGameStoreObject() {
-        /*
-         * // Arrange
-         * GameStoreObjectRequestDto request = new GameStoreObjectRequestDto(VALID_NAME,
-         * VALID_EMAIL,
-         * VALID_PASSWORD);
-         * 
-         * // Act
-         * ResponseEntity<GameStoreObjectResponseDto> response =
-         * client.postForEntity("/people",
-         * request, GameStoreObjectResponseDto.class);
-         * 
-         * // Assert
-         * assertNotNull(response);
-         * assertEquals(HttpStatus.CREATED, response.getStatusCode());
-         * GameStoreObjectResponseDto createdGameStoreObject = response.getBody();
-         * assertNotNull(createdGameStoreObject);
-         * assertEquals(VALID_NAME, createdGameStoreObject.getName());
-         * assertEquals(VALID_EMAIL, createdGameStoreObject.getEmail());
-         * assertNotNull(createdGameStoreObject.getId());
-         * assertTrue(createdGameStoreObject.getId() > 0,
-         * "Response should have a positive ID.");
-         * assertEquals(LocalDate.now(), createdGameStoreObject.getCreationDate());
-         * 
-         * this.validId = createdGameStoreObject.getId();
-         */
+        GameStoreObjectRequestDto request = new GameStoreObjectRequestDto(VALID_POLICY);
+
+        ResponseEntity<GameStoreObjectResponseDto> response = client.postForEntity(
+                "/api/game-store-object/create",
+                request,
+                GameStoreObjectResponseDto.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        GameStoreObjectResponseDto createdObject = response.getBody();
+        assertNotNull(createdObject);
+        assertEquals(VALID_POLICY, createdObject.getPolicy());
+        validId = createdObject.getId();
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(2)
     public void testReadGameStoreObjectByValidId() {
-        /*
-         * // Arrange
-         * String url = "/people/" + this.validId;
-         * 
-         * // Act
-         * ResponseEntity<GameStoreObjectResponseDto> response =
-         * client.getForEntity(url,
-         * GameStoreObjectResponseDto.class);
-         * 
-         * // Assert
-         * assertNotNull(response);
-         * assertEquals(HttpStatus.OK, response.getStatusCode());
-         * GameStoreObjectResponseDto person = response.getBody();
-         * assertNotNull(person);
-         * assertEquals(VALID_NAME, person.getName());
-         * assertEquals(VALID_EMAIL, person.getEmail());
-         * assertEquals(this.validId, person.getId());
-         * assertEquals(LocalDate.now(), person.getCreationDate());
-         */
+        ResponseEntity<GameStoreObjectResponseDto> response = client.getForEntity(
+                "/api/game-store-object/" + validId,
+                GameStoreObjectResponseDto.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(validId, response.getBody().getId());
+        assertEquals(VALID_POLICY, response.getBody().getPolicy());
+    }
+
+    @SuppressWarnings("null")
+    @Test
+    @Order(3)
+    public void testReadGameStoreObjectByInvalidId() {
+        ResponseEntity<String> response = client.getForEntity("/api/game-store-object/999", String.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().contains("not found")); // Match backend error message
+    }
+
+    @SuppressWarnings("null")
+    @Test
+    @Order(4)
+    public void testUpdateGameStoreObject() {
+        GameStoreObjectRequestDto request = new GameStoreObjectRequestDto(UPDATED_POLICY);
+        ResponseEntity<GameStoreObjectResponseDto> response = client.exchange(
+                "/api/game-store-object/update/" + validId,
+                org.springframework.http.HttpMethod.PUT,
+                new org.springframework.http.HttpEntity<>(request),
+                GameStoreObjectResponseDto.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(UPDATED_POLICY, response.getBody().getPolicy());
+    }
+
+    @Test
+    @Order(5)
+    public void testDeleteGameStoreObject() {
+        ResponseEntity<Void> response = client.exchange(
+                "/api/game-store-object/delete/" + validId,
+                org.springframework.http.HttpMethod.DELETE,
+                null,
+                Void.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        ResponseEntity<String> getResponse = client.getForEntity("/api/game-store-object/" + validId, String.class);
+        assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
+    }
+
+    @SuppressWarnings("null")
+    @Test
+    @Order(6)
+    public void testInvalidUpdate() {
+        GameStoreObjectRequestDto request = new GameStoreObjectRequestDto(UPDATED_POLICY);
+        ResponseEntity<String> response = client.exchange(
+                "/api/game-store-object/update/999",
+                org.springframework.http.HttpMethod.PUT,
+                new org.springframework.http.HttpEntity<>(request),
+                String.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().contains("not found")); // Match backend error message
+    }
+
+    @SuppressWarnings("null")
+    @Test
+    @Order(7)
+    public void testEmptyPolicy() {
+        GameStoreObjectRequestDto request = new GameStoreObjectRequestDto("");
+
+        ResponseEntity<String> response = client.postForEntity(
+                "/api/game-store-object/create",
+                request,
+                String.class);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().contains("Policy cannot be empty")); // Match backend validation error
     }
 }
