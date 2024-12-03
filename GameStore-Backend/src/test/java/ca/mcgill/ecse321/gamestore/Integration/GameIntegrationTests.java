@@ -89,26 +89,26 @@ public class GameIntegrationTests {
     @SuppressWarnings("null")
     @Test
     @Order(2)
-    public void testReadGameByValidId() {
-        // Arrange: Create the URL with the valid game ID
-        String url = "/api/games/get/" + this.validId;
+    public void testGetGameByValidId() {
+        // Arrange: Construct URL with valid ID
+        String url = "/api/games/get/" + validId;
 
-        // Act: Send GET request to retrieve the game by ID
+        // Act: Send GET request
         ResponseEntity<GameResponseDto> response = game.getForEntity(url, GameResponseDto.class);
 
-        // Assert: Check response status and verify game details
+        // Assert: Validate response and data
         assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode(), "Expected status code 200 (OK)");
+        assertEquals(HttpStatus.OK, response.getStatusCode());
 
         GameResponseDto retrievedGame = response.getBody();
-        assertNotNull(retrievedGame, "Game should be present in the response");
-        assertEquals(VALID_NAME, retrievedGame.getName(), "Game name should match the expected name");
-        assertEquals(VALID_CATEGORY.name(), retrievedGame.getCategory().name(), "Game category should match");
-        assertEquals(VALID_GAME_CONSOLE.name(), retrievedGame.getGameConsole().name(), "Game console should match");
-        assertEquals(VALID_PRICE, retrievedGame.getPrice(), "Game price should match");
-        assertEquals(VALID_DESCRIPTION, retrievedGame.getDescription(), "Game description should match");
-        assertEquals(VALID_IN_CATALOG, retrievedGame.isInCatalog(), "Game catalog status should match");
-        assertEquals(this.validId, retrievedGame.getId(), "Game ID should match the created game ID");
+        assertNotNull(retrievedGame);
+        assertEquals(validId, retrievedGame.getId());
+        assertEquals("Test Game", retrievedGame.getName());
+        assertEquals(50, retrievedGame.getPrice());
+        assertEquals("This is a test game", retrievedGame.getDescription());
+        assertEquals(CategoryReqDto.ActionAdventure.name(), retrievedGame.getCategory().name());
+        assertEquals(GameConsoleReqDto.PC.name(), retrievedGame.getGameConsole().name());
+        assertEquals(true, retrievedGame.isInCatalog());
     }
 
     @Test
