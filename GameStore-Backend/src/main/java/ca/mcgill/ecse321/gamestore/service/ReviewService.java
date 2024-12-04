@@ -2,6 +2,8 @@ package ca.mcgill.ecse321.gamestore.service;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Optional;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +31,7 @@ public class ReviewService {
     @Transactional
     public Review getReviewById(int id) {
         return reviewRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Review not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Review not found with ID: " + id));
     }
 
     @Transactional
@@ -52,14 +54,12 @@ public class ReviewService {
             throw new IllegalArgumentException("Rating must be between 0 and 5");
         }
 
-        CustomerAccount customerAccount = customerAccountRepository.findById(customerAccountId);
-        if (customerAccount == null) {
-            throw new IllegalArgumentException("CustomerAccount not found");
-        }
-        Game game = gameRepository.findById(gameId);
-        if (game == null) {
-            throw new IllegalArgumentException("Game not found");
-        }
+        // Retrieve CustomerAccount and Game with proper checks
+        CustomerAccount customerAccount = customerAccountRepository.findById(customerAccountId)
+                .orElseThrow(() -> new IllegalArgumentException("CustomerAccount not found with ID: " + customerAccountId));
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new IllegalArgumentException("Game not found with ID: " + gameId));
+
         Review review = new Review(date, description, likeCount, dislikeCount, rating, employeeReviewed,
                 customerAccount, game);
         return reviewRepository.save(review);
@@ -68,7 +68,7 @@ public class ReviewService {
     @Transactional
     public Review updateReview(int reviewId, int likeCount, int dislikeCount) {
         Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("Review not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Review not found with ID: " + reviewId));
 
         if (likeCount < 0 || dislikeCount < 0) {
             throw new IllegalArgumentException("Like and dislike counts cannot be negative");
@@ -81,10 +81,8 @@ public class ReviewService {
 
     @Transactional
     public void deleteReview(int reviewId) {
-        Review review = reviewRepository.findById(reviewId).get();
-        if (review == null) {
-            throw new IllegalArgumentException("Review not found");
-        }
-        reviewRepository.deleteById(reviewId);
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("Review not found with ID: " + reviewId));
+        reviewRepository.delete(review);
     }
 }

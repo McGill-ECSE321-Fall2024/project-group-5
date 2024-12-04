@@ -2,6 +2,8 @@ package ca.mcgill.ecse321.gamestore.service;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,6 @@ public class AccountService {
 
     @Autowired
     private StaffAccountRepository staffAccountRepository;
-
 
     /**
      * Generates a random salt of wanted length
@@ -87,6 +88,16 @@ public class AccountService {
         }
         return "";
     }
+
+    /**
+     * Helper method to determine if name has valid format
+     * Name cannot contain special characters or numbers except for ' and -
+     * 
+     * @param name - given name
+     * @return Empty String if name is valid or the error message associated
+     *         with the invalid name
+     * @vivianeltain
+     */
 
     /**
      * Helper method to check if string contains a number
@@ -259,6 +270,7 @@ public class AccountService {
      * @return true if username is free
      *         false if username is taken
      */
+    @Transactional
     public boolean checkUsernameAvailability(String username) {
         return customerAccountRepository.findByUsername(username) == null
                 && staffAccountRepository.findStaffAccountByUsername(username) == null;

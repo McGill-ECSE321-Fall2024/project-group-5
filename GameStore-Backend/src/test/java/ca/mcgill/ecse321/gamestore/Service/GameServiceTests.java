@@ -2,6 +2,8 @@ package ca.mcgill.ecse321.gamestore.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -70,7 +72,7 @@ public class GameServiceTests {
         game.setId(id);
         game.setName("Test Game");
 
-        when(repo.findById(id)).thenReturn(game);
+        when(repo.findById(id)).thenReturn(Optional.of(game));
 
         // Act
         Game foundGame = service.getGameById(id);
@@ -120,7 +122,7 @@ public class GameServiceTests {
         game.setName("Test Game");
         game.setPrice(50);
 
-        when(repo.findById(id)).thenReturn(game);
+        when(repo.findById(id)).thenReturn(Optional.of(game));
         when(repo.save(any(Game.class))).thenReturn(game);
 
         // Act
@@ -142,7 +144,7 @@ public class GameServiceTests {
         Game game = new Game(); // Assuming you have a Game class, populate it if necessary
         game.setId(validId);
 
-        when(repo.findById(validId)).thenReturn(game); // Simulate finding the game
+        when(repo.findById(validId)).thenReturn(Optional.of(game)); // Simulate finding the game
         when(repo.existsById(validId)).thenReturn(true); // Simulate that the game exists
 
         // Act
@@ -332,7 +334,7 @@ public class GameServiceTests {
         Game game = new Game();
         game.setId(id);
 
-        when(repo.findById(id)).thenReturn(game);
+        when(repo.findById(id)).thenReturn(Optional.of(game));
 
         // Act & Assert
         Exception e = assertThrows(IllegalArgumentException.class,
@@ -373,7 +375,7 @@ public class GameServiceTests {
         int id = 1;
         Game game = new Game();
         game.setId(id);
-        when(repo.findById(id)).thenReturn(game);
+        when(repo.findById(id)).thenReturn(Optional.of(game));
 
         // Act & Assert
         Exception e = assertThrows(IllegalArgumentException.class,
@@ -397,7 +399,7 @@ public class GameServiceTests {
         game.setId(id);
         game.setInCatalog(false);
 
-        when(repo.findById(id)).thenReturn(game);
+        when(repo.findById(id)).thenReturn(Optional.of(game));
 
         // Act & Assert
         Exception e = assertThrows(IllegalArgumentException.class, () -> service.deleteGameById(id));
@@ -410,7 +412,7 @@ public class GameServiceTests {
         int id = 1;
         Game game = new Game();
         game.setId(id);
-        when(repo.findById(id)).thenReturn(game);
+        when(repo.findById(id)).thenReturn(Optional.of(game));
 
         // Act & Assert
         Exception e = assertThrows(IllegalArgumentException.class,
@@ -446,7 +448,7 @@ public class GameServiceTests {
         game.setPrice(50);
         game.setDescription("Original Description");
 
-        when(repo.findById(id)).thenReturn(game);
+        when(repo.findById(id)).thenReturn(Optional.of(game));
         when(repo.save(game)).thenReturn(game);
 
         // Act
