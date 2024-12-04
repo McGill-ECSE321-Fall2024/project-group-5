@@ -210,7 +210,7 @@ public class CustomerAccountIntegrationTests {
                 // Assert: Verify response status code is NOT_FOUND
                 assertNotNull(response, "Response should not be null");
                 assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode(), "Expected status code 404 (NOT_FOUND)");
-                assertEquals("No account associated with this id exists", response.getBody(),
+                assertEquals("CustomerAccount not found with ID: " + INVALID_ID, response.getBody(),
                                 "No account associated with this id exists");
         }
 
