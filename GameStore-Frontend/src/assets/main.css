@@ -1,26 +1,39 @@
 @import './base.css';
 
+:root {
+  --primary-color: hsla(160, 100%, 37%, 1);
+  --primary-color-hover: hsla(160, 100%, 37%, 0.2);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
 #app {
-  max-width: 1280px;
+  max-width: 90%; /* Increased width */
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem; /* Reduced padding */
   font-weight: normal;
 }
 
+/* Links */
 a,
 .green {
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
+  color: var(--primary-color);
   transition: 0.4s;
-  padding: 3px;
+  padding: 5px 10px; /* Improved padding for better spacing */
 }
 
 @media (hover: hover) {
   a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
+    background-color: var(--primary-color-hover);
   }
 }
 
+/* Responsive Layout */
 @media (min-width: 1024px) {
   body {
     display: flex;
@@ -29,7 +42,50 @@ a,
 
   #app {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+    grid-template-columns: repeat(2, 1fr); /* Ensure two columns for a wider layout */
+    gap: 2rem; /* Adds spacing between columns */
   }
 }
+
+@media (max-width: 1024px) {
+  #app {
+    display: grid;
+    grid-template-columns: 1fr; /* Full width on smaller screens */
+    padding: 1rem; /* Adjusted for smaller screens */
+  }
+}
+
+/* Ensure spacing between children */
+#app > * {
+  margin-bottom: 1rem; /* Consistent spacing between elements */
+}
+
+/* Additional responsive tweaks for a better visual hierarchy */
+@media (max-width: 768px) {
+  a,
+  .green {
+    padding: 3px 5px; /* Further reduced padding for very small screens */
+  }
+}
+
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f9f9f9; /* Optional: Adds a light background */
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  display: flex;
+  gap: 2rem;
+  max-width: 1200px;
+  width: 100%;
+  padding: 1rem;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
