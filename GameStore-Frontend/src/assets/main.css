@@ -28,8 +28,12 @@ a,
   }
 
   #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+    width: 100%;
+    height: 100%;
+    display: flex; /* Use flex for better consistency */
+    flex-direction: column;
+    align-items: center; /* Center horizontally */
+    justify-content: flex-start; /* Start content at the top */
+    box-sizing: border-box; /* Prevent overflow due to padding */
   }
 }
