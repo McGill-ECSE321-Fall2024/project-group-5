@@ -44,15 +44,15 @@ export default {
 
 <style scoped>
 .home-container {
-  max-width: 1200px;
-  width: 90%;
-  margin: auto;
+  width: 100%; /* Expand to full parent width */
+  max-width: 1200px; /* Limit width on large screens */
+  margin: auto; /* Center horizontally */
   padding: 2rem;
   background: white;
   border-radius: 12px;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
 }
+
 
 .hero-header {
   background-color: #f4f4f9;

@@ -48,7 +48,6 @@ const toggleProfileDropdown = () => {
       <aside :class="['sidebar', { open: isSidebarOpen }]">
         <nav>
           <RouterLink to="/">Home</RouterLink>
-          <RouterLink to="/about">About</RouterLink>
           <RouterLink to="/shop">Shop</RouterLink>
           <RouterLink to="/login">Log In</RouterLink>
           <RouterLink to="/cart">Cart</RouterLink>
@@ -60,6 +59,7 @@ const toggleProfileDropdown = () => {
           <RouterLink to="/view-address">View Address</RouterLink>
           <RouterLink to="/view-info">View Info</RouterLink>
           <RouterLink to="/view-payment">View Payment Info</RouterLink>
+          <RouterLink to="/about">About</RouterLink>
         </nav>
       </aside>
 
