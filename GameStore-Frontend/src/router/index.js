@@ -16,8 +16,8 @@ const router = createRouter({
     { path: '/cart', name: 'cart', component: CartView },
     { path: '/about', name: 'about', component: AboutView },
     { path: '/events', name: 'events', component: EventsView }, // Add Events route
-    { path: '/staff', name: 'staff', component: StaffView }
-    { path: '/manager', name: 'Manager', component: ManagerPage }, 
+    { path: '/staff', name: 'staff', component: StaffView },
+    { path: '/manager', name: 'Manager', component: ManagerPage } 
   ],
 });
 
