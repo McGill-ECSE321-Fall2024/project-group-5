@@ -49,7 +49,7 @@ public class PaymentInformationServiceTests {
         PaymentInformation paymentInformation = new PaymentInformation(
                 "Alice", 12345678, Date.valueOf("2025-12-31"), 123, CardType.Visa, customerAccount);
 
-        when(customerAccountRepository.findById(1)).thenReturn(customerAccount);
+        when(customerAccountRepository.findById(1)).thenReturn(Optional.of(customerAccount));
         when(paymentInformationRepository.save(any(PaymentInformation.class))).thenReturn(paymentInformation);
 
         // Act

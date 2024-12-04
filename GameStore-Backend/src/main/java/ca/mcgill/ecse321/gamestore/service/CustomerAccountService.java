@@ -28,7 +28,8 @@ public class CustomerAccountService {
      */
     @Transactional
     public CustomerAccount getCustomerAccountByID(int id) {
-        CustomerAccount customerAccount = customerAccountRepository.findById(id);
+        CustomerAccount customerAccount = customerAccountRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("CustomerAccount not found with ID: " + id));
+
         if (customerAccount == null) {
             throw new IllegalArgumentException("No account associated with this id exists");
         }
@@ -89,7 +90,8 @@ public class CustomerAccountService {
      */
     @Transactional
     public CustomerAccount deleteCustomerAccount(int id) {
-        CustomerAccount customerAccount = customerAccountRepository.findById(id);
+        CustomerAccount customerAccount = customerAccountRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("CustomerAccount not found with ID: " + id));
+
         if (customerAccount == null) {
             throw new IllegalArgumentException("No account associated with this id exists");
         }
