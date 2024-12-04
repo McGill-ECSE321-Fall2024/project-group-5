@@ -21,23 +21,30 @@
             <th>Game Title</th>
             <th>Category</th>
             <th>Price</th>
-            <th>Inventory</th>
+            <th>Console</th> <!-- Added Console Column -->
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="game in filteredGames" :key="game.id">
+          <tr v-for="game in paginatedGames" :key="game.id">
             <td>{{ game.title }}</td>
             <td>{{ game.category }}</td>
             <td>{{ game.price }}</td>
-            <td>{{ game.inventory }}</td>
+            <td>{{ game.console }}</td> <!-- Display Console -->
             <td>
-              <button @click="editGame(game)">Edit</button>
-              <button @click="deleteGame(game.id)">Delete</button>
+              <button @click="editGame(game)" class="btn edit-btn">Edit</button>
+              <button @click="deleteGame(game.id)" class="btn delete-btn">Delete</button>
             </td>
           </tr>
         </tbody>
       </table>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1" class="pagination-btn">Previous</button>
+        <span class="pagination-info">Page {{ currentPage }} of {{ totalPages }}</span>
+        <button @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages" class="pagination-btn">Next</button>
+      </div>
 
       <!-- Add New Game Form -->
       <div v-if="showAddGameForm" class="game-form">
@@ -56,10 +63,6 @@
             <input v-model="newGame.price" type="number" id="price" required />
           </div>
           <div>
-            <label for="inventory">Inventory:</label>
-            <input v-model="newGame.inventory" type="number" id="inventory" required />
-          </div>
-          <div>
             <label for="category">Category:</label>
             <select v-model="newGame.category" id="category" required>
               <option value="Action">Action</option>
@@ -67,8 +70,17 @@
               <option value="RPG">RPG</option>
             </select>
           </div>
-          <button type="submit">Add Game</button>
-          <button type="button" @click="cancelAddGame">Cancel</button>
+          <div>
+            <label for="console">Console:</label> <!-- New Console Field -->
+            <select v-model="newGame.console" id="console" required>
+              <option value="PlayStation">PlayStation</option>
+              <option value="Xbox">Xbox</option>
+              <option value="PC">PC</option>
+              <option value="Nintendo Switch">Nintendo Switch</option>
+            </select>
+          </div>
+          <button type="submit" class="btn submit-btn">Add Game</button>
+          <button type="button" @click="cancelAddGame" class="btn cancel-btn">Cancel</button>
         </form>
       </div>
 
@@ -89,10 +101,6 @@
             <input v-model="editGameData.price" type="number" id="price" required />
           </div>
           <div>
-            <label for="inventory">Inventory:</label>
-            <input v-model="editGameData.inventory" type="number" id="inventory" required />
-          </div>
-          <div>
             <label for="category">Category:</label>
             <select v-model="editGameData.category" id="category" required>
               <option value="Action">Action</option>
@@ -100,60 +108,19 @@
               <option value="RPG">RPG</option>
             </select>
           </div>
-          <button type="submit">Update Game</button>
-          <button type="button" @click="cancelEditGame">Cancel</button>
+          <div>
+            <label for="console">Console:</label> <!-- Console Field for Edit Form -->
+            <select v-model="editGameData.console" id="console" required>
+              <option value="PlayStation">PlayStation</option>
+              <option value="Xbox">Xbox</option>
+              <option value="PC">PC</option>
+              <option value="Nintendo Switch">Nintendo Switch</option>
+            </select>
+          </div>
+          <button type="submit" class="btn submit-btn">Update Game</button>
+          <button type="button" @click="cancelEditGame" class="btn cancel-btn">Cancel</button>
         </form>
       </div>
-    </section>
-
-    <!-- Customer Orders Section -->
-    <section class="customer-orders">
-      <h2>Customer Orders</h2>
-      <table class="order-list">
-        <thead>
-          <tr>
-            <th>Order ID</th>
-            <th>Customer Name</th>
-            <th>Order Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="order in orders" :key="order.id">
-            <td>{{ order.id }}</td>
-            <td>{{ order.customerName }}</td>
-            <td>{{ order.status }}</td>
-            <td>
-              <button @click="viewOrderDetails(order)">View Details</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <!-- Customer Reviews Section -->
-    <section class="customer-reviews">
-      <h2>Customer Reviews</h2>
-      <table class="review-list">
-        <thead>
-          <tr>
-            <th>Game Title</th>
-            <th>Customer</th>
-            <th>Review</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="review in reviews" :key="review.id">
-            <td>{{ review.gameTitle }}</td>
-            <td>{{ review.customerName }}</td>
-            <td>{{ review.comment }}</td>
-            <td>
-              <button @click="respondToReview(review)">Respond</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </section>
   </div>
 </template>
@@ -173,25 +140,35 @@ export default {
         title: '',
         description: '',
         price: 0,
-        inventory: 0,
         category: 'Action',
+        console: 'PlayStation', // Added Console to new game data
       },
-      editGameData: null, // Store the game being edited
+      editGameData: null,
       showAddGameForm: false,
       showEditGameForm: false,
+      currentPage: 1,
+      pageSize: 5,
     };
   },
   computed: {
-    // Filtered games based on the search query
     filteredGames() {
       if (this.searchQuery === "") {
         return this.games;
       }
       return this.games.filter(game =>
         game.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        game.category.toLowerCase().includes(this.searchQuery.toLowerCase())
+        game.category.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        game.console.toLowerCase().includes(this.searchQuery.toLowerCase()) // Filter by console
       );
     },
+    paginatedGames() {
+      const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      return this.filteredGames.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.filteredGames.length / this.pageSize);
+    }
   },
   methods: {
     fetchGames() {
@@ -226,7 +203,7 @@ export default {
         .then(() => {
           this.fetchGames();
           this.showAddGameForm = false;
-          this.newGame = { title: '', description: '', price: 0, inventory: 0, category: 'Action' }; // Reset form
+          this.newGame = { title: '', description: '', price: 0, category: 'Action', console: 'PlayStation' }; // Reset form
         })
         .catch(error => {
           console.error('Error adding game:', error);
@@ -255,11 +232,10 @@ export default {
           console.error('Error deleting game:', error);
         });
     },
-    viewOrderDetails(order) {
-      // Logic to view detailed order information
-    },
-    respondToReview(review) {
-      // Logic to respond to a customer review
+    goToPage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
+      }
     },
     cancelAddGame() {
       this.showAddGameForm = false;
@@ -277,54 +253,57 @@ export default {
 };
 </script>
 
+
+
 <style scoped>
-/* General */
+/* Global Styles */
 body {
   font-family: 'Arial', sans-serif;
-  margin: 0;
-  background-color: #f8f9fa;
+  background-color: #f5faff;
   color: #333;
 }
 
-.staff-dashboard {
-  background-color: white;
-  padding: 20px;
+h1, h2 {
+  /* color: #2980b9; */
+  color: white;
 }
 
-/* Header */
+/* Header Styling */
 .header {
+  background-color: #2980b9;
+  color: white;
+  padding: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #2980b9;
-  color: white;
-  padding: 1rem 2rem;
 }
 
 .header .logo h1 {
-  font-size: 1.5rem;
   margin: 0;
 }
 
-.search-input {
+.header .search-input {
   padding: 0.5rem;
   border-radius: 4px;
-  border: 1px solid #ddd;
-  outline: none;
+  border: 1px solid #ccc;
+  width: 200px;
 }
 
-/* Manage Games */
+/* Manage Games Section */
 .manage-games {
-  padding: 2rem 0;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: black;
 }
 
 .manage-games h2 {
-  margin-bottom: 1.5rem;
-  color: #2980b9;
+  color: black; /* Ensures "Manage Games" header is black */
 }
 
-.add-game-btn {
-  background: #2980b9;
+.manage-games button {
+  background-color: #2980b9;
   color: white;
   padding: 0.5rem 1rem;
   border: none;
@@ -332,34 +311,35 @@ body {
   cursor: pointer;
 }
 
-.add-game-btn:hover {
-  background-color: #1c6691;
+.manage-games button:hover {
+  background-color: #1c6c8c;
 }
 
-/* Tables */
-table {
+.game-list {
   width: 100%;
+  margin-top: 2rem;
   border-collapse: collapse;
-  margin-bottom: 2rem;
 }
 
-th, td {
+.game-list th, .game-list td {
   padding: 1rem;
-  text-align: center;
-  border: 1px solid #ddd;
+  text-align: left;
 }
 
-th {
+.game-list th {
   background-color: #2980b9;
   color: white;
 }
 
-td {
-  background-color: #f9f9f9;
+.pagination {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-button {
-  background: #2980b9;
+.pagination .pagination-btn {
+  background-color: #2980b9;
   color: white;
   padding: 0.5rem 1rem;
   border: none;
@@ -367,63 +347,57 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background-color: #1c6691;
+.pagination .pagination-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
-/* Add Game Form */
 .game-form {
-  background-color: #fff;
+  background-color: #ffffff;
   padding: 1.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-top: 1rem;
-}
-
-.game-form form {
-  display: flex;
-  flex-direction: column;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
 }
 
 .game-form label {
   font-weight: bold;
-  margin-bottom: 0.5rem;
 }
 
 .game-form input, .game-form select {
+  width: 100%;
   padding: 0.5rem;
-  border: 1px solid #ddd;
-  margin-bottom: 1rem;
+  margin-top: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-.game-form button {
-  background: #2980b9;
-  color: white;
+.btn {
   padding: 0.5rem 1rem;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
-.game-form button:hover {
-  background-color: #1c6691;
-}
-
-/* Footer */
-.footer {
-  background: #2980b9;
+.submit-btn {
+  background-color: #2980b9;
   color: white;
-  text-align: center;
-  padding: 1rem 0;
 }
 
-.footer-links a {
-  color: white;
-  margin: 0 0.5rem;
-  text-decoration: none;
+.submit-btn:hover {
+  background-color: #1c6c8c;
 }
 
-.footer-links a:hover {
-  text-decoration: underline;
+.cancel-btn {
+  background-color: #ccc;
+}
+
+.cancel-btn:hover {
+  background-color: #b0b0b0;
+}
+
+.pagination-info {
+  font-size: 1rem;
+  color: #333;
 }
 </style>
