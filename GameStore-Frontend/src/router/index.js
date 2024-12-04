@@ -4,6 +4,7 @@ import ShopView from '../views/ShopView.vue';
 import CartView from '../views/CartView.vue';
 import AboutView from '../views/AboutView.vue';
 import EventsView from '../views/EventsView.vue'; // Add EventsView import
+import StaffView from '../views/StaffView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,6 +14,7 @@ const router = createRouter({
     { path: '/cart', name: 'cart', component: CartView },
     { path: '/about', name: 'about', component: AboutView },
     { path: '/events', name: 'events', component: EventsView }, // Add Events route
+    { path: '/staff', name: 'staff', component: StaffView }
   ],
 });
 
