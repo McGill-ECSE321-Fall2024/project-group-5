@@ -63,3 +63,12 @@ The main features of the web application are listed as follows:
 | Romain Teyssier| 20   | 45 | 10 |
 | Caroline Thom | 19   | 32 | 0 |
 | Reswanth Reji Pillai | 18   | 30 | 0 |
+
+### Sprint 1
+[Sprint 1: Overview](https://github.com/McGill-ECSE321-Fall2024/project-group-5/wiki/Deliverable-1)
+
+### Sprint 2
+[Sprint 2: Overview](https://github.com/McGill-ECSE321-Fall2024/project-group-5/wiki/Deliverable-2)
+
+### Sprint 3
+[Sprint 3: Overview](https://github.com/McGill-ECSE321-Fall2024/project-group-5/wiki/Deliverable-3)
