@@ -4,7 +4,7 @@ import ca.mcgill.ecse321.gamestore.model.StaffAccount;
 
 public class StaffAccountResponseDto {
     private int id;
-    private String name;
+    private String username;
 
     // Jackson needs a default constructor, but it doesn't need to be public
     @SuppressWarnings("unused")
@@ -19,19 +19,15 @@ public class StaffAccountResponseDto {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
     public void setId(int id) {
         this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Object getUsername() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void setUsername(String username) {
+        this.username = username;
     }
 }
