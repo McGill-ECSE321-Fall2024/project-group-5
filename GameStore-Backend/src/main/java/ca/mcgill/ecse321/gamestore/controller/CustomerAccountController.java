@@ -1,7 +1,7 @@
 package ca.mcgill.ecse321.gamestore.controller;
 
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,12 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import ca.mcgill.ecse321.gamestore.controller.utilities.AuthenticationUtility;
+import ca.mcgill.ecse321.gamestore.dto.CustomerAccountListDto;
 import ca.mcgill.ecse321.gamestore.dto.CustomerAccountRequestDto;
 import ca.mcgill.ecse321.gamestore.dto.CustomerAccountResponseDto;
 import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
 import ca.mcgill.ecse321.gamestore.service.CustomerAccountService;
-import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/customer-account")
@@ -29,6 +28,22 @@ public class CustomerAccountController {
 
     @Autowired
     private CustomerAccountService customerAccountService;
+
+    // /**
+    // * GET endpoint to retrieve a CustomerAccount by its ID.
+    // *
+    // * @param id the ID of the CustomerAccount to retrieve
+    // * @return CustomerAccountResponseDto representation of the CustomerAccount
+    // * @vivianeltain
+    // */
+    // @GetMapping(value = { "/get-with-id/{id}", "/get-with-id/{id}/" })
+    // public CustomerAccountResponseDto getCustomerAccountById(@PathVariable("id")
+    // int theId) {
+    // CustomerAccount customerAccount =
+    // customerAccountService.getCustomerAccountByID(theId);
+
+    // return new CustomerAccountResponseDto(customerAccount);
+    // }
 
     /**
      * GET endpoint to retrieve a CustomerAccount by its ID.
@@ -38,12 +53,12 @@ public class CustomerAccountController {
      * @vivianeltain
      */
     @GetMapping("/get-with-id/{id}")
-    public ResponseEntity<CustomerAccountResponseDto> getCustomerAccountById(@PathVariable int id) {
+    public ResponseEntity<?> getCustomerAccountById(@PathVariable("id") int aId) {
         CustomerAccount customerAccount;
         try {
-            customerAccount = customerAccountService.getCustomerAccountByID(id);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            customerAccount = customerAccountService.getCustomerAccountByID(aId);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
         return ResponseEntity.ok(new CustomerAccountResponseDto(customerAccount));
     }
@@ -59,7 +74,7 @@ public class CustomerAccountController {
      */
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<CustomerAccountResponseDto> createCustomerAccount(
+    public ResponseEntity<?> createCustomerAccount(
             @RequestBody CustomerAccountRequestDto customerAccountRequestDto) {
         // Assuming service method handles validation for uniqueness and other checks
         CustomerAccount createdCustomerAccount;
@@ -67,8 +82,8 @@ public class CustomerAccountController {
             createdCustomerAccount = customerAccountService.createCustomerAccount(
                     customerAccountRequestDto.getUsername(), customerAccountRequestDto.getEmailAddress(),
                     customerAccountRequestDto.getPassword(), customerAccountRequestDto.getName());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(new CustomerAccountResponseDto(createdCustomerAccount));
     }
@@ -82,18 +97,44 @@ public class CustomerAccountController {
      * @return CustomerAccountResponseDto representing the updated CustomerAccount
      * @vivianeltain
      */
-    @PutMapping("/update/{id}")
-    public ResponseEntity<CustomerAccountResponseDto> updateCustomerAccount(
-            @PathVariable int id, @RequestBody CustomerAccountRequestDto customerAccountRequestDto) {
-        CustomerAccount updatedCustomerAccount;
+    @PutMapping("/update-username/{email}/{username}")
+    public ResponseEntity<?> updateCustomerAccountUsername(
+            @PathVariable("email") String email, @PathVariable("username") String username) {
         try {
-            updatedCustomerAccount = customerAccountService.updateCustomerAccount(id,
-                    customerAccountRequestDto.getUsername(), customerAccountRequestDto.getPassword(),
-                    customerAccountRequestDto.getName());
+            customerAccountService.updateCustomerAccountUsername(email, username);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        return ResponseEntity.ok(new CustomerAccountResponseDto(updatedCustomerAccount));
+        CustomerAccount updatedCustomerAccount = customerAccountService.getCustomerAccountByEmail(email);
+
+        return ResponseEntity.ok().body(new CustomerAccountResponseDto(updatedCustomerAccount));
+    }
+
+    @PutMapping("/update-password/{email}/{oldPassword}/{newPassword}")
+    public ResponseEntity<?> updateCustomerAccountPassword(
+            @PathVariable("email") String email, @PathVariable("oldPassword") String oldPassword,
+            @PathVariable("newPassword") String newPassword) {
+        try {
+            customerAccountService.updateCustomerAccountPassword(email, oldPassword, newPassword);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        CustomerAccount updatedCustomerAccount = customerAccountService.getCustomerAccountByEmail(email);
+
+        return ResponseEntity.ok().body(new CustomerAccountResponseDto(updatedCustomerAccount));
+    }
+
+    @PutMapping("/update-name/{email}/{name}")
+    public ResponseEntity<?> updateCustomerAccountName(
+            @PathVariable("email") String email, @PathVariable("name") String name) {
+        try {
+            customerAccountService.updateCustomerAccountName(email, name);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        CustomerAccount updatedCustomerAccount = customerAccountService.getCustomerAccountByEmail(email);
+
+        return ResponseEntity.ok().body(new CustomerAccountResponseDto(updatedCustomerAccount));
     }
 
     /**
@@ -104,12 +145,12 @@ public class CustomerAccountController {
      * @vivianeltain
      */
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<CustomerAccountResponseDto> deleteCustomerAccount(@PathVariable int id) {
+    public ResponseEntity<?> deleteCustomerAccount(@PathVariable("id") int id) {
         try {
             CustomerAccount deletedCustomerAccount = customerAccountService.deleteCustomerAccount(id);
             return ResponseEntity.ok(new CustomerAccountResponseDto(deletedCustomerAccount));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -120,17 +161,21 @@ public class CustomerAccountController {
      * @return List<CustomerAccountResponseDto> representation of all the
      *         CustomerAccount
      */
-    @GetMapping("/get")
-    public ResponseEntity<?> getAllCustomerAccounts(HttpServletRequest request) {
-        try {
-            if (!AuthenticationUtility.isStaff(request))
-                return ResponseEntity.status(AuthenticationUtility.FORBIDDEN).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(AuthenticationUtility.UNAUTHORIZED).body(e.getMessage());
+    @GetMapping("/get/all")
+    public ResponseEntity<?> getAllCustomerAccounts() {
+        // try {
+        // if (!AuthenticationUtility.isStaff(request))
+        // return ResponseEntity.status(AuthenticationUtility.FORBIDDEN).build();
+        // } catch (Exception e) {
+        // return
+        // ResponseEntity.status(AuthenticationUtility.UNAUTHORIZED).body(e.getMessage());
+        // }
+        List<CustomerAccountResponseDto> customers = new ArrayList<>();
+        for (CustomerAccount customer : customerAccountService.getAllCustomerAccounts()) {
+            customers.add(new CustomerAccountResponseDto(customer));
         }
-        return ResponseEntity.ok().body(customerAccountService
-                .getAllCustomerAccounts().stream().filter(Objects::nonNull).map(CustomerAccountResponseDto::new)
-                .collect(Collectors.toList()));
+
+        return ResponseEntity.ok(new CustomerAccountListDto(customers));
     }
 
     /**
@@ -141,9 +186,14 @@ public class CustomerAccountController {
      * @vivianeltain
      */
     @GetMapping("/get-with-email/{email}")
-    public CustomerAccountResponseDto findCustomerAccountByEmail(@PathVariable String anEmail) throws Exception {
-        CustomerAccount customerAccount = customerAccountService.getCustomerAccountByEmail(anEmail);
-        return new CustomerAccountResponseDto(customerAccount);
+    public ResponseEntity<?> getCustomerAccountByEmail(@PathVariable("email") String anEmail) {
+        CustomerAccount customerAccount;
+        try {
+            customerAccount = customerAccountService.getCustomerAccountByEmail(anEmail);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        return ResponseEntity.ok(new CustomerAccountResponseDto(customerAccount));
     }
 
     /**
@@ -154,9 +204,14 @@ public class CustomerAccountController {
      * @vivianeltain
      */
     @GetMapping("/get-with-username/{username}")
-    public CustomerAccountResponseDto findCustomerAccountByUsername(@PathVariable String aUsername) throws Exception {
-        CustomerAccount customerAccount = customerAccountService.getCustomerAccountByUsername(aUsername);
-        return new CustomerAccountResponseDto(customerAccount);
+    public ResponseEntity<?> getCustomerAccountByUsername(@PathVariable("username") String aUsername) {
+        CustomerAccount customerAccount;
+        try {
+            customerAccount = customerAccountService.getCustomerAccountByUsername(aUsername);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+        return ResponseEntity.ok(new CustomerAccountResponseDto(customerAccount));
     }
 
 }

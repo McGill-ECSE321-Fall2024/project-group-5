@@ -35,12 +35,16 @@ public class GameService {
           */
     @Transactional
     public Game addGame(String name, int price, String description, Category category, GameConsole gameConsole, boolean inCatalog) {
-        validateGameDetails(name, price, description, category, gameConsole, inCatalog);
+        validateGameDetails(name, price, description, category, gameConsole);
         // Check if a game with the same name already exists
         Game existingGame = gameRepository.findByName(name);
         if (existingGame != null) {
             throw new IllegalArgumentException("A game with this name already exists");
         }
+        if (!inCatalog) {
+            throw new IllegalArgumentException("New games must be in the catalog");
+        }
+
 
         Game game = new Game();
         game.setName(name);
@@ -68,8 +72,9 @@ public class GameService {
      */
     @Transactional
     public Game updateGame(int id, String name, int price, String description, Category category, GameConsole gameConsole, boolean inCatalog) {
-        validateGameDetails(name, price, description, category, gameConsole, inCatalog);
-        Game game = getGameById(id);
+        validateGameDetails(name, price, description, category, gameConsole);
+        Game game = gameRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Game not found with ID: " + id));
         game.setName(name);
         game.setPrice(price);
         game.setDescription(description);
@@ -87,18 +92,14 @@ public class GameService {
      * @throws Exception if game not found
      * @carolinethom
      */
+    @Transactional
     public Game getGameById(int id) {
         if (id <= 0) {
-            throw new IllegalArgumentException("Invalid ID");
+            throw new IllegalArgumentException("Invalid ID.");
         }
-    
-        Game game = gameRepository.findById(id);
-        if (game == null) {
-            throw new IllegalArgumentException("No game exists with this ID: " + id);
-        } else {
-            return game;
-        }
+        return gameRepository.findById(id).orElse(null);
     }
+
     
     /**
      * Find Game by name
@@ -189,15 +190,12 @@ public class GameService {
      */
     @Transactional
     public void deleteGameById(int id) {
-        if (id <= 0) {
-            throw new IllegalArgumentException("No game exists with this ID: " + id);
-        }
         if (!gameRepository.existsById(id)) {
-            throw new IllegalArgumentException("No game exists with this ID: " + id);
+            throw new IllegalArgumentException("Game with ID " + id + " not found.");
         }
-        Game game = gameRepository.findById(id);
-        gameRepository.delete(game);
+        gameRepository.deleteById(id);
     }
+
 
     /**
      * Helper method to validate game details
@@ -209,25 +207,22 @@ public class GameService {
      * @param gameConsole - Game console
      * @throws IllegalArgumentException if any field is invalid
      */
-    private void validateGameDetails(String name, int price, String description, Category category, GameConsole gameConsole, boolean inCatalog) {
+    private void validateGameDetails(String name, int price, String description, Category category, GameConsole gameConsole) {
         if (!StringUtils.hasText(name)) {
             throw new IllegalArgumentException("Game name cannot be null or empty");
         }
         if (price < 0) {
-            throw new IllegalArgumentException("Game price cannot be negative");
+            throw new IllegalArgumentException("Price cannot be negative");
         }
         if (description == null) {
-            throw new IllegalArgumentException("Game description cannot be null or empty");
+            throw new IllegalArgumentException("Description cannot be null or empty");
         }
 
         if (category == null) {
-            throw new IllegalArgumentException("Category cannot be null");
+            throw new IllegalArgumentException("Category is required");
         }
         if (gameConsole == null) {
-            throw new IllegalArgumentException("Game console cannot be null");
-        }
-        if (inCatalog == false) {
-            throw new IllegalArgumentException("Game is not in catalog");
+            throw new IllegalArgumentException("Game console is required");
         }
     }
 }
