@@ -1,72 +1,96 @@
 <template>
-  <main class="shop">
-    <h1>Shop Games</h1>
-    
-    <!-- Search Bar -->
-    <div class="search">
-      <label for="search">Search by Name:</label>
-      <input type="text" id="search" v-model="searchQuery" placeholder="Search for a game..." />
+  <div class="games-container">
+    <!-- Header Section -->
+    <header class="header">
+      <div class="header-left">
+        <h1 class="store-title">Shop Games</h1>
+      </div>
+      <div class="header-right">
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="Search for games..."
+          class="search-input"
+        />
+      </div>
+    </header>
+
+    <!-- Filters -->
+    <div class="filter-console">
+      <div class="console-icons">
+        <button
+          @click="setConsoleFilter('PC')"
+          :class="{'active': selectedConsole === 'PC'}"
+          class="console-icon"
+        >
+          <i class="fas fa-desktop"></i> PC
+        </button>
+        <button
+          @click="setConsoleFilter('PlayStation')"
+          :class="{'active': selectedConsole === 'PlayStation'}"
+          class="console-icon"
+        >
+          <i class="fab fa-playstation"></i> PlayStation
+        </button>
+        <button
+          @click="setConsoleFilter('Xbox')"
+          :class="{'active': selectedConsole === 'Xbox'}"
+          class="console-icon"
+        >
+          <i class="fab fa-xbox"></i> Xbox
+        </button>
+        <button
+          @click="setConsoleFilter('Nintendo')"
+          :class="{'active': selectedConsole === 'Nintendo'}"
+          class="console-icon"
+        >
+          <i class="fab fa-nintendo-switch"></i> Nintendo
+        </button>
+      </div>
     </div>
 
-    <!-- Filters Section -->
-    <div class="filters">
-      <label for="filter">Filter by Genre:</label>
-      <select id="filter" v-model="selectedGenre">
+    <div class="filter-category">
+      <select v-model="selectedGenre" class="filter-select">
         <option value="">All Genres</option>
         <option v-for="genre in genres" :key="genre" :value="genre">{{ genre }}</option>
-      </select>
-
-      <label for="console">Filter by Console:</label>
-      <select id="console" v-model="selectedConsole">
-        <option value="">All Consoles</option>
-        <option v-for="console in consoles" :key="console" :value="console">{{ console }}</option>
       </select>
     </div>
 
     <!-- Games Grid -->
-    <div class="games-grid">
+    <div class="games-list">
       <div v-for="game in filteredGames" :key="game.id" class="game-card">
-        <img :src="game.image" :alt="game.name" class="game-image"/>
-        <div class="game-info">
-          <h3>{{ game.name }}</h3>
-          <p class="price">${{ game.price }}</p>
-          <div class="game-details">
-            <p><strong>Console:</strong> {{ game.console }}</p>
-            <p><strong>Genre:</strong> {{ game.genre }}</p>
-          </div>
+        <h3 class="game-title">{{ game.name }}</h3>
+        <p class="game-description">
+          <strong>Console:</strong> {{ game.console }} |
+          <strong>Genre:</strong> {{ game.genre }}
+        </p>
+        <button @click="toggleReviews(game.id)" class="toggle-reviews-btn">
+          {{ game.showReviews ? "Hide Reviews" : "Show Reviews" }}
+        </button>
 
-          <!-- Show Reviews Button -->
-          <button @click="toggleReviews(game.id)" class="show-reviews-btn">
-            {{ game.showReviews ? "Hide Reviews" : "Show Reviews" }}
-          </button>
-
-          <!-- Reviews Section (conditionally rendered) -->
-          <div v-if="game.showReviews" class="reviews">
-            <h4>Reviews</h4>
-            <div v-for="review in game.reviews" :key="review.id" class="review">
-              <p>{{ review.text }}</p>
-              <p>Rating: {{ review.rating }} / 5</p>
-
-              <!-- Like/Dislike Buttons with Counters -->
-              <div class="like-dislike-buttons">
-                <button @click="likeReview(game.id, review.id)">👍 {{ review.likes }}</button>
-                <button @click="dislikeReview(game.id, review.id)">👎 {{ review.dislikes }}</button>
-              </div>
+        <!-- Reviews Section -->
+        <div v-if="game.showReviews" class="reviews">
+          <h4 class="reviews-header">Reviews</h4>
+          <div v-for="review in game.reviews" :key="review.id" class="review">
+            <p class="review-text">{{ review.text }}</p>
+            <p class="review-rating">Rating: {{ review.rating }} / 5</p>
+            <div class="like-dislike-buttons">
+              <button @click="likeReview(game.id, review.id)" class="like-btn">
+                👍 {{ review.likes }}
+              </button>
+              <button @click="dislikeReview(game.id, review.id)" class="dislike-btn">
+                👎 {{ review.dislikes }}
+              </button>
             </div>
           </div>
-
-          <!-- Button Container (for spacing between buttons) -->
-          <div class="button-container">
-            <!-- Add to Cart Button -->
-            <button @click="addToCart(game)" class="add-to-cart-btn">Add to Cart</button>
-
-            <!-- Write a Review Button -->
-            <button @click="writeReview(game.id)" class="write-review-btn">Write a Review</button>
-          </div>
+          <button @click="writeReview(game.id)" class="write-review-btn">Write a Review</button>
         </div>
+
+        <!-- Add to Cart Button -->
+        <button @click="addToCart(game)" class="add-to-cart-btn">Add to Cart</button>
       </div>
     </div>
-  </main>
+  </div>
 </template>
 
 <script>
@@ -83,11 +107,9 @@ export default {
           name: "Adventure Quest",
           genre: "Adventure",
           console: "PC",
-          price: 29.99,
-          image: "/images/adventure-quest.jpg",
           reviews: [
             { id: 1, text: "Amazing game!", rating: 5, likes: 0, dislikes: 0 },
-            { id: 2, text: "Good, but a bit repetitive.", rating: 3, likes: 0, dislikes: 0 }
+            { id: 2, text: "Good, but a bit repetitive.", rating: 3, likes: 0, dislikes: 0 },
           ],
           showReviews: false,
         },
@@ -96,275 +118,242 @@ export default {
           name: "Mystic RPG",
           genre: "RPG",
           console: "PlayStation",
-          price: 49.99,
-          image: "/images/mystic-rpg.jpg",
           reviews: [
             { id: 3, text: "Great graphics and story!", rating: 4, likes: 0, dislikes: 0 },
-            { id: 4, text: "Too easy, not challenging enough.", rating: 2, likes: 0, dislikes: 0 }
+            { id: 4, text: "Too easy, not challenging enough.", rating: 2, likes: 0, dislikes: 0 },
           ],
           showReviews: false,
-        }
+        },
       ],
-      genres: ["Adventure", "RPG", "Action", "Strategy"],
-      consoles: ["PC", "PlayStation", "Xbox", "Nintendo Switch"]
+      genres: ["Adventure", "RPG", "Action", "Puzzle", "Strategy"],
     };
-  },
-  computed: {
-    filteredGames() {
-      let games = this.games;
-
-      // Filter by Name (searchQuery)
-      if (this.searchQuery) {
-        games = games.filter(game =>
-          game.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-        );
-      }
-
-      // Filter by Genre
-      if (this.selectedGenre) {
-        games = games.filter(game => game.genre === this.selectedGenre);
-      }
-
-      // Filter by Console
-      if (this.selectedConsole) {
-        games = games.filter(game => game.console === this.selectedConsole);
-      }
-
-      return games;
-    }
   },
   methods: {
     addToCart(game) {
-      console.log(`Added ${game.name} to the cart.`);
+      alert(`${game.name} has been added to your cart!`);
     },
-
-    // Like Review
+    toggleReviews(gameId) {
+      const game = this.games.find((g) => g.id === gameId);
+      game.showReviews = !game.showReviews;
+    },
     likeReview(gameId, reviewId) {
-      const game = this.games.find(g => g.id === gameId);
-      const review = game.reviews.find(r => r.id === reviewId);
+      const game = this.games.find((g) => g.id === gameId);
+      const review = game.reviews.find((r) => r.id === reviewId);
       review.likes++;
-      console.log(`Liked review: ${review.text}`);
     },
-
-    // Dislike Review
     dislikeReview(gameId, reviewId) {
-      const game = this.games.find(g => g.id === gameId);
-      const review = game.reviews.find(r => r.id === reviewId);
+      const game = this.games.find((g) => g.id === gameId);
+      const review = game.reviews.find((r) => r.id === reviewId);
       if (review.dislikes < 10) {
         review.dislikes++;
       }
-      console.log(`Disliked review: ${review.text}`);
     },
-
-    // Toggle the visibility of reviews
-    toggleReviews(gameId) {
-      const game = this.games.find(g => g.id === gameId);
-      game.showReviews = !game.showReviews;
-    },
-
-    // Write a Review
     writeReview(gameId) {
-      const game = this.games.find(g => g.id === gameId);
-      console.log(`Writing a review for ${game.name}`);
-      // Add logic to trigger a review input form or dialog
-    }
-  }
+      const game = this.games.find((g) => g.id === gameId);
+      alert(`Write a review for ${game.name}`);
+    },
+    setConsoleFilter(consoleType) {
+      this.selectedConsole = this.selectedConsole === consoleType ? "" : consoleType;
+    },
+  },
+  computed: {
+    filteredGames() {
+      return this.games.filter((game) => {
+        const matchesSearch = game.name.toLowerCase().includes(this.searchQuery.toLowerCase());
+        const matchesGenre = this.selectedGenre ? game.genre === this.selectedGenre : true;
+        const matchesConsole = this.selectedConsole ? game.console === this.selectedConsole : true;
+        return matchesSearch && matchesGenre && matchesConsole;
+      });
+    },
+  },
 };
 </script>
 
 <style scoped>
-.shop {
+/* Body and Container */
+body, html {
+  height: 100%;
+  margin: 0;
+  background-color: #f4f4f9;
+}
+
+.games-container {
+  max-width: 1200px;
+  width: 90%;
+  margin: auto;
   padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Header */
+.header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  min-height: 100vh;
-  margin: 0 auto;
+  margin-bottom: 2rem;
 }
 
-.filters {
-  margin-bottom: 1.5rem;
+.store-title {
+  font-size: 2.5rem;
+  color: #333;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.search-input {
+  padding: 0.75rem;
+  font-size: 1rem;
+  width: 350px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.search-input:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+/* Filters */
+.filter-console {
+  margin-bottom: 2rem;
+}
+
+.console-icons {
   display: flex;
   justify-content: center;
   gap: 1rem;
 }
 
-.games-grid {
+.console-icon {
+  padding: 0.75rem;
+  font-size: 1.5rem;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.console-icon:hover,
+.console-icon.active {
+  background-color: #3498db;
+  color: white;
+}
+
+.filter-category {
+  margin-bottom: 1.5rem;
+}
+
+.filter-select {
+  padding: 0.75rem;
+  font-size: 1rem;
+  width: 80%;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+/* Games Grid */
+.games-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
-  justify-items: center;
-  width: 100%;
-  max-width: 1200px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
 }
 
 .game-card {
-  border: 1px solid #ddd;
-  padding: 1rem;
-  border-radius: 12px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  background-color: #f9f9f9;
-  width: 100%;
-  max-width: 280px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  height: auto; /* Allow height to grow */
-  min-height: 400px; /* Ensure card has minimum height */
-}
-
-.game-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.game-image {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
+  padding: 1.5rem;
+  background: #fff;
   border-radius: 8px;
-  margin-bottom: 1rem;
-}
-
-.game-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex-grow: 1; /* Allow game info to take remaining space */
-}
-
-h1 {
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
   text-align: center;
-  width: 100%;
-  margin-bottom: 2rem;
+  height: 100%;
 }
 
-h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
+.game-title {
+  font-size: 1.5rem;
   color: #333;
 }
 
-.price {
-  font-size: 1.1rem;
-  color: #4caf50;
-  font-weight: bold;
-  margin: 0.5rem 0;
-}
-
-.game-details {
-  margin: 1rem 0;
-  font-size: 0.9rem;
+.game-description {
+  font-size: 1rem;
   color: #777;
-}
-
-.game-details p {
-  margin: 0.2rem 0;
-}
-
-.show-reviews-btn {
-  background-color: #e67e22;
-  border: 2px solid #e67e22;
-  color: white;
-  padding: 8px 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  font-weight: bold;
   margin-bottom: 1rem;
 }
 
-.show-reviews-btn:hover {
-  background-color: #f1c40f;
-  transform: scale(1.1);
+.toggle-reviews-btn {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background-color: #f39c12;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 .reviews {
   margin-top: 1rem;
-  max-height: 200px;
-  overflow-y: auto;
-  flex-grow: 1; /* Allow reviews section to grow */
+  text-align: left;
 }
 
-.review {
-  border-top: 1px solid #ccc;
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-}
-
-.review p {
+.reviews-header {
   color: #333;
 }
 
-.like-dislike-buttons button {
-  background-color: #4caf50;
-  border: 2px solid #388e3c;
-  border-radius: 5px;
-  padding: 8px 12px;
-  margin: 0.3rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
+.review-text {
+  color: #333;
 }
 
-.like-dislike-buttons button:hover {
-  background-color: #66bb6a;
-  transform: scale(1.1);
+.review-rating {
+  color: #333;
 }
 
-.like-dislike-buttons button:active {
-  transform: scale(0.95);
+.like-dislike-buttons {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1rem;
+  margin-top: 0.5rem;
 }
 
-.like-dislike-buttons button:nth-child(2) {
-  background-color: #f44336;
-  border: 2px solid #d32f2f;
-}
-
-.like-dislike-buttons button:nth-child(2):hover {
-  background-color: #ef5350;
-}
-
-.like-dislike-buttons button:nth-child(2):active {
-  transform: scale(0.95);
-}
-
-/* Add to Cart Button */
-.add-to-cart-btn {
-  background-color: #3498db;
-  border: 2px solid #2980b9;
+.like-btn, .dislike-btn, .write-review-btn, .add-to-cart-btn {
   padding: 10px 20px;
-  font-weight: bold;
-  color: white;
+  border-radius: 6px;
+  border: none;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
-  margin-bottom: 1rem;
+  font-weight: bold;
+  transition: transform 0.2s, background-color 0.3s;
 }
 
-.add-to-cart-btn:hover {
-  background-color: #2980b9;
+.like-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.like-btn:hover {
+  background-color: #66bb6a;
   transform: scale(1.05);
 }
 
-.add-to-cart-btn:active {
+.like-btn:active {
   transform: scale(0.95);
 }
 
-/* Write Review Button */
+.dislike-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.dislike-btn:hover {
+  background-color: #ef5350;
+  transform: scale(1.05);
+}
+
+.dislike-btn:active {
+  transform: scale(0.95);
+}
+
 .write-review-btn {
   background-color: #9b59b6;
-  border: 2px solid #8e44ad;
-  padding: 10px 20px;
-  font-weight: bold;
   color: white;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
-  margin-top: 10px;
 }
 
 .write-review-btn:hover {
@@ -376,11 +365,17 @@ h3 {
   transform: scale(0.95);
 }
 
-.button-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
+.add-to-cart-btn {
+  background-color: #3498db;
+  color: white;
+}
+
+.add-to-cart-btn:hover {
+  background-color: #2980b9;
+  transform: scale(1.05);
+}
+
+.add-to-cart-btn:active {
+  transform: scale(0.95);
 }
 </style>

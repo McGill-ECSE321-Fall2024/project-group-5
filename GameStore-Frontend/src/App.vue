@@ -51,6 +51,7 @@ const toggleProfileDropdown = () => {
           <RouterLink to="/about">About</RouterLink>
           <RouterLink to="/events">Events</RouterLink>
           <RouterLink to="/shop">Shop</RouterLink>
+          <RouterLink to="/manager">Manager</RouterLink>
         </nav>
       </aside>
 

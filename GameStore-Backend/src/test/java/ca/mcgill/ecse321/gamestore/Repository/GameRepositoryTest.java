@@ -17,137 +17,121 @@ import java.util.List;
 @Transactional
 public class GameRepositoryTest {
 
-	@Autowired
-	private GameRepository gameRepository;
+    @Autowired
+    private GameRepository gameRepository;
 
-	@AfterEach
-	public void clearDatabase() {
-		gameRepository.deleteAll();
-	}
+    @AfterEach
+    public void clearDatabase() {
+        gameRepository.deleteAll();
+    }
 
-	@Test
-	public void testSaveAndFindById() {
-		// Create a Game and save it
-		Game game = new Game();
-		game.setName("Test Game");
-		game.setPrice(60);
-		game.setDescription("Test Description");
-		game.setCategory(Game.Category.Action);
-		game.setGameConsole(Game.GameConsole.PS5);
-		gameRepository.save(game);
+    @Test
+    public void testSaveAndFindById() {
+        Game game = new Game();
+        game.setName("Test Game");
+        game.setPrice(60);
+        game.setDescription("Test Description");
+        game.setCategory(Game.Category.Action);
+        game.setGameConsole(Game.GameConsole.PS5);
+        gameRepository.save(game);
 
-		// Save the game to the repository
-		gameRepository.save(game);
+        Game foundGame = gameRepository.findById(game.getId())
+                .orElse(null);
 
-		// Retrieve the game by its ID
-		Game foundGame = gameRepository.findById(game.getId());
+        assertNotNull(foundGame);
+        assertEquals("Test Game", foundGame.getName());
+        assertEquals(60, foundGame.getPrice());
+    }
 
-		// Ensure the game was saved and retrieved successfully
-		assertNotNull(foundGame);
-		assertEquals("Test Game", foundGame.getName());
-		assertEquals(60, foundGame.getPrice());
-	}
+    @Test
+    public void testFindByCategory() {
+        Game game = new Game();
+        game.setName("Test Game");
+        game.setPrice(60);
+        game.setDescription("Test Description");
+        game.setCategory(Game.Category.Action);
+        game.setGameConsole(Game.GameConsole.PS5);
+        gameRepository.save(game);
 
-	@Test
-	public void testFindByCategory() {
-		// Create a Game and save it
-		Game game = new Game();
-		game.setName("Test Game");
-		game.setPrice(60);
-		game.setDescription("Test Description");
-		game.setCategory(Game.Category.Action);
-		game.setGameConsole(Game.GameConsole.PS5);
-		gameRepository.save(game);
+        List<Game> foundGames = gameRepository.findByCategory(Game.Category.Action);
 
-		// Find games by category
-		List<Game> foundGames = gameRepository.findByCategory(Game.Category.Action);
+        assertNotNull(foundGames);
+        assertFalse(foundGames.isEmpty());
+        assertEquals(Game.Category.Action, foundGames.get(0).getCategory());
+    }
 
-		// Ensure the game was found and has the correct category
-		assertNotNull(foundGames);
-		assertFalse(foundGames.isEmpty());
-		assertEquals(Game.Category.Action, foundGames.get(0).getCategory());
-	}
+    @Test
+    public void testFindByGameConsole() {
+        Game game = new Game();
+        game.setName("Test Game");
+        game.setPrice(60);
+        game.setDescription("Test Description");
+        game.setCategory(Game.Category.Action);
+        game.setGameConsole(Game.GameConsole.NintendoSwitch);
+        gameRepository.save(game);
 
-	@Test
-	public void testFindByGameConsole() {
-		// Create a Game and save it
-		Game game = new Game();
-		game.setName("Test Game");
-		game.setPrice(60);
-		game.setDescription("Test Description");
-		game.setCategory(Game.Category.Action);
-		game.setGameConsole(Game.GameConsole.NintendoSwitch);
-		gameRepository.save(game);
+        List<Game> foundGames = gameRepository.findByGameConsole(Game.GameConsole.NintendoSwitch);
 
-		// Find games by console
-		List<Game> foundGames = gameRepository.findByGameConsole(Game.GameConsole.NintendoSwitch);
+        assertNotNull(foundGames);
+        assertFalse(foundGames.isEmpty());
+        assertEquals(Game.GameConsole.NintendoSwitch, foundGames.get(0).getGameConsole());
+    }
 
-		// Ensure the game was found and is associated with the correct console
-		assertNotNull(foundGames);
-		assertFalse(foundGames.isEmpty());
-		assertEquals(Game.GameConsole.NintendoSwitch, foundGames.get(0).getGameConsole());
-	}
+    @Test
+    public void testFindById() {
+        Game game = new Game();
+        game.setName("Unique Game");
+        game.setPrice(60);
+        game.setDescription("Test Description");
+        game.setCategory(Game.Category.Action);
+        game.setGameConsole(Game.GameConsole.PS5);
+        gameRepository.save(game);
 
-	@Test
-	public void testFindById() {
-		// Create a Game and save it
-		Game game = new Game();
-		game.setName("Unique Game");
-		game.setPrice(60);
-		game.setDescription("Test Description");
-		game.setCategory(Game.Category.Action);
-		game.setGameConsole(Game.GameConsole.PS5);
-		gameRepository.save(game);
+        Game foundGame = gameRepository.findById(game.getId())
+                .orElse(null);
 
-		// Find games by name
-		Game foundGame = gameRepository.findById(game.getId());
+        assertNotNull(foundGame);
+        assertEquals("Unique Game", foundGame.getName());
+    }
 
-		// Ensure the game was found by its name
-		assertNotNull(foundGame);
-		assertEquals("Unique Game", foundGame.getName());
-	}
+    @Test
+    public void testUpdateGame() {
+        Game game = new Game();
+        game.setName("Test Game");
+        game.setPrice(60);
+        game.setDescription("Test Description");
+        game.setCategory(Game.Category.Action);
+        game.setGameConsole(Game.GameConsole.PS5);
+        gameRepository.save(game);
 
-	@Test
-	public void testUpdateGame() {
-		// Create a Game and save it
-		Game game = new Game();
-		game.setName("Test Game");
-		game.setPrice(60);
-		game.setDescription("Test Description");
-		game.setCategory(Game.Category.Action);
-		game.setGameConsole(Game.GameConsole.PS5);
-		gameRepository.save(game);
+        Game foundGame = gameRepository.findById(game.getId())
+                .orElse(null);
+        assertNotNull(foundGame);
+        foundGame.setDescription("Updated Description");
+        foundGame.setPrice(75);
+        gameRepository.save(foundGame);
 
-		// Retrieve the game, update its description and price, and save it again
-		Game foundGame = gameRepository.findById(game.getId());
-		assertNotNull(foundGame);
-		foundGame.setDescription("Updated Description");
-		foundGame.setPrice(75);
-		gameRepository.save(foundGame);
+        Game updatedGame = gameRepository.findById(foundGame.getId())
+                .orElse(null);
+        assertNotNull(updatedGame);
+        assertEquals("Updated Description", updatedGame.getDescription());
+        assertEquals(75, updatedGame.getPrice());
+    }
 
-		// Retrieve the updated game and verify the changes
-		Game updatedGame = gameRepository.findById(foundGame.getId());
-		assertNotNull(updatedGame);
-		assertEquals("Updated Description", updatedGame.getDescription());
-		assertEquals(75, updatedGame.getPrice());
-	}
+    @Test
+    public void testDeleteGame() {
+        Game game = new Game();
+        game.setName("Test Game");
+        game.setPrice(60);
+        game.setDescription("Test Description");
+        game.setCategory(Game.Category.Action);
+        game.setGameConsole(Game.GameConsole.PS5);
+        gameRepository.save(game);
 
-	@Test
-	public void testDeleteGame() {
-		// Create a Game and save it
-		Game game = new Game();
-		game.setName("Test Game");
-		game.setPrice(60);
-		game.setDescription("Test Description");
-		game.setCategory(Game.Category.Action);
-		game.setGameConsole(Game.GameConsole.PS5);
-		gameRepository.save(game);
+        gameRepository.delete(game);
 
-		// Delete the game
-		gameRepository.delete(game);
-
-		// Ensure the game is no longer in the repository
-		Game deletedGame = gameRepository.findById(game.getId());
-		assertNull(deletedGame);
-	}
+        Game deletedGame = gameRepository.findById(game.getId())
+                .orElse(null);
+        assertNull(deletedGame);
+    }
 }

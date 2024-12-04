@@ -35,7 +35,8 @@ public class PaymentInformationService {
         validateExpirationDate(requestDTO.getExpirationDate());
     
         // Retrieve the CustomerAccount
-        CustomerAccount customerAccount = customerAccountRepository.findById(requestDTO.getCustomerAccountId());
+        CustomerAccount customerAccount = customerAccountRepository.findById(requestDTO.getCustomerAccountId()).orElseThrow(() -> new IllegalArgumentException("CustomerAccount not found with ID: " + requestDTO.getCustomerAccountId()));
+
     
         // Create PaymentInformation object
         PaymentInformation paymentInformation = new PaymentInformation(
@@ -102,7 +103,8 @@ public class PaymentInformationService {
      */
     @Transactional
     public Iterable<PaymentInformation> getPaymentInformationsByCustomerAccountId(int customerAccountId) {
-        CustomerAccount customerAccount = customerAccountRepository.findById(customerAccountId);
+        CustomerAccount customerAccount = customerAccountRepository.findById(customerAccountId).orElseThrow(() -> new IllegalArgumentException("CustomerAccount not found with ID: " + customerAccountId));
+
         if (customerAccount == null) {
             throw new IllegalArgumentException("Customer account with the specified ID does not exist.");
         }
@@ -143,7 +145,8 @@ public class PaymentInformationService {
             paymentInformation.setCardType(requestDTO.getCardType());
         }
         if (requestDTO.getCustomerAccountId() > 0) {
-            CustomerAccount customerAccount = customerAccountRepository.findById(requestDTO.getCustomerAccountId());
+            CustomerAccount customerAccount = customerAccountRepository.findById(requestDTO.getCustomerAccountId()).orElseThrow(() -> new IllegalArgumentException("CustomerAccount not found with ID: " + requestDTO.getCustomerAccountId()));
+
             if (customerAccount != null) {
                 paymentInformation.setCustomerAccount(customerAccount);
             }

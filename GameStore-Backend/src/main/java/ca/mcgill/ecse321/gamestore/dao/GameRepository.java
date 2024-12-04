@@ -1,17 +1,16 @@
 package ca.mcgill.ecse321.gamestore.dao;
 
+import java.util.Optional;
 import java.util.List;
-
 import org.springframework.data.repository.CrudRepository;
-
 import ca.mcgill.ecse321.gamestore.model.Game;
 
 public interface GameRepository extends CrudRepository<Game, Integer> {
 
     // find Game by id
-    Game findById(int id);
+    Optional<Game> findById(int id); // Correct method signature
 
-    // find Game by name 
+    // find Game by name
     Game findByName(String name);
 
     // find Games by partial name
@@ -26,6 +25,3 @@ public interface GameRepository extends CrudRepository<Game, Integer> {
     // delete Game by id
     void deleteById(int id);
 }
-
-
-//vs code is buggin again
