@@ -171,7 +171,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 /* Center the entire page */
 .page-wrapper {
@@ -198,11 +197,11 @@ export default {
 h1 {
   margin-bottom: 0.5rem;
   font-size: 1.8rem;
-  color: #333;
+  color: #000; /* Change text color to black */
 }
 
 .sub-heading {
-  color: #666;
+  color: #000; /* Change text color to black */
   font-size: 0.9rem;
   margin-bottom: 1.5rem;
 }
@@ -218,6 +217,7 @@ h1 {
   margin-bottom: 0.5rem;
   font-weight: bold;
   font-size: 0.9rem;
+  color: #000; /* Change label text color to black */
 }
 
 .form-control input {
@@ -226,6 +226,7 @@ h1 {
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 1rem;
+  color: #000; /* Change input text color to black */
 }
 
 /* Error message */
@@ -251,16 +252,3 @@ h1 {
   background-color: #217dbb;
 }
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-

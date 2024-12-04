@@ -42,7 +42,6 @@ export default {
 </script>
 
 
-
 <style scoped>
 /* Center the entire page */
 .page-wrapper {
@@ -69,11 +68,11 @@ export default {
 h1 {
   margin-bottom: 0.5rem;
   font-size: 1.8rem;
-  color: #333;
+  color: black; /* Set heading text color to black */
 }
 
 .sub-heading {
-  color: #666;
+  color: black; /* Set sub-heading text color to black */
   font-size: 0.9rem;
   margin-bottom: 1.5rem;
 }
@@ -89,6 +88,7 @@ h1 {
   margin-bottom: 0.5rem;
   font-weight: bold;
   font-size: 0.9rem;
+  color: black; /* Set label text color to black */
 }
 
 .form-control input {
@@ -97,6 +97,7 @@ h1 {
   border: 1px solid #ccc;
   border-radius: 6px;
   font-size: 1rem;
+  color: black; /* Set input text color to black */
 }
 
 /* Actions (checkbox and forgot password link) */
@@ -111,6 +112,7 @@ h1 {
   font-size: 0.85rem;
   display: flex;
   align-items: center;
+  color: black; /* Set remember me text color to black */
 }
 
 .forgot-password {
@@ -150,7 +152,7 @@ h1 {
 
 .divider span {
   font-size: 0.9rem;
-  color: #999;
+  color: black; /* Set divider text color to black */
   background: white;
   padding: 0 0.5rem;
   position: relative;

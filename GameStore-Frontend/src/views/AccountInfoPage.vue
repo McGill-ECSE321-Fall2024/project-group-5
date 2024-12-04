@@ -45,7 +45,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .page-wrapper {
   display: flex;
@@ -65,7 +64,7 @@ export default {
 h1 {
   font-size: 2rem;
   margin-bottom: 2rem;
-  color: #333;
+  color: #000; /* Change to black */
 }
 
 .account-boxes {
@@ -90,19 +89,14 @@ h1 {
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
 }
 
-.box-icon {
-  width: 50px;
-  height: 50px;
-  margin-bottom: 1rem;
-}
-
 h2 {
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
+  color: #000; /* Change to black */
 }
 
 p {
-  color: #666;
+  color: #000; /* Change to black */
   font-size: 0.9rem;
 }
 
@@ -110,6 +104,6 @@ p {
   width: 50px;
   height: 50px;
   margin-bottom: 1rem;
-  fill: #3498db; /* Blue color from the Create Account page */
+  fill: #3498db; /* Blue color for icons */
 }
 </style>

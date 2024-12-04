@@ -23,7 +23,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .page-wrapper {
   display: flex;
@@ -47,7 +46,7 @@ export default {
 h1 {
   font-size: 1.8rem;
   margin-bottom: 1.5rem;
-  color: #333;
+  color: black; /* Set heading text color to black */
 }
 
 .info-box {
@@ -62,12 +61,13 @@ h1 {
 .info-box h2 {
   font-size: 1.2rem;
   margin-bottom: 1rem;
+  color: black; /* Set subheading text color to black */
 }
 
 .info-box p {
   font-size: 1rem;
   margin: 0.5rem 0;
-  color: #555;
+  color: black; /* Set paragraph text color to black */
 }
 
 .edit-btn {
@@ -85,3 +85,4 @@ h1 {
   background-color: #217dbb;
 }
 </style>
+

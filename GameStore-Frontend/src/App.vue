@@ -15,7 +15,7 @@ const toggleSidebar = () => {
 
 // Toggle the profile dropdown visibility
 const toggleProfileDropdown = () => {
-  isProfileDropdownOpen.value = !isProfileDropdownOpen.value;
+  isProfileDropdown.value = !isProfileDropdown.value;
 };
 </script>
 
@@ -49,9 +49,17 @@ const toggleProfileDropdown = () => {
         <nav>
           <RouterLink to="/">Home</RouterLink>
           <RouterLink to="/about">About</RouterLink>
-          <RouterLink to="/events">Events</RouterLink>
           <RouterLink to="/shop">Shop</RouterLink>
-          <RouterLink to="/manager">Manager</RouterLink>
+          <RouterLink to="/login">Log In</RouterLink>
+          <RouterLink to="/cart">Cart</RouterLink>
+          <RouterLink to="/profile">Account Info</RouterLink>
+          <RouterLink to="/create-account">Create Account</RouterLink>
+          <RouterLink to="/edit-address">Edit Address</RouterLink>
+          <RouterLink to="/edit-info">Edit Info</RouterLink>
+          <RouterLink to="/edit-payment">Edit Payment Info</RouterLink>
+          <RouterLink to="/view-address">View Address</RouterLink>
+          <RouterLink to="/view-info">View Info</RouterLink>
+          <RouterLink to="/view-payment">View Payment Info</RouterLink>
         </nav>
       </aside>
 
@@ -86,8 +94,8 @@ const toggleProfileDropdown = () => {
   flex-direction: column;
   height: 100vh;
   font-family: Arial, sans-serif;
-  background-color: #333;
-  color: white;
+  background-color: white; /* Set background to white */
+  color: black; /* Text color is black */
 }
 
 /* Top Navigation Bar */
@@ -96,10 +104,11 @@ const toggleProfileDropdown = () => {
   justify-content: flex-end;
   align-items: center;
   padding: 0.5rem 1rem;
-  background-color: #222;
+  background-color: #fff; /* Set taskbar background to white */
   position: sticky;
   top: 0;
   z-index: 1000;
+  border-bottom: 1px solid #ddd; /* Subtle border for separation */
 }
 
 /* Right Top Icons */
@@ -112,12 +121,12 @@ const toggleProfileDropdown = () => {
 /* Cart Icon */
 .cart-icon {
   font-size: 1.8rem;
-  color: white;
+  color: #3498db;
   text-decoration: none;
 }
 
 .cart-icon:hover {
-  color: #ff5722;
+  color: #217dbb;
 }
 
 /* Profile Container */
@@ -128,16 +137,17 @@ const toggleProfileDropdown = () => {
 .profile-icon {
   font-size: 2rem;
   cursor: pointer;
+  color: #222; /* Dark profile icon */
 }
 
 .profile-dropdown {
   position: absolute;
   top: 45px;
   right: 0;
-  background-color: #222;
-  border: 1px solid #444;
+  background-color: #fff;
+  border: 1px solid #ddd;
   border-radius: 5px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 10;
   overflow: hidden;
 }
@@ -145,24 +155,26 @@ const toggleProfileDropdown = () => {
 .profile-dropdown a {
   display: block;
   padding: 0.5rem 1rem;
-  color: white;
+  color: black; /* Black text for links */
   text-decoration: none;
 }
 
 .profile-dropdown a:hover {
-  background-color: #444;
+  background-color: #f4f4f9;
 }
 
 /* Main Layout */
 .main-layout {
   display: flex;
   flex-grow: 1;
+  justify-content: center; /* Center content horizontally */
+  margin-top: 1rem; /* Space at the top */
 }
 
 /* Sidebar */
 .sidebar {
-  width: 200px;
-  background-color: #222;
+  width: 220px;
+  background-color: #f4f4f9; /* Light background for sidebar */
   padding: 1rem;
   position: absolute;
   top: 0;
@@ -182,8 +194,8 @@ const toggleProfileDropdown = () => {
 .toggle-button {
   position: absolute;
   top: 1rem;
-  left: 1rem; /* Matches your preferred placement */
-  background: #444;
+  left: 1rem;
+  background: #3498db;
   border: none;
   cursor: pointer;
   padding: 0.5rem;
@@ -192,10 +204,16 @@ const toggleProfileDropdown = () => {
   justify-content: center;
   align-items: center;
   z-index: 1100;
+  transition: left 0.3s ease; /* Add transition for moving the button */
 }
 
 .toggle-button:hover {
-  background-color: #555;
+  background-color: #217dbb;
+}
+
+/* Move the hamburger button within the sidebar */
+.sidebar.open + .toggle-button {
+  left: 220px; /* Keep button aligned to the right side of the sidebar */
 }
 
 .hamburger span {
@@ -209,20 +227,63 @@ const toggleProfileDropdown = () => {
 /* Sidebar Navigation Links */
 .sidebar nav a {
   display: block;
-  padding: 0.5rem;
-  color: white;
+  padding: 0.75rem;
+  color: black;
   text-decoration: none;
+  border-radius: 6px;
 }
 
 .sidebar nav a:hover {
-  background-color: #444;
+  background-color: #e7e7e7;
 }
 
 /* Content */
 .content {
   flex-grow: 1;
+  display: flex;
+  justify-content: center; /* Horizontally center */
+  align-items: center; /* Vertically center */
   padding: 1rem;
-  background-color: #333;
-  color: white;
+  background-color: white; /* Set content background to white */
+  color: black; /* Text color is black */
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 auto; /* Center the content horizontally */
+  min-height: 100vh; /* Ensure the content takes at least full screen height */
+  position: relative; /* Ensure the container has a defined position */
+}
+
+/* Ensure the child content area (e.g. RouterView) is properly centered */
+.content > * {
+  max-width: 100%; /* Ensure the content doesn't overflow */
+  width: 100%; /* Set full width of the container */
+  display: flex;
+  justify-content: center; /* Center child content horizontally */
+  align-items: center; /* Center child content vertically */
+  flex-direction: column; /* Stack content if needed */
+}
+
+/* Optional: To limit the width of the content, you can set a max-width */
+.content > * > .container {
+  max-width: 1200px; /* Constrain width for larger screens */
+  width: 100%; /* Ensure it scales properly */
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sidebar {
+    position: relative;
+    transform: none;
+  }
+
+  .toggle-button {
+    z-index: 1200;
+  }
+
+  .content {
+    margin-left: 0; /* No left margin for mobile screens */
+    max-width: 100%; /* Full width on mobile */
+  }
 }
 </style>

@@ -73,7 +73,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .page-wrapper {
   display: flex;
@@ -97,7 +96,7 @@ export default {
 h1 {
   font-size: 1.8rem;
   margin-bottom: 1.5rem;
-  color: #333;
+  color: black; /* Set heading text color to black */
 }
 
 .address-table {
@@ -111,6 +110,7 @@ h1 {
   border: 1px solid #ddd;
   padding: 0.75rem;
   text-align: left;
+  color: black; /* Set table text color to black */
 }
 
 .address-table th {

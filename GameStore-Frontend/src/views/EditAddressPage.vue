@@ -111,6 +111,7 @@ export default {
 h1 {
   font-size: 1.8rem;
   margin-bottom: 1rem;
+  color: #000; /* Change text color to black */
 }
 
 .form-control {
@@ -122,6 +123,7 @@ h1 {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: bold;
+  color: #000; /* Change label text color to black */
 }
 
 .form-control input {
@@ -129,6 +131,7 @@ h1 {
   padding: 0.75rem;
   border: 1px solid #ccc;
   border-radius: 6px;
+  color: #000; /* Change input text color to black */
 }
 
 .save-btn {

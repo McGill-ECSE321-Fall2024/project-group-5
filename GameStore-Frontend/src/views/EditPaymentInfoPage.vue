@@ -139,7 +139,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .edit-container {
   padding: 2rem;
@@ -154,11 +153,13 @@ export default {
 h1 {
   font-size: 1.8rem;
   margin-bottom: 1rem;
+  color: black; /* Set header text color to black */
 }
 
 p {
   font-size: 1rem;
   margin-bottom: 2rem;
+  color: black; /* Set paragraph text color to black */
 }
 
 .form-control {
@@ -170,6 +171,7 @@ p {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: bold;
+  color: black; /* Set label text color to black */
 }
 
 .form-control input {
@@ -177,13 +179,14 @@ p {
   padding: 0.75rem;
   border: 1px solid #ccc;
   border-radius: 6px;
+  color: black; /* Set input text color to black */
 }
 
 .save-btn {
   width: 100%;
   padding: 0.75rem;
   background-color: #3498db;
-  color: white;
+  color: black; /* Set button text color to black */
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -197,5 +200,6 @@ p {
   color: red;
   font-size: 0.85rem;
   margin-bottom: 1rem;
+  color: black; /* Set error message text color to black */
 }
 </style>

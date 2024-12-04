@@ -75,7 +75,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .page-wrapper {
   display: flex;
@@ -100,7 +99,7 @@ export default {
 h1 {
   margin-bottom: 2rem;
   font-size: 1.8rem;
-  color: #333;
+  color: black; /* Set heading text color to black */
 }
 
 .payment-table {
@@ -114,6 +113,7 @@ h1 {
   border: 1px solid #ddd;
   padding: 0.75rem;
   text-align: left;
+  color: black; /* Set table text color to black */
 }
 
 .payment-table th {
