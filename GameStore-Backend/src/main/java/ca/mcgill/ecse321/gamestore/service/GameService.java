@@ -100,7 +100,6 @@ public class GameService {
         }
     }
     
-
     /**
      * Find Game by name
      *

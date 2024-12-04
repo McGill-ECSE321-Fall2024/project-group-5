@@ -42,6 +42,7 @@ public class CustomerAccountServiceTests {
     String password1 = "Password1!";
     String password2 = "Password2!";
     String password3 = "Password3!";
+    String newPassword = "NewPassword1!";
     String hashedPassword1 = AccountService.hashPassword(password1, salt1);
     String hashedPassword2 = AccountService.hashPassword(password2, salt2);
     String hashedPassword3 = AccountService.hashPassword(password3, salt3);
@@ -591,43 +592,54 @@ public class CustomerAccountServiceTests {
     }
 
     @Test
-    public void testUpdateCustomerAccountWithValidId() {
+    public void testUpdateCustomerAccountUsernameWithValidEmail() {
         String errorMessage = "";
-        CustomerAccount account = null;
+        CustomerAccount updatedAccount = null;
 
-        // Delete account
         try {
-            account = service.updateCustomerAccount(CA1.getId(), TEST_USERNAME, TEST_PASSWORD, TEST_NAME);
+            updatedAccount = service.updateCustomerAccountUsername(CA1.getEmailAddress(), "Updated Username");
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
-
-        String salt = CA1.getRandomPassword();
-        String hashedPassword = AccountService.hashPassword(TEST_PASSWORD, salt);
 
         // Check
         assertEquals("", errorMessage);
-        assertNotNull(account);
-        assertEquals(TEST_USERNAME, account.getUsername());
-        assertEquals(hashedPassword, account.getPasswordHash());
-        assertEquals(TEST_NAME, account.getName());
-        assertEquals(CA1.getEmailAddress(), account.getEmailAddress());
+        assertNotNull(updatedAccount);
+        assertEquals(CA1.getEmailAddress(), updatedAccount.getEmailAddress());
+        assertEquals("Updated Username", updatedAccount.getUsername());
+        assertEquals(CA1.getName(), updatedAccount.getName());
     }
 
     @Test
-    public void testUpdateCustomerAccountInvalidId() {
+    public void testUpdateCustomerAccountUsernameWithInvalidEmail() {
         String errorMessage = "";
-        CustomerAccount account = null;
+        CustomerAccount updatedAccount = null;
 
-        // Delete account
         try {
-            account = service.updateCustomerAccount(TEST_ID, TEST_USERNAME, TEST_PASSWORD, TEST_NAME);
+            updatedAccount = service.updateCustomerAccountUsername("fakeemail@email.com", "Updated Username");
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
 
         // Check
-        assertEquals("No account associated with this id exists", errorMessage);
+        assertEquals("No account associated with this email exists", errorMessage);
+        assertNull(updatedAccount);
+    }
+
+    @Test
+    public void testUpdateCustomerAccount_wrongOldPassword() {
+        String errorMessage = "";
+        CustomerAccount account = null;
+
+        // Delete account
+        try {
+            account = service.updateCustomerAccountPassword(CA1.getEmailAddress(), "WrongOldPassword1!", newPassword);
+        } catch (Exception e) {
+            errorMessage = e.getMessage();
+        }
+
+        // Check
+        assertEquals("Wrong old password!", errorMessage);
         assertNull(account);
     }
 
@@ -638,7 +650,7 @@ public class CustomerAccountServiceTests {
 
         // Delete account
         try {
-            account = service.updateCustomerAccount(CA1.getId(), TEST_USERNAME, null, TEST_NAME);
+            account = service.updateCustomerAccountPassword(CA1.getEmailAddress(), password1, null);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -653,9 +665,9 @@ public class CustomerAccountServiceTests {
         String errorMessage = "";
         CustomerAccount account = null;
 
-        // Create account
+        // Delete account
         try {
-            account = service.updateCustomerAccount(CA1.getId(), TEST_USERNAME, "         ", TEST_NAME);
+            account = service.updateCustomerAccountPassword(CA1.getEmailAddress(), password1, "        ");
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -672,7 +684,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.updateCustomerAccount(CA1.getId(), TEST_USERNAME, "1234", TEST_NAME);
+            account = service.updateCustomerAccountPassword(CA1.getEmailAddress(), password1, "1234");
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -689,7 +701,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.updateCustomerAccount(CA1.getId(), TEST_USERNAME, "hellohello", TEST_NAME);
+            account = service.updateCustomerAccountPassword(CA1.getEmailAddress(), password1, "hellohello");
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -706,7 +718,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.updateCustomerAccount(CA1.getId(), TEST_USERNAME, "hellohello1", TEST_NAME);
+            account = service.updateCustomerAccountPassword(CA1.getEmailAddress(), password1, "hellohello1");
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -723,7 +735,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.updateCustomerAccount(CA1.getId(), TEST_USERNAME, "12341234!", TEST_NAME);
+            account = service.updateCustomerAccountPassword(CA1.getEmailAddress(), password1, "12341234!");
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -740,7 +752,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.updateCustomerAccount(CA1.getId(), TEST_USERNAME, "TESTTEST!2", TEST_NAME);
+            account = service.updateCustomerAccountPassword(CA1.getEmailAddress(), password1, "TESTTEST!2");
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -757,7 +769,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.updateCustomerAccount(CA1.getId(), TEST_USERNAME, "testtest!2", TEST_NAME);
+            account = service.updateCustomerAccountPassword(CA1.getEmailAddress(), password1, "testtest!2");
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -774,7 +786,7 @@ public class CustomerAccountServiceTests {
 
         // Create account
         try {
-            account = service.updateCustomerAccount(CA1.getId(), TEST_USERNAME, "Test Test!2", TEST_NAME);
+            account = service.updateCustomerAccountPassword(CA1.getEmailAddress(), password1, "Test Test!2");
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }
@@ -785,13 +797,13 @@ public class CustomerAccountServiceTests {
     }
 
     @Test
-    public void testUpdateCustomerAccount_duplicateUsername() throws Exception {
+    public void testUpdateCustomerAccountDuplicateUsername() throws Exception {
         String errorMessage = "";
         CustomerAccount account = null;
 
         // Create account
         try {
-            account = service.updateCustomerAccount(CA1.getId(), CA2.getUsername(), TEST_PASSWORD, TEST_NAME);
+            account = service.updateCustomerAccountUsername(CA1.getEmailAddress(), CA2.getUsername());
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }

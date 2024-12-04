@@ -26,10 +26,11 @@ public class CustomerAccountService {
      * @throws Exception
      * @vivianeltain
      */
-    public CustomerAccount getCustomerAccountByID(int id) throws Exception {
+    @Transactional
+    public CustomerAccount getCustomerAccountByID(int id) {
         CustomerAccount customerAccount = customerAccountRepository.findById(id);
         if (customerAccount == null) {
-            throw new Exception("No account associated with this id exists");
+            throw new IllegalArgumentException("No account associated with this id exists");
         }
         return customerAccount;
     }
@@ -42,10 +43,11 @@ public class CustomerAccountService {
      * @throws Exception
      * @vivianeltain
      */
-    public CustomerAccount getCustomerAccountByEmail(String email) throws Exception {
+    @Transactional
+    public CustomerAccount getCustomerAccountByEmail(String email) {
         CustomerAccount customerAccount = customerAccountRepository.findByEmailAddress(email);
         if (customerAccount == null) {
-            throw new Exception("No account associated with this email exists");
+            throw new IllegalArgumentException("No account associated with this email exists");
         }
         return customerAccount;
     }
@@ -58,10 +60,11 @@ public class CustomerAccountService {
      * @throws Exception
      * @vivianeltain
      */
-    public CustomerAccount getCustomerAccountByUsername(String username) throws Exception {
+    @Transactional
+    public CustomerAccount getCustomerAccountByUsername(String username) {
         CustomerAccount customerAccount = customerAccountRepository.findByUsername(username);
         if (customerAccount == null) {
-            throw new Exception("No account associated with this username exists");
+            throw new IllegalArgumentException("No account associated with this username exists");
         }
         return customerAccount;
     }
@@ -84,10 +87,11 @@ public class CustomerAccountService {
      * @throws Exception
      * @vivianeltain
      */
-    public CustomerAccount deleteCustomerAccount(int id) throws Exception {
+    @Transactional
+    public CustomerAccount deleteCustomerAccount(int id) {
         CustomerAccount customerAccount = customerAccountRepository.findById(id);
         if (customerAccount == null) {
-            throw new Exception("No account associated with this id exists");
+            throw new IllegalArgumentException("No account associated with this id exists");
         }
         customerAccountRepository.delete(customerAccount);
         return customerAccount;
@@ -198,33 +202,32 @@ public class CustomerAccountService {
      * @vivianeltain
      */
     @Transactional
-    public CustomerAccount createCustomerAccount(String username, String email, String password, String name)
-            throws Exception {
+    public CustomerAccount createCustomerAccount(String username, String email, String password, String name) {
         if (username == null) {
-            throw new Exception("Username must not be null");
+            throw new IllegalArgumentException("Username must not be null");
         }
         if (username.trim().length() == 0) {
-            throw new Exception("Username must not be empty");
+            throw new IllegalArgumentException("Username must not be empty");
         }
         if (!accountService.checkUsernameAvailability(username)) {
-            throw new Exception("Username is already taken");
+            throw new IllegalArgumentException("Username is already taken");
         }
         // Check that email follows proper format
         String emailValidation = isValidEmail(email);
         if (!emailValidation.isEmpty()) {
-            throw new Exception(emailValidation);
+            throw new IllegalArgumentException(emailValidation);
         }
         // Check that account with the same email doesn't already exist
         if (customerAccountRepository.findByEmailAddress(email) != null) {
-            throw new Exception("Account associated with given email already exists");
+            throw new IllegalArgumentException("Account associated with given email already exists");
         }
         // check that password is valid
         if (!AccountService.isValidPassword(password).isEmpty()) {
-            throw new Exception(AccountService.isValidPassword(password));
+            throw new IllegalArgumentException(AccountService.isValidPassword(password));
         }
 
         if (name != null && !isValidName(name).isEmpty()) {
-            throw new Exception(isValidName(name));
+            throw new IllegalArgumentException(isValidName(name));
         }
         // Generate salt and hash password for data encryption
         String salt = AccountService.generateSalt(8);
@@ -245,15 +248,15 @@ public class CustomerAccountService {
      * @vivianeltain
      */
     @Transactional
-    public CustomerAccount authenticateWithEmail(String email, String password) throws Exception {
+    public CustomerAccount authenticateWithEmail(String email, String password) {
         // Check input
         if (email == null || email.trim().length() == 0 || password == null || password.trim().length() == 0
                 || !isValidEmail(email).isEmpty()) {
-            throw new Exception("Please enter a valid email and password");
+            throw new IllegalArgumentException("Please enter a valid email and password");
         }
         CustomerAccount customerAccount = customerAccountRepository.findByEmailAddress(email);
         if (customerAccount == null) {
-            throw new Exception("There is no account associated with that email address");
+            throw new IllegalArgumentException("There is no account associated with that email address");
         }
         // get salt associated with account to rehash password and compare
         String salt = customerAccount.getRandomPassword();
@@ -261,7 +264,7 @@ public class CustomerAccountService {
         if (hashedPassword.equals(customerAccount.getPasswordHash())) {
             return customerAccount;
         } else {
-            throw new Exception("Password and email do not match");
+            throw new IllegalArgumentException("Password and email do not match");
         }
     }
 
@@ -315,45 +318,110 @@ public class CustomerAccountService {
         return false;
     }
 
-    /**
-     * Update CustomerAccount with given parameters
-     * Note: email cannot change
-     * 
-     * @param id       - CustomerAccount Id
-     * @param username - CustomerAccount username
-     * @param password - CustomerAccount password
-     * @param name     - CustomerAccount name *
-     * @return updated CustomerAccount
-     * @throws Exception
-     * @vivianeltain
-     */
-    public CustomerAccount updateCustomerAccount(int aId, String aUsername, String aPassword, String aName)
-            throws Exception {
-        // check for duplicate username
-        if (!accountService.checkUsernameAvailability(aUsername)
-                || !(customerAccountRepository.findByUsername(aUsername) == null)) {
-            throw new Exception("An account with this username already exits");
-        }
+    // /**
+    // * Update CustomerAccount with given parameters
+    // * Note: email cannot change
+    // *
+    // * @param id - CustomerAccount Id
+    // * @param username - CustomerAccount username
+    // * @param password - CustomerAccount password
+    // * @param name - CustomerAccount name *
+    // * @return updated CustomerAccount
+    // * @throws Exception
+    // * @vivianeltain
+    // */
+    // @Transactional
+    // public CustomerAccount updateCustomerAccount(int aId, String aUsername,
+    // String aPassword, String aName) {
+    // // check for duplicate username
+    // if (!accountService.checkUsernameAvailability(aUsername)
+    // || !(customerAccountRepository.findByUsername(aUsername) == null)) {
+    // throw new IllegalArgumentException("An account with this username already
+    // exits");
+    // }
+    // // Attempt to update account
+    // CustomerAccount customerAccount = customerAccountRepository.findById(aId);
+    // if (customerAccount == null) {
+    // throw new IllegalArgumentException("No account associated with this id
+    // exists");
+    // }
+    // // Check that new password is valid
+    // String passwordValidation = AccountService.isValidPassword(aPassword);
+    // if (!passwordValidation.isEmpty()) {
+    // throw new IllegalArgumentException(passwordValidation);
+    // }
+    // // Check that new name is valid
+    // if (aName != null && !isValidName(aName).isEmpty()) {
+    // throw new IllegalArgumentException(isValidName(aName));
+    // }
+    // String salt = AccountService.generateSalt(8);
+    // String hashedPassword = AccountService.hashPassword(aPassword, salt);
+    // customerAccount.setPasswordHash(hashedPassword);
+    // customerAccount.setRandomPassword(salt);
+    // customerAccount.setUsername(aUsername);
+    // customerAccount.setName(aName);
+    // customerAccountRepository.save(customerAccount);
+    // return customerAccount;
+    // }
+
+    @Transactional
+    public CustomerAccount updateCustomerAccountPassword(String aEmail, String oldPassword, String newPassword) {
         // Attempt to update account
-        CustomerAccount customerAccount = customerAccountRepository.findById(aId);
+        CustomerAccount customerAccount = customerAccountRepository.findByEmailAddress(aEmail);
         if (customerAccount == null) {
-            throw new Exception("No account associated with this id exists");
+            throw new IllegalArgumentException("No account associated with this email exists");
         }
+        // Check that they have the right old password
+        String salt = customerAccount.getRandomPassword();
+        String hashedOldPassword = customerAccount.getPasswordHash();
+
+        if (!hashedOldPassword.equals(AccountService.hashPassword(oldPassword,
+                salt))) {
+            throw new IllegalArgumentException("Wrong old password!");
+        }
+
         // Check that new password is valid
-        String passwordValidation = AccountService.isValidPassword(aPassword);
+        String passwordValidation = AccountService.isValidPassword(newPassword);
         if (!passwordValidation.isEmpty()) {
-            throw new Exception(passwordValidation);
+            throw new IllegalArgumentException(passwordValidation);
+        }
+        String newSalt = AccountService.generateSalt(8);
+        String hashedNewPassword = AccountService.hashPassword(newPassword, newSalt);
+        customerAccount.setPasswordHash(hashedNewPassword);
+        customerAccount.setRandomPassword(newSalt);
+        customerAccountRepository.save(customerAccount);
+        return customerAccount;
+    }
+
+    @Transactional
+    public CustomerAccount updateCustomerAccountName(String aEmail, String aName) {
+        // Attempt to update account
+        CustomerAccount customerAccount = customerAccountRepository.findByEmailAddress(aEmail);
+        if (customerAccount == null) {
+            throw new IllegalArgumentException("No account associated with this email exists");
         }
         // Check that new name is valid
         if (aName != null && !isValidName(aName).isEmpty()) {
-            throw new Exception(isValidName(aName));
+            throw new IllegalArgumentException(isValidName(aName));
         }
-        String salt = AccountService.generateSalt(8);
-        String hashedPassword = AccountService.hashPassword(aPassword, salt);
-        customerAccount.setPasswordHash(hashedPassword);
-        customerAccount.setRandomPassword(salt);
-        customerAccount.setUsername(aUsername);
         customerAccount.setName(aName);
+        customerAccountRepository.save(customerAccount);
+        return customerAccount;
+    }
+
+    @Transactional
+    public CustomerAccount updateCustomerAccountUsername(String aEmail, String newUsername) {
+        // check for duplicate username
+        if (!accountService.checkUsernameAvailability(newUsername)
+                || !(customerAccountRepository.findByUsername(newUsername) == null)) {
+            throw new IllegalArgumentException("An account with this username already exits");
+        }
+        // Attempt to update account
+        CustomerAccount customerAccount = customerAccountRepository.findByEmailAddress(aEmail);
+        if (customerAccount == null) {
+            throw new IllegalArgumentException("No account associated with this email exists");
+        }
+        customerAccount.setUsername(newUsername);
         customerAccountRepository.save(customerAccount);
         return customerAccount;
     }

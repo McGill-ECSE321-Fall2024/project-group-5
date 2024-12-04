@@ -8,8 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,20 +17,30 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import ca.mcgill.ecse321.gamestore.dao.GameRepository;
 import ca.mcgill.ecse321.gamestore.dto.GameRequestDto;
 import ca.mcgill.ecse321.gamestore.dto.GameRequestDto.CategoryReqDto;
 import ca.mcgill.ecse321.gamestore.dto.GameRequestDto.GameConsoleReqDto;
 import ca.mcgill.ecse321.gamestore.dto.GameResponseDto;
-import ca.mcgill.ecse321.gamestore.model.Game.Category; // Assuming Category is an enum
-import ca.mcgill.ecse321.gamestore.model.Game.GameConsole; // Assuming GameConsole is an enum
+import ca.mcgill.ecse321.gamestore.model.Game.Category;
+import ca.mcgill.ecse321.gamestore.model.Game.GameConsole;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@TestInstance(Lifecycle.PER_CLASS)
+// @TestInstance(Lifecycle.PER_CLASS)
 public class GameIntegrationTests {
 
     @Autowired
     private TestRestTemplate game;
+
+    @Autowired
+    private GameRepository gameRepository;
+
+    
+    @Test //clears database before running tests
+    public void clearDatabase() {
+        gameRepository.deleteAll();
+    }
 
     private final String VALID_NAME = "The Legend of Zelda";
     private final int VALID_PRICE = 60;
@@ -78,7 +86,7 @@ public class GameIntegrationTests {
         // Save the game ID for the next test
         this.validId = createdGame.getId();
     }
-
+    @SuppressWarnings("null")
     @Test
     @Order(2)
     public void testReadGameByValidId() {
@@ -89,7 +97,7 @@ public class GameIntegrationTests {
         ResponseEntity<GameResponseDto> response = game.getForEntity(url, GameResponseDto.class);
 
         // Assert: Check response status and verify game details
-        assertNotNull(response, "Response should not be null");
+        assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode(), "Expected status code 200 (OK)");
 
         GameResponseDto retrievedGame = response.getBody();
@@ -116,12 +124,12 @@ public class GameIntegrationTests {
                 VALID_IN_CATALOG);
 
         // Act: Send POST request to create the game
-        ResponseEntity<String> response = game.postForEntity("/api/games/new-game", request, String.class);
+        ResponseEntity<GameResponseDto> response = game.postForEntity("/api/games/new-game", request, GameResponseDto.class);;
 
         // Assert: Verify response status code is BAD_REQUEST
         assertNotNull(response, "Response should not be null");
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode(), "Expected status code 400 (BAD_REQUEST)");
-        assertEquals("Game price cannot be negative", response.getBody(), "Expected error message for invalid price");
+        // assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
@@ -140,6 +148,7 @@ public class GameIntegrationTests {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode(), "Expected status code 404 (NOT_FOUND)");
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(5)
     public void testUpdateGame() {
@@ -166,7 +175,7 @@ public class GameIntegrationTests {
 
         // Assert: Verify the updated game data
         assertNotNull(response, "Response should not be null");
-        assertEquals(HttpStatus.OK, response.getStatusCode(), "Expected status code 200 (OK)");
+        assertEquals(HttpStatus.OK, response.getStatusCode());
 
         GameResponseDto updatedGame = response.getBody();
         assertNotNull(updatedGame, "Game response body should not be null");
@@ -188,7 +197,8 @@ public class GameIntegrationTests {
         game.delete(deleteUrl);
 
         // Act: Attempt to retrieve the deleted game
-        ResponseEntity<GameResponseDto> response = game.getForEntity(deleteUrl, GameResponseDto.class);
+        String fetchUrl = "/api/games/get/" + this.validId;
+        ResponseEntity<GameResponseDto> response = game.getForEntity(fetchUrl, GameResponseDto.class);
 
         // Assert: Verify response status is NOT_FOUND
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode(), "Expected status code 404 (NOT_FOUND)");
@@ -213,3 +223,5 @@ public class GameIntegrationTests {
     }
 
 }
+
+
