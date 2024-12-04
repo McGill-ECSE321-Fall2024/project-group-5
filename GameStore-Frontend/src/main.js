@@ -7,6 +7,8 @@ import '@fortawesome/fontawesome-free/css/all.css';
 
 
 const app = createApp(App)
+app = require('cors')
+app.use(cors());
 
 app.use(router)
 

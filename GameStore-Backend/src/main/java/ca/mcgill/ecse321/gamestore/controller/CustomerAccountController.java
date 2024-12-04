@@ -214,4 +214,8 @@ public class CustomerAccountController {
         return ResponseEntity.ok(new CustomerAccountResponseDto(customerAccount));
     }
 
+    @GetMapping("/testing")
+    public String testEndpoint(){
+        return "Endpoint works";
+    }
 }
