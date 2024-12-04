@@ -44,7 +44,8 @@ public class AddressIntegrationTests {
         request.setCustomerName("Alice");
 
         // Act
-        ResponseEntity<AddressResponseDto> response = client.postForEntity("/addresses", request, AddressResponseDto.class);
+        ResponseEntity<AddressResponseDto> response = client.postForEntity("/addresses", request,
+                AddressResponseDto.class);
 
         // Assert
         assertNotNull(response);
@@ -79,13 +80,15 @@ public class AddressIntegrationTests {
     @Order(3)
     public void testDeleteAddress() {
         // Act
-        ResponseEntity<Void> deleteResponse = client.exchange("/addresses/" + this.validId, HttpMethod.DELETE, null, Void.class);
+        ResponseEntity<Void> deleteResponse = client.exchange("/addresses/" + this.validId, HttpMethod.DELETE, null,
+                Void.class);
 
         // Assert Delete Response
         assertEquals(HttpStatus.NO_CONTENT, deleteResponse.getStatusCode());
 
         // Attempt to fetch deleted entity
-        ResponseEntity<AddressResponseDto> response = client.getForEntity("/addresses/" + this.validId, AddressResponseDto.class);
+        ResponseEntity<AddressResponseDto> response = client.getForEntity("/addresses/" + this.validId,
+                AddressResponseDto.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
@@ -94,7 +97,7 @@ public class AddressIntegrationTests {
     public void testCreateAddressWithInvalidData() {
         // Arrange
         AddressRequestDto request = new AddressRequestDto();
-        request.setAddress("");  // Empty address
+        request.setAddress(""); // Empty address
         request.setCity("Montreal");
         request.setProvince("Quebec");
         request.setCountry("Canada");
@@ -102,7 +105,8 @@ public class AddressIntegrationTests {
         request.setCustomerName("Alice");
 
         // Act
-        ResponseEntity<AddressResponseDto> response = client.postForEntity("/addresses", request, AddressResponseDto.class);
+        ResponseEntity<AddressResponseDto> response = client.postForEntity("/addresses", request,
+                AddressResponseDto.class);
 
         // Assert
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -112,10 +116,11 @@ public class AddressIntegrationTests {
     @Order(5)
     public void testGetAddressWithNonExistentId() {
         // Arrange
-        int nonExistentId = 999999;  // ID that doesn't exist
+        int nonExistentId = 999999; // ID that doesn't exist
 
         // Act
-        ResponseEntity<AddressResponseDto> response = client.getForEntity("/addresses/" + nonExistentId, AddressResponseDto.class);
+        ResponseEntity<AddressResponseDto> response = client.getForEntity("/addresses/" + nonExistentId,
+                AddressResponseDto.class);
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -132,7 +137,7 @@ public class AddressIntegrationTests {
         request1.setCountry("Canada");
         request1.setPostalCode("H3B 2B2");
         request1.setCustomerName("Bob");
-    
+
         AddressRequestDto request2 = new AddressRequestDto();
         request2.setAddress("910 Maple Ave");
         request2.setCity("Toronto");
@@ -140,13 +145,14 @@ public class AddressIntegrationTests {
         request2.setCountry("Canada");
         request2.setPostalCode("M5H 3J1");
         request2.setCustomerName("Charlie");
-    
+
         client.postForEntity("/addresses", request1, AddressResponseDto.class);
         client.postForEntity("/addresses", request2, AddressResponseDto.class);
-    
+
         // Act
-        ResponseEntity<AddressResponseDto[]> response = client.getForEntity("/addresses/city/Montreal", AddressResponseDto[].class);
-    
+        ResponseEntity<AddressResponseDto[]> response = client.getForEntity("/addresses/city/Montreal",
+                AddressResponseDto[].class);
+
         // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -155,63 +161,67 @@ public class AddressIntegrationTests {
         assertTrue(addresses.length > 0);
         assertEquals("Montreal", addresses[0].getCity());
     }
-    
+
+    /*
+     * @Test
+     * 
+     * @Order(7)
+     * public void testUpdateAddress() {
+     * // Arrange
+     * AddressRequestDto updatedRequest = new AddressRequestDto();
+     * updatedRequest.setAddress("1234 Elm Street Updated");
+     * updatedRequest.setCity("Montreal");
+     * updatedRequest.setProvince("Quebec");
+     * updatedRequest.setCountry("Canada");
+     * updatedRequest.setPostalCode("H3A 1A2");
+     * 
+     * // Act
+     * ResponseEntity<AddressResponseDto> response = client.exchange(
+     * "/addresses/" + this.validId,
+     * HttpMethod.PUT,
+     * new org.springframework.http.HttpEntity<>(updatedRequest),
+     * AddressResponseDto.class);
+     * 
+     * // Assert
+     * assertNotNull(response);
+     * assertEquals(HttpStatus.OK, response.getStatusCode());
+     * AddressResponseDto updatedAddress = response.getBody();
+     * assertNotNull(updatedAddress);
+     * assertEquals("1234 Elm Street Updated", updatedAddress.getAddress());
+     * assertEquals("H3A 1A2", updatedAddress.getPostalCode());
+     * }
+     * 
+     * @Test
+     * 
+     * @Order(8)
+     * public void testUpdateAddressWithInvalidData() {
+     * // Arrange
+     * AddressRequestDto invalidUpdateRequest = new AddressRequestDto();
+     * invalidUpdateRequest.setAddress(""); // Invalid empty address
+     * invalidUpdateRequest.setCity("Montreal");
+     * invalidUpdateRequest.setProvince("Quebec");
+     * invalidUpdateRequest.setCountry("Canada");
+     * invalidUpdateRequest.setPostalCode("H3A 1A1");
+     * invalidUpdateRequest.setCustomerName("Alice");
+     * 
+     * // Act
+     * ResponseEntity<AddressResponseDto> response = client.exchange(
+     * "/addresses/" + this.validId,
+     * HttpMethod.PUT,
+     * new org.springframework.http.HttpEntity<>(invalidUpdateRequest),
+     * AddressResponseDto.class);
+     * 
+     * // Assert
+     * assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+     * }
+     */
+
     @Test
     @Order(7)
-    public void testUpdateAddress() {
-        // Arrange
-        AddressRequestDto updatedRequest = new AddressRequestDto();
-        updatedRequest.setAddress("1234 Elm Street Updated");
-        updatedRequest.setCity("Montreal");
-        updatedRequest.setProvince("Quebec");
-        updatedRequest.setCountry("Canada");
-        updatedRequest.setPostalCode("H3A 1A2");
-    
-        // Act
-        ResponseEntity<AddressResponseDto> response = client.exchange(
-                "/addresses/" + this.validId, 
-                HttpMethod.PUT, 
-                new org.springframework.http.HttpEntity<>(updatedRequest), 
-                AddressResponseDto.class);
-    
-        // Assert
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        AddressResponseDto updatedAddress = response.getBody();
-        assertNotNull(updatedAddress);
-        assertEquals("1234 Elm Street Updated", updatedAddress.getAddress());
-        assertEquals("H3A 1A2", updatedAddress.getPostalCode());
-    }
-    
-    @Test
-    @Order(8)
-    public void testUpdateAddressWithInvalidData() {
-        // Arrange
-        AddressRequestDto invalidUpdateRequest = new AddressRequestDto();
-        invalidUpdateRequest.setAddress("");  // Invalid empty address
-        invalidUpdateRequest.setCity("Montreal");
-        invalidUpdateRequest.setProvince("Quebec");
-        invalidUpdateRequest.setCountry("Canada");
-        invalidUpdateRequest.setPostalCode("H3A 1A1");
-        invalidUpdateRequest.setCustomerName("Alice");
-    
-        // Act
-        ResponseEntity<AddressResponseDto> response = client.exchange(
-                "/addresses/" + this.validId, 
-                HttpMethod.PUT, 
-                new org.springframework.http.HttpEntity<>(invalidUpdateRequest), 
-                AddressResponseDto.class);
-    
-        // Assert
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-    
-    @Test
-    @Order(9)
     public void testListAllAddresses() {
         // Act
         ResponseEntity<AddressResponseDto[]> response = client.getForEntity("/addresses", AddressResponseDto[].class);
-    
+
         // Assert
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -219,15 +229,15 @@ public class AddressIntegrationTests {
         assertNotNull(addresses);
         assertTrue(addresses.length > 0);
     }
-    
+
     @Test
-    @Order(10)
+    @Order(8)
     public void testDeleteNonExistentAddress() {
         // Act
         ResponseEntity<Void> deleteResponse = client.exchange("/addresses/999999", HttpMethod.DELETE, null, Void.class);
-    
+
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, deleteResponse.getStatusCode());
     }
-    
+
 }

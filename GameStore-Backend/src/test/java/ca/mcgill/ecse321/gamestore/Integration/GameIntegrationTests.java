@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import ca.mcgill.ecse321.gamestore.dao.GameRepository;
 import ca.mcgill.ecse321.gamestore.dto.GameRequestDto;
 import ca.mcgill.ecse321.gamestore.dto.GameResponseDto;
-import ca.mcgill.ecse321.gamestore.model.Game;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,8 +27,6 @@ public class GameIntegrationTests {
     private final String VALID_NAME = "The Legend of Zelda";
     private final int VALID_PRICE = 60;
     private final String VALID_DESCRIPTION = "An epic action-adventure game set in a fantasy world.";
-    private final Game.Category VALID_CATEGORY = Game.Category.ActionAdventure;
-    private final Game.GameConsole VALID_GAME_CONSOLE = Game.GameConsole.PC;
     private final boolean VALID_IN_CATALOG = true;
 
     private int validId;
@@ -40,21 +37,22 @@ public class GameIntegrationTests {
         assertEquals(0, gameRepository.count(), "Database should be empty after clearing");
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(1)
     public void testCreateValidGame() {
         // Arrange
         GameRequestDto request = new GameRequestDto(
-            VALID_NAME, 
-            VALID_PRICE, 
-            VALID_DESCRIPTION,
-            GameRequestDto.CategoryReqDto.ActionAdventure, 
-            GameRequestDto.GameConsoleReqDto.PC, 
-            VALID_IN_CATALOG
-        );
+                VALID_NAME,
+                VALID_PRICE,
+                VALID_DESCRIPTION,
+                GameRequestDto.CategoryReqDto.ActionAdventure,
+                GameRequestDto.GameConsoleReqDto.PC,
+                VALID_IN_CATALOG);
 
         // Act
-        ResponseEntity<GameResponseDto> response = game.postForEntity("/api/games/new-game", request, GameResponseDto.class);
+        ResponseEntity<GameResponseDto> response = game.postForEntity("/api/games/new-game", request,
+                GameResponseDto.class);
 
         // Assert
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -63,6 +61,7 @@ public class GameIntegrationTests {
         assertTrue(validId > 0, "Game ID should be greater than 0");
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(2)
     public void testReadGameByValidId() {
@@ -79,22 +78,23 @@ public class GameIntegrationTests {
         assertEquals(VALID_NAME, response.getBody().getName());
     }
 
+    @SuppressWarnings("null")
     @Test
     @Order(3)
     public void testUpdateGame() {
         // Arrange
         GameRequestDto updatedRequest = new GameRequestDto(
-            "Updated Name", 
-            VALID_PRICE, 
-            "Updated Description",
-            GameRequestDto.CategoryReqDto.ActionAdventure, 
-            GameRequestDto.GameConsoleReqDto.PC, 
-            false
-        );
+                "Updated Name",
+                VALID_PRICE,
+                "Updated Description",
+                GameRequestDto.CategoryReqDto.ActionAdventure,
+                GameRequestDto.GameConsoleReqDto.PC,
+                false);
 
         // Act
         game.put("/api/games/update/" + validId, updatedRequest);
-        ResponseEntity<GameResponseDto> response = game.getForEntity("/api/games/get/" + validId, GameResponseDto.class);
+        ResponseEntity<GameResponseDto> response = game.getForEntity("/api/games/get/" + validId,
+                GameResponseDto.class);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -109,7 +109,8 @@ public class GameIntegrationTests {
     public void testDeleteGame() {
         // Act
         game.delete("/api/games/delete/" + validId);
-        ResponseEntity<GameResponseDto> response = game.getForEntity("/api/games/get/" + validId, GameResponseDto.class);
+        ResponseEntity<GameResponseDto> response = game.getForEntity("/api/games/get/" + validId,
+                GameResponseDto.class);
 
         // Assert
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());

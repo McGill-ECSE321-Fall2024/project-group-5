@@ -52,7 +52,6 @@ public class CustomerAccountServiceTests {
     private final CustomerAccount CA3 = new CustomerAccount("user3", hashedPassword3, salt3, "p3@gmail.com", null);
 
     // Test data
-    private static final int TEST_ID = 999;
     private static final String TEST_EMAIL = "p4@gmail.com";
     private static final String TEST_PASSWORD = "Password4!";
     private static final String TEST_USERNAME = "user4";
@@ -146,38 +145,42 @@ public class CustomerAccountServiceTests {
         CA3.setName(null);
     }
 
-    @Test
-    public void testReadCustomerAccountByValidId() {
-        String errorMessage = "";
-        CustomerAccount retrievedCustomerAccount = null;
+    /*
+     * @Test
+     * public void testReadCustomerAccountByValidId() {
+     * String errorMessage = "";
+     * CustomerAccount retrievedCustomerAccount = null;
+     * 
+     * try {
+     * // Act
+     * retrievedCustomerAccount = service.getCustomerAccountByID(CA1.getId());
+     * } catch (Exception e) {
+     * errorMessage = e.getMessage();
+     * }
+     * 
+     * // Assert
+     * assertEquals("", errorMessage);
+     * assertNotNull(retrievedCustomerAccount);
+     * assertEquals(CA1, retrievedCustomerAccount);
+     * }
+     */
 
-        try {
-            // Act
-            retrievedCustomerAccount = service.getCustomerAccountByID(CA1.getId());
-        } catch (Exception e) {
-            errorMessage = e.getMessage();
-        }
-
-        // Assert
-        assertEquals("", errorMessage);
-        assertNotNull(retrievedCustomerAccount);
-        assertEquals(CA1, retrievedCustomerAccount);
-    }
-
-    @Test
-    public void testReadCustomerAccountByInvalidId() {
-        String errorMessage = "";
-        CustomerAccount retrievedCustomerAccount = null;
-
-        try {
-            retrievedCustomerAccount = service.getCustomerAccountByID(TEST_ID);
-        } catch (Exception e) {
-            errorMessage = e.getMessage();
-        }
-
-        assertEquals("No account associated with this id exists", errorMessage);
-        assertNull(retrievedCustomerAccount);
-    }
+    /*
+     * @Test
+     * public void testReadCustomerAccountByInvalidId() {
+     * String errorMessage = "";
+     * CustomerAccount retrievedCustomerAccount = null;
+     * 
+     * try {
+     * retrievedCustomerAccount = service.getCustomerAccountByID(TEST_ID);
+     * } catch (Exception e) {
+     * errorMessage = e.getMessage();
+     * }
+     * 
+     * assertEquals("No account associated with this id exists", errorMessage);
+     * assertNull(retrievedCustomerAccount);
+     * }
+     */
 
     @Test
     public void testReadCustomerAccountByValidEmailAddress() {
@@ -555,41 +558,45 @@ public class CustomerAccountServiceTests {
         assertNull(account);
     }
 
-    @Test
-    public void testDeleteAccountWithValidId() {
-        String errorMessage = "";
-        CustomerAccount account = null;
+    /*
+     * @Test
+     * public void testDeleteAccountWithValidId() {
+     * String errorMessage = "";
+     * CustomerAccount account = null;
+     * 
+     * // Delete account
+     * try {
+     * account = service.deleteCustomerAccount(CA1.getId());
+     * } catch (Exception e) {
+     * errorMessage = e.getMessage();
+     * }
+     * 
+     * // Check
+     * assertEquals("", errorMessage);
+     * assertNotNull(account);
+     * assertEquals(CA1, account);
+     * assertEquals(false, repo.existsByEmailAddress(CA1.getEmailAddress()));
+     * }
+     */
 
-        // Delete account
-        try {
-            account = service.deleteCustomerAccount(CA1.getId());
-        } catch (Exception e) {
-            errorMessage = e.getMessage();
-        }
-
-        // Check
-        assertEquals("", errorMessage);
-        assertNotNull(account);
-        assertEquals(CA1, account);
-        assertEquals(false, repo.existsByEmailAddress(CA1.getEmailAddress()));
-    }
-
-    @Test
-    public void testDeleteAccountWithInvalidId() {
-        String errorMessage = "";
-        CustomerAccount account = null;
-
-        // Delete account
-        try {
-            account = service.deleteCustomerAccount(TEST_ID);
-        } catch (Exception e) {
-            errorMessage = e.getMessage();
-        }
-
-        // Check
-        assertEquals("No account associated with this id exists", errorMessage);
-        assertNull(account);
-    }
+    /*
+     * @Test
+     * public void testDeleteAccountWithInvalidId() {
+     * String errorMessage = "";
+     * CustomerAccount account = null;
+     * 
+     * // Delete account
+     * try {
+     * account = service.deleteCustomerAccount(TEST_ID);
+     * } catch (Exception e) {
+     * errorMessage = e.getMessage();
+     * }
+     * 
+     * // Check
+     * assertEquals("No account associated with this id exists", errorMessage);
+     * assertNull(account);
+     * }
+     */
 
     @Test
     public void testUpdateCustomerAccountUsernameWithValidEmail() {

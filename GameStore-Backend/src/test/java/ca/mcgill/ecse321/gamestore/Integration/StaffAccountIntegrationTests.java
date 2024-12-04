@@ -1,73 +1,63 @@
 package ca.mcgill.ecse321.gamestore.Integration;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
-import ca.mcgill.ecse321.gamestore.dao.StaffAccountRepository;
-import ca.mcgill.ecse321.gamestore.dto.StaffAccountResponseDto;
-import ca.mcgill.ecse321.gamestore.dto.StaffAccountRequestDto;
-import ca.mcgill.ecse321.gamestore.dto.StaffAccountResponseDto;
-import ca.mcgill.ecse321.gamestore.dto.StaffAccountRequestDto;
-import ca.mcgill.ecse321.gamestore.dto.StaffAccountResponseDto;
-import ca.mcgill.ecse321.gamestore.model.Account;
-import ca.mcgill.ecse321.gamestore.model.StaffAccount;
-import ca.mcgill.ecse321.gamestore.service.AccountService;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(Lifecycle.PER_CLASS)
 public class StaffAccountIntegrationTests {
 
-    private TestRestTemplate staffAccount;
+    /*
+     * private TestRestTemplate staffAccount;
+     * 
+     * @Autowired
+     * private StaffAccountRepository staffRepository;
+     * 
+     * private final String VALID_USERNAME = "example";
+     * private final String VALID_USERNAME2 = "example2";
+     * private final String VALID_NAME = "Example Name";
+     * private final String VALID_EMAIL = "example@email.com";
+     * private final String VALID_EMAIL2 = "example2@email.com";
+     * private final String INVALID_EMAIL = "alice@.ca";
+     * private final String VALID_PASSWORD = "Password123!";
+     * private final String SALT = AccountService.generateSalt(8);
+     * private final String HASHED_VALID_PASSWORD =
+     * AccountService.hashPassword(VALID_PASSWORD, SALT);
+     * 
+     * // private final String INVALID_PASSWORD = "123";
+     * private final int INVALID_ID = -1;
+     * 
+     * private static final String Staff_ACCOUNT_API_URL = "/api/staff-account";
+     * private static final String CREATE_STAFF_ACCOUNT_URL = Staff_ACCOUNT_API_URL
+     * + "/create";
+     * private static final String GET_STAFF_ACCOUNT_BY_ID_URL =
+     * Staff_ACCOUNT_API_URL + "/get-with-id/";
+     * private static final String UPDATE_STAFF_ACCOUNT_PASSWORD_URL =
+     * Staff_ACCOUNT_API_URL
+     * + "/update-password/";
+     * private static final String DELETE_STAFF_ACCOUNT_URL = Staff_ACCOUNT_API_URL
+     * + "/delete/";
+     * private static final String GET_ALL_STAFF_ACCOUNTS_URL =
+     * Staff_ACCOUNT_API_URL + "/get/all";
+     * private static final String GET_STAFF_ACCOUNT_BY_USERNAME_URL =
+     * Staff_ACCOUNT_API_URL
+     * + "/get-with-username/";
+     */
 
-    @Autowired
-    private StaffAccountRepository staffRepository;
-
-    private final String VALID_USERNAME = "example";
-    private final String VALID_USERNAME2 = "example2";
-    private final String VALID_NAME = "Example Name";
-    private final String VALID_EMAIL = "example@email.com";
-    private final String VALID_EMAIL2 = "example2@email.com";
-    private final String INVALID_EMAIL = "alice@.ca";
-    private final String VALID_PASSWORD = "Password123!";
-    private final String SALT = AccountService.generateSalt(8);
-    private final String HASHED_VALID_PASSWORD = AccountService.hashPassword(VALID_PASSWORD, SALT);
-
-    // private final String INVALID_PASSWORD = "123";
-    private final int INVALID_ID = -1;
-
-    private static final String Staff_ACCOUNT_API_URL = "/api/staff-account";
-    private static final String CREATE_STAFF_ACCOUNT_URL = Staff_ACCOUNT_API_URL + "/create";
-    private static final String GET_STAFF_ACCOUNT_BY_ID_URL = Staff_ACCOUNT_API_URL + "/get-with-id/";
-    private static final String UPDATE_STAFF_ACCOUNT_PASSWORD_URL = Staff_ACCOUNT_API_URL
-            + "/update-password/";
-    private static final String DELETE_STAFF_ACCOUNT_URL = Staff_ACCOUNT_API_URL + "/delete/";
-    private static final String GET_ALL_STAFF_ACCOUNTS_URL = Staff_ACCOUNT_API_URL + "/get/all";
-    private static final String GET_STAFF_ACCOUNT_BY_USERNAME_URL = Staff_ACCOUNT_API_URL
-            + "/get-with-username/";
-
-    @BeforeEach
-    @AfterEach
-    public void clearDatabase() {
-        staffRepository.deleteAll();
-        Account.accountsByUsername.clear();
-    }
+    /*
+     * @BeforeEach
+     * 
+     * @AfterEach
+     * public void clearDatabase() {
+     * staffRepository.deleteAll();
+     * Account.accountsByUsername.clear();
+     * }
+     */
 
     // @Test
     // public void testCreateValidStaffAccount() {

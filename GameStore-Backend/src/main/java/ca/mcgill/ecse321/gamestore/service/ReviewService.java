@@ -2,8 +2,6 @@ package ca.mcgill.ecse321.gamestore.service;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.Optional;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,7 +54,8 @@ public class ReviewService {
 
         // Retrieve CustomerAccount and Game with proper checks
         CustomerAccount customerAccount = customerAccountRepository.findById(customerAccountId)
-                .orElseThrow(() -> new IllegalArgumentException("CustomerAccount not found with ID: " + customerAccountId));
+                .orElseThrow(
+                        () -> new IllegalArgumentException("CustomerAccount not found with ID: " + customerAccountId));
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new IllegalArgumentException("Game not found with ID: " + gameId));
 

@@ -29,12 +29,13 @@ public class GameService {
      * @param gameConsole - Game console
      * @param inCatalog   - Whether the game is in catalog
      * @return Saved Game
-          * @throws Exception 
-          * @throws IllegalArgumentException if any parameter is invalid
-          * @carolinethom
-          */
+     * @throws Exception
+     * @throws IllegalArgumentException if any parameter is invalid
+     * @carolinethom
+     */
     @Transactional
-    public Game addGame(String name, int price, String description, Category category, GameConsole gameConsole, boolean inCatalog) {
+    public Game addGame(String name, int price, String description, Category category, GameConsole gameConsole,
+            boolean inCatalog) {
         validateGameDetails(name, price, description, category, gameConsole);
         // Check if a game with the same name already exists
         Game existingGame = gameRepository.findByName(name);
@@ -44,7 +45,6 @@ public class GameService {
         if (!inCatalog) {
             throw new IllegalArgumentException("New games must be in the catalog");
         }
-
 
         Game game = new Game();
         game.setName(name);
@@ -71,10 +71,11 @@ public class GameService {
      * @carolinethom
      */
     @Transactional
-    public Game updateGame(int id, String name, int price, String description, Category category, GameConsole gameConsole, boolean inCatalog) {
+    public Game updateGame(int id, String name, int price, String description, Category category,
+            GameConsole gameConsole, boolean inCatalog) {
         validateGameDetails(name, price, description, category, gameConsole);
         Game game = gameRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Game not found with ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("Game not found with ID: " + id));
         game.setName(name);
         game.setPrice(price);
         game.setDescription(description);
@@ -97,10 +98,10 @@ public class GameService {
         if (id <= 0) {
             throw new IllegalArgumentException("Invalid ID.");
         }
-        return gameRepository.findById(id).orElse(null);
+        return gameRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("No game exists with this ID: " + id));
     }
 
-    
     /**
      * Find Game by name
      *
@@ -113,15 +114,14 @@ public class GameService {
         if (!StringUtils.hasText(name)) {
             throw new IllegalArgumentException("Game name cannot be null or empty");
         }
-    
+
         Game game = gameRepository.findByName(name);
         if (game == null) {
             throw new IllegalArgumentException("No game exists with this name: " + name);
         }
-    
+
         return game;
     }
-    
 
     /**
      * Find Games by partial name match
@@ -168,7 +168,6 @@ public class GameService {
         return gameRepository.findByGameConsole(gameConsole);
     }
 
-
     /**
      * List all Games
      *
@@ -196,7 +195,6 @@ public class GameService {
         gameRepository.deleteById(id);
     }
 
-
     /**
      * Helper method to validate game details
      *
@@ -207,7 +205,8 @@ public class GameService {
      * @param gameConsole - Game console
      * @throws IllegalArgumentException if any field is invalid
      */
-    private void validateGameDetails(String name, int price, String description, Category category, GameConsole gameConsole) {
+    private void validateGameDetails(String name, int price, String description, Category category,
+            GameConsole gameConsole) {
         if (!StringUtils.hasText(name)) {
             throw new IllegalArgumentException("Game name cannot be null or empty");
         }

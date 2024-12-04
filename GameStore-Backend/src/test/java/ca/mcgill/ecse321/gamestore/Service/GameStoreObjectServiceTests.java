@@ -26,7 +26,6 @@ public class GameStoreObjectServiceTests {
     @Test
     public void testCreateValidGameStoreObject() {
         // Arrange
-        GameStoreObject gameStoreObject = new GameStoreObject("Return Policy");
         when(repo.save(any(GameStoreObject.class))).thenAnswer(invocation -> {
             GameStoreObject obj = invocation.getArgument(0);
             obj.setPolicy("Return Policy");

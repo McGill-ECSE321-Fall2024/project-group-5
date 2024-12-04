@@ -451,6 +451,7 @@ public class CustomerAccountIntegrationTests {
                 assertEquals(1, count);
         }
 
+        @SuppressWarnings("null")
         @Test
         public void testDeleteCustomerAccount() {
                 // Create & save a new client
