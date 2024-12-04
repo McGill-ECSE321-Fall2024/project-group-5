@@ -26,8 +26,7 @@ public class StaffAccountController {
     public StaffAccountResponseDto createStaffAccount(@RequestBody StaffAccountRequestDto requestDto) {
         StaffAccount staffAccount = staffAccountService.createStaffAccount(
                 requestDto.getUsername(),
-                requestDto.getPassword(),
-                requestDto.getName());
+                requestDto.getPassword());
         return new StaffAccountResponseDto(staffAccount);
     }
 
@@ -41,10 +40,11 @@ public class StaffAccountController {
         return new StaffAccountResponseDto(staffAccountService.getStaffAccountByUsername(username));
     }
 
-    @PutMapping("/{id}/updatePassword")
-    public void updatePassword(@PathVariable int id, @RequestBody String newPassword) {
-        staffAccountService.updatePassword(id, newPassword);
-    }
+    // @PutMapping("/{id}/updatePassword")
+    // public void updatePassword(@PathVariable int id, @RequestBody String
+    // newPassword) {
+    // staffAccountService.updatePassword(id, newPassword);
+    // }
 
     @DeleteMapping("/{id}")
     public void deleteStaffAccount(@PathVariable int id) {
