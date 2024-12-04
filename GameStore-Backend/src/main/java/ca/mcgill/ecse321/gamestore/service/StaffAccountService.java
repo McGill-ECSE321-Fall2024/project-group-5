@@ -43,12 +43,13 @@ public class StaffAccountService {
     }
 
     @Transactional
-    public void deleteStaffAccount(int id) {
+    public StaffAccount deleteStaffAccount(int id) {
         StaffAccount staffAccount = staffAccountRepository.findStaffAccountById(id);
         if (staffAccount == null) {
-            throw new IllegalArgumentException("No account associted with this id exists");
+            throw new IllegalArgumentException("No account associated with this id exists");
         }
         staffAccountRepository.deleteById(id);
+        return staffAccount;
     }
 
     @Transactional
@@ -63,7 +64,7 @@ public class StaffAccountService {
         // || !(staffAccountRepository.findStaffAccountByUsername(username) == null)) {
         // throw new IllegalArgumentException("Username is already taken");
         // }
-        if ((staffAccountRepository.findStaffAccountByUsername(username) != null)) {
+        if (!accountService.checkUsernameAvailability(username)) {
             throw new IllegalArgumentException("Username is already taken");
         }
         if (AccountService.isValidPassword(password) == "") {
@@ -79,10 +80,10 @@ public class StaffAccountService {
     }
 
     @Transactional
-    public void updateStaffAccountPassword(int id, String newPassword) {
-        StaffAccount staffAccount = getStaffAccountById(id);
-        if (AccountService.isValidPassword(newPassword) == "") {
-            throw new IllegalArgumentException("Password does not meet security requirements");
+    public StaffAccount updateStaffAccountPassword(String username, String newPassword) {
+        StaffAccount staffAccount = getStaffAccountByUsername(username);
+        if (!AccountService.isValidPassword(newPassword).isEmpty()) {
+            throw new IllegalArgumentException(AccountService.isValidPassword(newPassword));
         }
 
         String newSalt = AccountService.generateSalt(8);
@@ -91,6 +92,7 @@ public class StaffAccountService {
         staffAccount.setPasswordHash(hashedPassword);
         staffAccount.setRandomPassword(newSalt);
         staffAccountRepository.save(staffAccount);
+        return staffAccount;
     }
 
     @Transactional
