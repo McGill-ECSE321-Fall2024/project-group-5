@@ -25,202 +25,229 @@ import ca.mcgill.ecse321.gamestore.dto.CustomerAccountResponseDto;
 import ca.mcgill.ecse321.gamestore.dto.TransactionRequestDto;
 import ca.mcgill.ecse321.gamestore.dto.TransactionResponseDto;
 import ca.mcgill.ecse321.gamestore.model.CustomerAccount;
-import ca.mcgill.ecse321.gamestore.service.CustomerAccountService;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(Lifecycle.PER_CLASS)
 public class TransactionIntegrationTests {
-    @Autowired
-    private TransactionRepository transactionRepository;
+        @Autowired
+        private TransactionRepository transactionRepository;
 
-    @Autowired
-    private CustomerAccountRepository customerAccountRepository;
+        @Autowired
+        private CustomerAccountRepository customerAccountRepository;
 
-    @Autowired
-    private CustomerAccountService customerAccountService;
+        @Autowired
+        private TestRestTemplate client;
 
-    @Autowired
-    private TestRestTemplate client;
+        @BeforeAll
+        @AfterAll
+        public void clearDatabase() {
+                transactionRepository.deleteAll();
+                customerAccountRepository.deleteAll();
+        }
 
-    private final String VALID_USERNAME = "Alice";
-    private final String VALID_NAME = "Alice";
-    private final String VALID_EMAIL = "alice@mail.mcgill.ca";
-    private final String VALID_PASSWORD = "Password123%";
+        @Test
+        @Order(1)
+        public void testCreateValidTransaction() throws Exception {
+                // Arrange
+                // create and persist necessary objects for creation of Transaction
+                CustomerAccount customerAccount = new CustomerAccount();
+                customerAccount.setEmail("bob@gmail.com");
+                customerAccount.setName("bob");
+                customerAccount.setUsername("bob123");
+                customerAccount.setRandomPassword("aRandomPassword");
+                customerAccount.setPasswordHash("thePasswordHash");
 
-    @BeforeAll
-    @AfterAll
-    public void clearDatabase() {
-        transactionRepository.deleteAll();
-        customerAccountRepository.deleteAll();
-    }
+                TransactionRequestDto request = new TransactionRequestDto(0, false, false, false, null, null, null);
+                CustomerAccountResponseDto account = new CustomerAccountResponseDto(customerAccount);
+                request.setCustomerAccount(account);
 
-    @Test
-    @Order(1)
-    public void testCreateValidTransaction() throws Exception {
-        // Arrange
-        // create and persist necessary objects for creation of Transaction
-        CustomerAccount accountModel = customerAccountService.createCustomerAccount(VALID_USERNAME, VALID_EMAIL,
-                VALID_PASSWORD, VALID_NAME);
-        TransactionRequestDto request = new TransactionRequestDto(0, false, false, false, null, null, null);
-        CustomerAccountResponseDto account = new CustomerAccountResponseDto(accountModel);
-        request.setCustomerAccount(account);
+                // Act
+                ResponseEntity<TransactionResponseDto> response = client.postForEntity("/api/transaction/create/",
+                                request,
+                                TransactionResponseDto.class);
 
-        // Act
-        ResponseEntity<TransactionResponseDto> response = client.postForEntity("api/transaction/create", request,
-                TransactionResponseDto.class);
+                // Assert
+                assertNotNull(response.getBody());
+                assertEquals(HttpStatus.CREATED, response.getStatusCode());
+                TransactionResponseDto createdTransaction = response.getBody();
+                assertNotNull(createdTransaction);
+                assertEquals(account.getId(),
+                                createdTransaction.getCustomerAccount().getId());
+                assertTrue(createdTransaction.getTransactionId() >= 0);
+        }
 
-        // Assert
-        assertNotNull(response);
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        TransactionResponseDto createdTransaction = response.getBody();
-        assertNotNull(createdTransaction);
-        assertEquals(account.getId(),
-                createdTransaction.getCustomerAccount().getId());
-        assertTrue(createdTransaction.getTransactionId() >= 0);
-    }
+        @SuppressWarnings("null")
+        @Test
+        @Order(2)
+        public void testReadTransactionByValidId() throws Exception {
+                // Arrange
+                CustomerAccount customerAccount = new CustomerAccount();
+                customerAccount.setEmail("bob@gmail.com");
+                customerAccount.setName("bob");
+                customerAccount.setUsername("bob123");
+                customerAccount.setRandomPassword("aRandomPassword");
+                customerAccount.setPasswordHash("thePasswordHash");
 
-    @SuppressWarnings("null")
-    @Test
-    @Order(2)
-    public void testReadTransactionByValidId() throws Exception {
-        // Arrange
-        CustomerAccount accountModel = customerAccountService.createCustomerAccount(VALID_USERNAME, VALID_EMAIL,
-                VALID_PASSWORD, VALID_NAME);
-        TransactionRequestDto request = new TransactionRequestDto(0, false, false, false, null, null, null);
-        request.setCustomerAccount(new CustomerAccountResponseDto(accountModel));
+                TransactionRequestDto request = new TransactionRequestDto(0, false, false, false, null, null, null);
+                request.setCustomerAccount(new CustomerAccountResponseDto(customerAccount));
 
-        ResponseEntity<TransactionResponseDto> createResponse = client.postForEntity("api/transaction/create", request,
-                TransactionResponseDto.class);
-        TransactionResponseDto createdTransaction = createResponse.getBody();
-        assertNotNull(createdTransaction);
+                ResponseEntity<TransactionResponseDto> createResponse = client.postForEntity("/api/transaction/create/",
+                                request,
+                                TransactionResponseDto.class);
+                TransactionResponseDto createdTransaction = createResponse.getBody();
+                assertNotNull(createdTransaction);
 
-        // Act
-        ResponseEntity<TransactionResponseDto> response = client.getForEntity(
-                "api/transaction/get/" + createdTransaction.getTransactionId(), TransactionResponseDto.class);
+                // Act
+                ResponseEntity<TransactionResponseDto> response = client.getForEntity(
+                                "/api/transaction/get/" + createdTransaction.getTransactionId(),
+                                TransactionResponseDto.class);
 
-        // Assert
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(createdTransaction.getTransactionId(), response.getBody().getTransactionId());
-        assertEquals(createdTransaction.getCustomerAccount().getId(), response.getBody().getCustomerAccount().getId());
-    }
+                // Assert
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK, response.getStatusCode());
+                assertEquals(createdTransaction.getTransactionId(), response.getBody().getTransactionId());
+                assertEquals(createdTransaction.getCustomerAccount().getId(),
+                                response.getBody().getCustomerAccount().getId());
+        }
 
-    // Tests creating a transaciton with invalid customer account
-    @Test
-    @Order(3)
-    public void testCreateTransactionWithInvalidAccount() {
-        // Arrange
-        TransactionRequestDto request = new TransactionRequestDto(0, false, false, false, null, null, null);
+        // Tests creating a transaciton with invalid customer account
+        @Test
+        @Order(3)
+        public void testCreateTransactionWithInvalidAccount() {
+                // Arrange
+                TransactionRequestDto request = new TransactionRequestDto(0, false, false, false, null, null, null);
 
-        // Act
-        ResponseEntity<TransactionResponseDto> response = client.postForEntity("api/transaction/create", request,
-                TransactionResponseDto.class);
+                // Act
+                ResponseEntity<TransactionResponseDto> response = client.postForEntity("/api/transaction/create/",
+                                request,
+                                TransactionResponseDto.class);
 
-        // Assert
-        assertNotNull(response);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
+                // Assert
+                assertNotNull(response);
+                assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        }
 
-    @SuppressWarnings("null")
-    @Test
-    @Order(4)
-    public void testFindTransactionsByCustomer() throws Exception {
-        // Arrange
-        CustomerAccount accountModel = customerAccountService.createCustomerAccount(VALID_USERNAME, VALID_EMAIL,
-                VALID_PASSWORD, VALID_NAME);
-        TransactionRequestDto request = new TransactionRequestDto(0, false, false, false, null, null, null);
-        request.setCustomerAccount(new CustomerAccountResponseDto(accountModel));
+        @SuppressWarnings("null")
+        @Test
+        @Order(4)
+        public void testFindTransactionsByCustomer() throws Exception {
+                // Arrange
+                CustomerAccount customerAccount = new CustomerAccount();
+                customerAccount.setEmail("bob@gmail.com");
+                customerAccount.setName("bob");
+                customerAccount.setUsername("bob123");
+                customerAccount.setRandomPassword("aRandomPassword");
+                customerAccount.setPasswordHash("thePasswordHash");
 
-        client.postForEntity("api/transaction/create", request, TransactionResponseDto.class);
+                TransactionRequestDto request = new TransactionRequestDto(0, false, false, false, null, null, null);
+                request.setCustomerAccount(new CustomerAccountResponseDto(customerAccount));
 
-        // Act
-        ResponseEntity<TransactionResponseDto[]> response = client
-                .getForEntity("api/transaction/find-by-customer/" + accountModel.getId(),
-                        TransactionResponseDto[].class);
+                client.postForEntity("/api/transaction/create/", request, TransactionResponseDto.class);
 
-        // Assert
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody().length > 0);
-        assertEquals(accountModel.getId(), response.getBody()[0].getCustomerAccount().getId());
-    }
+                // Act
+                ResponseEntity<TransactionResponseDto[]> response = client
+                                .getForEntity("/api/transaction/find-by-customer/" + customerAccount.getId(),
+                                                TransactionResponseDto[].class);
 
-    @SuppressWarnings("null")
-    @Test
-    @Order(5)
-    public void testFindTransactionsByIsPaid() {
-        // Act
-        ResponseEntity<TransactionResponseDto[]> response = client.getForEntity("api/transaction/find-by-is-paid/false",
-                TransactionResponseDto[].class);
+                // Assert
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK, response.getStatusCode());
+                assertTrue(response.getBody().length > 0);
+                assertEquals(customerAccount.getId(), response.getBody()[0].getCustomerAccount().getId());
+        }
 
-        // Assert
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody().length >= 0);
-    }
+        @SuppressWarnings("null")
+        @Test
+        @Order(5)
+        public void testFindTransactionsByIsPaid() {
+                // Act
+                ResponseEntity<TransactionResponseDto[]> response = client.getForEntity(
+                                "/api/transaction/find-by-is-paid/false/",
+                                TransactionResponseDto[].class);
 
-    @SuppressWarnings("null")
-    @Test
-    @Order(6)
-    public void testFindTransactionsByDeliveryStatus() {
-        // Act
-        ResponseEntity<TransactionResponseDto[]> response = client
-                .getForEntity("api/transaction/find-by-delivery-status/false", TransactionResponseDto[].class);
+                // Assert
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK, response.getStatusCode());
+                assertTrue(response.getBody().length >= 0);
+        }
 
-        // Assert
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody().length >= 0);
-    }
+        @SuppressWarnings("null")
+        @Test
+        @Order(6)
+        public void testFindTransactionsByDeliveryStatus() {
+                // Act
+                ResponseEntity<TransactionResponseDto[]> response = client
+                                .getForEntity("/api/transaction/find-by-delivery-status/false/",
+                                                TransactionResponseDto[].class);
 
-    @Test
-    @Order(7)
-    public void testDeleteTransaction() throws Exception {
-        // Arrange
-        CustomerAccount accountModel = customerAccountService.createCustomerAccount(VALID_USERNAME, VALID_EMAIL,
-                VALID_PASSWORD, VALID_NAME);
-        TransactionRequestDto request = new TransactionRequestDto(0, false, false, false, null, null, null);
-        request.setCustomerAccount(new CustomerAccountResponseDto(accountModel));
+                // Assert
+                assertNotNull(response);
+                assertEquals(HttpStatus.OK, response.getStatusCode());
+                assertTrue(response.getBody().length >= 0);
+        }
 
-        ResponseEntity<TransactionResponseDto> createResponse = client.postForEntity("api/transaction/create", request,
-                TransactionResponseDto.class);
-        TransactionResponseDto createdTransaction = createResponse.getBody();
-        assertNotNull(createdTransaction);
+        @Test
+        @Order(7)
+        public void testDeleteTransaction() throws Exception {
+                // Arrange
+                CustomerAccount customerAccount = new CustomerAccount();
+                customerAccount.setEmail("bob@gmail.com");
+                customerAccount.setName("bob");
+                customerAccount.setUsername("bob123");
+                customerAccount.setRandomPassword("aRandomPassword");
+                customerAccount.setPasswordHash("thePasswordHash");
 
-        // Act
-        client.delete("api/transaction/delete/" + createdTransaction.getTransactionId());
+                TransactionRequestDto request = new TransactionRequestDto(0, false, false, false, null, null, null);
+                request.setCustomerAccount(new CustomerAccountResponseDto(customerAccount));
 
-        // Assert
-        ResponseEntity<TransactionResponseDto> response = client.getForEntity(
-                "api/transaction/get/" + createdTransaction.getTransactionId(), TransactionResponseDto.class);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    }
+                ResponseEntity<TransactionResponseDto> createResponse = client.postForEntity("/api/transaction/create/",
+                                request,
+                                TransactionResponseDto.class);
+                TransactionResponseDto createdTransaction = createResponse.getBody();
+                assertNotNull(createdTransaction);
 
-    @SuppressWarnings("null")
-    @Test
-    @Order(8)
-    public void testUpdateTransaction() throws Exception {
-        // Arrange
-        CustomerAccount accountModel = customerAccountService.createCustomerAccount(VALID_USERNAME, VALID_EMAIL,
-                VALID_PASSWORD, VALID_NAME);
-        TransactionRequestDto request = new TransactionRequestDto(0, false, false, false, null, null, null);
-        request.setCustomerAccount(new CustomerAccountResponseDto(accountModel));
+                // Act
+                client.delete("/api/transaction/delete/" + createdTransaction.getTransactionId());
 
-        ResponseEntity<TransactionResponseDto> createResponse = client.postForEntity("api/transaction/create", request,
-                TransactionResponseDto.class);
-        TransactionResponseDto createdTransaction = createResponse.getBody();
-        assertNotNull(createdTransaction);
+                // Assert
+                ResponseEntity<TransactionResponseDto> response = client.getForEntity(
+                                "/api/transaction/get/" + createdTransaction.getTransactionId(),
+                                TransactionResponseDto.class);
+                assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        }
 
-        createdTransaction.setIsPaid(true);
+        @SuppressWarnings("null")
+        @Test
+        @Order(8)
+        public void testUpdateTransaction() throws Exception {
+                // Arrange
+                CustomerAccount customerAccount = new CustomerAccount();
+                customerAccount.setEmail("bob@gmail.com");
+                customerAccount.setName("bob");
+                customerAccount.setUsername("bob123");
+                customerAccount.setRandomPassword("aRandomPassword");
+                customerAccount.setPasswordHash("thePasswordHash");
 
-        // Act
-        client.put("api/transaction/update", createdTransaction);
+                TransactionRequestDto request = new TransactionRequestDto(0, false, false, false, null, null, null);
+                request.setCustomerAccount(new CustomerAccountResponseDto(customerAccount));
 
-        // Assert
-        ResponseEntity<TransactionResponseDto> updatedResponse = client.getForEntity(
-                "api/transaction/get/" + createdTransaction.getTransactionId(), TransactionResponseDto.class);
-        assertEquals(HttpStatus.OK, updatedResponse.getStatusCode());
-        assertTrue(updatedResponse.getBody().getIsPaid());
-    }
+                ResponseEntity<TransactionResponseDto> createResponse = client.postForEntity("/api/transaction/create/",
+                                request,
+                                TransactionResponseDto.class);
+                TransactionResponseDto createdTransaction = createResponse.getBody();
+                assertNotNull(createdTransaction);
+
+                createdTransaction.setIsPaid(true);
+
+                // Act
+                client.put("/api/transaction/update/", createdTransaction);
+
+                // Assert
+                ResponseEntity<TransactionResponseDto> updatedResponse = client.getForEntity(
+                                "/api/transaction/get/" + createdTransaction.getTransactionId(),
+                                TransactionResponseDto.class);
+                assertEquals(HttpStatus.OK, updatedResponse.getStatusCode());
+                assertTrue(updatedResponse.getBody().getIsPaid());
+        }
 }
