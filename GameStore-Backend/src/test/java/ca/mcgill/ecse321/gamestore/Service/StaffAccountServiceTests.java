@@ -291,7 +291,8 @@ public class StaffAccountServiceTests {
         StaffAccount updatedAccount = null;
 
         try {
-            updatedAccount = staffAccountService.updateStaffAccountPassword(SA1.getUsername(), TEST_PASSWORD);
+            updatedAccount = staffAccountService.updateStaffAccountPassword(SA1.getUsername(), password1,
+                    TEST_PASSWORD);
         } catch (Exception e) {
             errorMessage = e.getMessage();
         }

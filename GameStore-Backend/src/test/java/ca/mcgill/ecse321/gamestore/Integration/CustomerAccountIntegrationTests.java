@@ -2,17 +2,13 @@ package ca.mcgill.ecse321.gamestore.Integration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.stream.StreamSupport;
 
-import org.aspectj.lang.annotation.After;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,7 +46,6 @@ public class CustomerAccountIntegrationTests {
 
         // private final String INVALID_PASSWORD = "123";
         private final int INVALID_ID = -1;
-        private int validId;
 
         private static final String CUSTOMER_ACCOUNT_API_URL = "/api/customer-account";
         private static final String CREATE_CUSTOMER_ACCOUNT_URL = CUSTOMER_ACCOUNT_API_URL + "/create";
@@ -336,7 +331,6 @@ public class CustomerAccountIntegrationTests {
                 CustomerAccountResponseDto createdClient = response.getBody();
                 assertNotNull(createdClient);
                 assertTrue(createdClient.getId() > 0, "Response should have a positive ID.");
-                validId = createdClient.getId();
 
                 // Creata new Name
                 String newUsername = "newUsername";
@@ -382,7 +376,6 @@ public class CustomerAccountIntegrationTests {
                 CustomerAccountResponseDto createdClient = response.getBody();
                 assertNotNull(createdClient);
                 assertTrue(createdClient.getId() > 0, "Response should have a positive ID.");
-                validId = createdClient.getId();
 
                 // Creata new Name
                 String newName = "New Name";
@@ -428,7 +421,6 @@ public class CustomerAccountIntegrationTests {
                 CustomerAccountResponseDto createdClient = response.getBody();
                 assertNotNull(createdClient);
                 assertTrue(createdClient.getId() > 0, "Response should have a positive ID.");
-                validId = createdClient.getId();
 
                 // Creata new Name
                 String newPassword = "NewPassword1!";

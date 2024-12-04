@@ -80,19 +80,32 @@ public class StaffAccountService {
     }
 
     @Transactional
-    public StaffAccount updateStaffAccountPassword(String username, String newPassword) {
-        StaffAccount staffAccount = getStaffAccountByUsername(username);
-        if (!AccountService.isValidPassword(newPassword).isEmpty()) {
-            throw new IllegalArgumentException(AccountService.isValidPassword(newPassword));
+    public StaffAccount updateStaffAccountPassword(String aUsername, String oldPassword, String newPassword) {
+        // Attempt to update account
+        StaffAccount StaffAccount = staffAccountRepository.findStaffAccountByUsername(aUsername);
+        if (StaffAccount == null) {
+            throw new IllegalArgumentException("No account associated with this username exists");
+        }
+        // Check that they have the right old password
+        String salt = StaffAccount.getRandomPassword();
+        String hashedOldPassword = StaffAccount.getPasswordHash();
+
+        if (!hashedOldPassword.equals(AccountService.hashPassword(oldPassword,
+                salt))) {
+            throw new IllegalArgumentException("Wrong old password!");
         }
 
+        // Check that new password is valid
+        String passwordValidation = AccountService.isValidPassword(newPassword);
+        if (!passwordValidation.isEmpty()) {
+            throw new IllegalArgumentException(passwordValidation);
+        }
         String newSalt = AccountService.generateSalt(8);
-        String hashedPassword = AccountService.hashPassword(newPassword, newSalt);
-
-        staffAccount.setPasswordHash(hashedPassword);
-        staffAccount.setRandomPassword(newSalt);
-        staffAccountRepository.save(staffAccount);
-        return staffAccount;
+        String hashedNewPassword = AccountService.hashPassword(newPassword, newSalt);
+        StaffAccount.setPasswordHash(hashedNewPassword);
+        StaffAccount.setRandomPassword(newSalt);
+        staffAccountRepository.save(StaffAccount);
+        return StaffAccount;
     }
 
     @Transactional
@@ -100,7 +113,7 @@ public class StaffAccountService {
         // check input
         if (username == null || username.trim().length() == 0 || password == null || password.trim().length() == 0
                 || !AccountService.isValidPassword(password).isEmpty()) {
-            throw new IllegalArgumentException("Please enter a valid email and password");
+            throw new IllegalArgumentException("Please enter a valid username and password");
         }
         StaffAccount staffAccount = staffAccountRepository.findStaffAccountByUsername(username);
         if (staffAccount == null) {
@@ -111,7 +124,7 @@ public class StaffAccountService {
         if (hashedPassword.equals(staffAccount.getPasswordHash())) {
             return staffAccount;
         } else {
-            throw new IllegalArgumentException("Password and email do not match");
+            throw new IllegalArgumentException("Password and username do not match");
         }
     }
 
