@@ -175,12 +175,12 @@ export default {
 </script>
 <style scoped>
 .edit-container {
-  padding: 2rem;
+  padding: 7rem 8rem;
   text-align: center;
   background: white;
-  max-width: 400px;
+  max-width: 10000px;
   margin: auto;
-  border-radius: 12px;
+  border-radius: 30px;
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -210,7 +210,9 @@ p {
 
 .form-control input {
   width: 100%;
-  padding: 0.75rem;
+  padding: 1rem 8rem;
+  align-items: center;
+  text-align: center;
   border: 1px solid #ccc;
   border-radius: 6px;
   color: black; /* Set input text color to black */
@@ -226,7 +228,7 @@ p {
   width: 100%;
   padding: 0.75rem;
   background-color: #3498db;
-  color: black; /* Set button text color to black */
+  color: white; /* Set button text color to black */
   border: none;
   border-radius: 6px;
   cursor: pointer;

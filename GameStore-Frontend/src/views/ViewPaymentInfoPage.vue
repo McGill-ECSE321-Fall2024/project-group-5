@@ -81,7 +81,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 50vh ;
   background-color: #f4f4f9;
   margin: 0;
   font-family: Arial, sans-serif;
@@ -90,7 +90,7 @@ export default {
 .payment-container {
   text-align: center;
   background: white;
-  padding: 2rem;
+  padding: 5rem;
   border-radius: 12px;
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
   max-width: 800px;

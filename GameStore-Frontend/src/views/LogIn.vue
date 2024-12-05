@@ -48,7 +48,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 50vh;
   background-color: #f4f4f9;
   margin: 0;
   font-family: Arial, sans-serif;
@@ -57,10 +57,10 @@ export default {
 /* Styling the login container */
 .login-container {
   background: white;
-  padding: 2.5rem;
+  padding: 10rem;
   border-radius: 12px;
   text-align: center;
-  max-width: 420px;
+  max-width: 15000px;
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
 }
 

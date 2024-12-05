@@ -78,7 +78,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 0vh;
   background-color: #f4f4f9;
   margin: 0;
   font-family: Arial, sans-serif;

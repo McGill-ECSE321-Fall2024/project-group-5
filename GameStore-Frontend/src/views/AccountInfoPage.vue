@@ -50,7 +50,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 0vh;
   background-color: #f4f4f9;
   margin: 0;
   font-family: Arial, sans-serif;
@@ -58,7 +58,7 @@ export default {
 
 .account-container {
   text-align: center;
-  max-width: 800px;
+  max-width: 1000px;
 }
 
 h1 {

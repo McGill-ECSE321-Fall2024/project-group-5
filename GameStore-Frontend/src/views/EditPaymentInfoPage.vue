@@ -141,10 +141,10 @@ export default {
 </script>
 <style scoped>
 .edit-container {
-  padding: 2rem;
+  padding: 7rem 8rem;
   text-align: center;
   background: white;
-  max-width: 400px;
+  max-width: 7000px;
   margin: auto;
   border-radius: 12px;
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
@@ -158,13 +158,15 @@ h1 {
 
 p {
   font-size: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 5rem;
   color: black; /* Set paragraph text color to black */
 }
 
 .form-control {
   margin-bottom: 1.5rem;
   text-align: left;
+  display:flex;
+  flex-direction:column;
 }
 
 .form-control label {
@@ -176,7 +178,9 @@ p {
 
 .form-control input {
   width: 100%;
-  padding: 0.75rem;
+  align-items:center;
+  text-align:center;
+  padding: 1rem 8rem;
   border: 1px solid #ccc;
   border-radius: 6px;
   color: black; /* Set input text color to black */
@@ -186,7 +190,7 @@ p {
   width: 100%;
   padding: 0.75rem;
   background-color: #3498db;
-  color: black; /* Set button text color to black */
+  color: white; /* Set button text color to black */
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -200,6 +204,6 @@ p {
   color: red;
   font-size: 0.85rem;
   margin-bottom: 1rem;
-  color: black; /* Set error message text color to black */
+  color: red; /* Set error message text color to black */
 }
 </style>

@@ -186,10 +186,10 @@ export default {
 /* Styling the register container */
 .register-container {
   background: white;
-  padding: 2.5rem;
+  padding: 5rem 10rem;
   border-radius: 12px;
   text-align: center;
-  max-width: 420px;
+  max-width: 10000px;
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -222,8 +222,10 @@ h1 {
 
 .form-control input {
   width: 100%;
-  padding: 0.75rem;
+  padding: 1rem 7rem;
   border: 1px solid #ccc;
+  align-items: center;
+  text-align: center;
   border-radius: 6px;
   font-size: 1rem;
   color: #000; /* Change input text color to black */

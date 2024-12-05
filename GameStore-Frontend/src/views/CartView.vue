@@ -115,7 +115,7 @@
         <div class="form-group half-width">
           <label>CVV</label>
           <input
-            type="text"
+            type="password"
             placeholder="CVV"
             v-model="cvv"
             maxlength="3"
@@ -227,7 +227,7 @@ export default {
   display: flex;
   justify-content: center; /* Center horizontally */
   gap: 2rem;
-  padding: 2rem;
+  padding: 5rem;
   min-height: 100vh; /* Make the container take full height of the viewport */
   background-color: #f4f8fc;
   font-family: Arial, sans-serif;
@@ -235,7 +235,7 @@ export default {
 
 .form-container,
 .order-summary {
-  width: 45%; /* Adjust to fit both sections */
+  width: 120%; /* Adjust to fit both sections */
   background: #ffffff;
   padding: 2rem;
   border-radius: 12px;

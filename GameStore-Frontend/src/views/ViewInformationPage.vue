@@ -23,12 +23,13 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .page-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 0vh;
   background-color: #f4f4f9;
   margin: 0;
   font-family: Arial, sans-serif;
@@ -37,29 +38,30 @@ export default {
 .info-container {
   text-align: center;
   background: white;
-  padding: 2rem;
+  padding: 7rem 8rem; /* Increased padding for a wider look */
   border-radius: 12px;
-  max-width: 500px;
+  max-width: 7000px; /* Increased the max-width to take more space */
   box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
+  width: 100%; /* Ensures responsiveness on smaller screens */
 }
 
 h1 {
-  font-size: 1.8rem;
-  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  margin-bottom: 2rem;
   color: black; /* Set heading text color to black */
 }
 
 .info-box {
   background: #f9f9f9;
-  padding: 1.5rem;
+  padding: 2rem;
   border-radius: 8px;
   border: 1px solid #ddd;
   text-align: left;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .info-box h2 {
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   margin-bottom: 1rem;
   color: black; /* Set subheading text color to black */
 }
@@ -72,10 +74,10 @@ h1 {
 
 .edit-btn {
   width: 100%;
-  padding: 0.75rem;
+  padding: 1rem;
   background-color: #3498db;
   color: white;
-  font-size: 1rem;
+  font-size: 1.2rem; /* Slightly larger font size for better readability */
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -85,4 +87,3 @@ h1 {
   background-color: #217dbb;
 }
 </style>
-
