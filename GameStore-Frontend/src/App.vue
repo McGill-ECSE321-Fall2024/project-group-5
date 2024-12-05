@@ -47,18 +47,20 @@ const toggleProfileDropdown = () => {
       <!-- Sidebar -->
       <aside :class="['sidebar', { open: isSidebarOpen }]">
         <nav>
+          <RouterLink to="/login">Log In</RouterLink>
+          <RouterLink to="/create-account">Create Account</RouterLink>
           <RouterLink to="/">Home</RouterLink>
           <RouterLink to="/shop">Shop</RouterLink>
-          <RouterLink to="/login">Log In</RouterLink>
           <RouterLink to="/cart">Cart</RouterLink>
-          <RouterLink to="/profile">Account Info</RouterLink>
-          <RouterLink to="/create-account">Create Account</RouterLink>
-          <RouterLink to="/edit-address">Edit Address</RouterLink>
-          <RouterLink to="/edit-info">Edit Info</RouterLink>
-          <RouterLink to="/edit-payment">Edit Payment Info</RouterLink>
-          <RouterLink to="/view-address">View Address</RouterLink>
-          <RouterLink to="/view-info">View Info</RouterLink>
-          <RouterLink to="/view-payment">View Payment Info</RouterLink>
+          <RouterLink to="/profile" class="account-header">Account Info</RouterLink>
+          <div class="account-sub-links">
+            <RouterLink to="/view-info">View Info</RouterLink>
+            <RouterLink to="/view-address">View Address</RouterLink>
+            <RouterLink to="/view-payment">View Payment Info</RouterLink>
+            <RouterLink to="/edit-info">Manage Info</RouterLink>
+            <RouterLink to="/edit-address">Manage Address</RouterLink>
+            <RouterLink to="/edit-payment">Manage Payment Info</RouterLink>
+          </div>
           <RouterLink to="/about">About</RouterLink>
         </nav>
       </aside>
@@ -189,6 +191,13 @@ const toggleProfileDropdown = () => {
 .sidebar.open {
   transform: translateX(0);
 }
+
+/* Indent for sub-links under Account Info */
+.account-sub-links {
+  margin-left: 1rem; /* Indent the sub-links to the right */
+}
+
+
 
 /* Hamburger Menu */
 .toggle-button {

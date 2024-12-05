@@ -28,6 +28,7 @@
       </table>
 
       <button class="add-btn" @click="addNewPayment">Add New Payment Method</button>
+      
     </div>
   </div>
 </template>
@@ -70,7 +71,7 @@ export default {
       }
     },
     addNewPayment() {
-      this.$router.push({ name: "EditPaymentInfo" });
+      this.$router.push({ name: "EditPayment" });
     },
   },
 };

@@ -18,7 +18,7 @@ export default {
   name: "ViewInformationPage",
   methods: {
     navigateToEditInformation() {
-      this.$router.push("/edit-information");
+      this.$router.push("/edit-info");
     },
   },
 };

@@ -4,7 +4,7 @@
       <h1>Edit Your Account Details</h1>
       <div class="account-boxes">
 
-        <div class="account-box" @click="navigateTo('view-information')">
+        <div class="account-box" @click="navigateTo('view-info')">
 
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#3498db" width="48px" height="48px">
     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 17.93c-4.95 0-8.93-4.02-8.93-8.93S7.05 4.07 12 4.07s8.93 4.02 8.93 8.93-4.02 8.93-8.93 8.93zM11 6h2v6h-2zm0 8h2v2h-2z"/>
@@ -21,7 +21,7 @@
           <p>Change or add your shipping and billing addresses.</p>
         </div>
 
-        <div class="account-box" @click="navigateTo('view-payment-info')">
+        <div class="account-box" @click="navigateTo('view-payment')">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#3498db" width="48px" height="48px">
     <path d="M21 4H3C1.9 4 1 4.9 1 6v12c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-1 4H4v2h16V8zm0 8H4v-4h16v4z"/>
   </svg>
