@@ -18,7 +18,7 @@
             <td>{{ payment.cardHolder }}</td>
             <td>{{ maskCardNumber(payment.cardNumber) }}</td>
             <td>{{ payment.expiryDate }}</td>
-            <td>{{ payment.cvv }}</td>
+            <td>{{ maskCVV(payment.cvv) }}</td>
             <td>
               <button class="edit-btn" @click="editPayment(index)">Edit</button>
               <button class="delete-btn" @click="deletePayment(index)">Delete</button>
@@ -58,6 +58,9 @@ export default {
     maskCardNumber(cardNumber) {
       return `**** **** **** ${cardNumber.slice(-4)}`;
     },
+    maskCVV(cvv) {
+      return '***'; // Always return masked CVV
+    },
     editPayment(index) {
       const selectedPayment = this.paymentMethods[index];
       this.$router.push({
@@ -76,12 +79,13 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .page-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 50vh ;
+  min-height: 50vh;
   background-color: #f4f4f9;
   margin: 0;
   font-family: Arial, sans-serif;

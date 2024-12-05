@@ -20,28 +20,28 @@
       <div class="console-icons">
         <button
           @click="setConsoleFilter('PC')"
-          :class="{'active': selectedConsole === 'PC'}"
+          :class="{'active': selectedConsole === 'PC', PC: true}"
           class="console-icon"
         >
           <i class="fas fa-desktop"></i> PC
         </button>
         <button
           @click="setConsoleFilter('PlayStation')"
-          :class="{'active': selectedConsole === 'PlayStation'}"
+          :class="{'active': selectedConsole === 'PlayStation', PlayStation: true}"
           class="console-icon"
         >
           <i class="fab fa-playstation"></i> PlayStation
         </button>
         <button
           @click="setConsoleFilter('Xbox')"
-          :class="{'active': selectedConsole === 'Xbox'}"
+          :class="{'active': selectedConsole === 'Xbox', Xbox: true}"
           class="console-icon"
         >
           <i class="fab fa-xbox"></i> Xbox
         </button>
         <button
           @click="setConsoleFilter('Nintendo')"
-          :class="{'active': selectedConsole === 'Nintendo'}"
+          :class="{'active': selectedConsole === 'Nintendo', Nintendo: true}"
           class="console-icon"
         >
           <i class="fab fa-nintendo-switch"></i> Nintendo
@@ -204,9 +204,9 @@ body, html {
 }
 
 .search-input {
-  padding: 0.75rem;
-  font-size: 1rem;
-  width: 350px;
+  padding: 1rem;
+  font-size: 1.2rem;
+  width: 400px;
   border-radius: 6px;
   border: 1px solid #ddd;
 }
@@ -228,29 +228,49 @@ body, html {
 }
 
 .console-icon {
-  padding: 0.75rem;
+  padding: 1rem;
   font-size: 1.5rem;
   border: 2px solid transparent;
   border-radius: 8px;
   cursor: pointer;
+  transition: transform 0.2s, background-color 0.3s;
 }
 
-.console-icon:hover,
-.console-icon.active {
+/* Colors for each console */
+.console-icon.PC {
   background-color: #3498db;
   color: white;
 }
 
-.filter-category {
-  margin-bottom: 1.5rem;
+.console-icon.PC:hover {
+  background-color: #217dbb;
 }
 
-.filter-select {
-  padding: 0.75rem;
-  font-size: 1rem;
-  width: 80%;
-  border-radius: 6px;
-  border: 1px solid #ddd;
+.console-icon.PlayStation {
+  background-color: #6366f1;
+  color: white;
+}
+
+.console-icon.PlayStation:hover {
+  background-color: #4f46e5;
+}
+
+.console-icon.Xbox {
+  background-color: #4caf50;
+  color: white;
+}
+
+.console-icon.Xbox:hover {
+  background-color: #388e3c;
+}
+
+.console-icon.Nintendo {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.console-icon.Nintendo:hover {
+  background-color: #c0392b;
 }
 
 /* Games Grid */
@@ -258,6 +278,7 @@ body, html {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 2rem;
+  align-items: start;
 }
 
 .game-card {
@@ -266,18 +287,10 @@ body, html {
   border-radius: 8px;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
   text-align: center;
-  height: 100%;
-}
-
-.game-title {
-  font-size: 1.5rem;
-  color: #333;
-}
-
-.game-description {
-  font-size: 1rem;
-  color: #777;
-  margin-bottom: 1rem;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .toggle-reviews-btn {
@@ -288,94 +301,5 @@ body, html {
   border: none;
   border-radius: 6px;
   cursor: pointer;
-}
-
-.reviews {
-  margin-top: 1rem;
-  text-align: left;
-}
-
-.reviews-header {
-  color: #333;
-}
-
-.review-text {
-  color: #333;
-}
-
-.review-rating {
-  color: #333;
-}
-
-.like-dislike-buttons {
-  display: flex;
-  justify-content: flex-start;
-  gap: 1rem;
-  margin-top: 0.5rem;
-}
-
-.like-btn, .dislike-btn, .write-review-btn, .add-to-cart-btn {
-  padding: 10px 20px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  transition: transform 0.2s, background-color 0.3s;
-}
-
-.like-btn {
-  background-color: #4caf50;
-  color: white;
-}
-
-.like-btn:hover {
-  background-color: #66bb6a;
-  transform: scale(1.05);
-}
-
-.like-btn:active {
-  transform: scale(0.95);
-}
-
-.dislike-btn {
-  background-color: #f44336;
-  color: white;
-}
-
-.dislike-btn:hover {
-  background-color: #ef5350;
-  transform: scale(1.05);
-}
-
-.dislike-btn:active {
-  transform: scale(0.95);
-}
-
-.write-review-btn {
-  background-color: #9b59b6;
-  color: white;
-}
-
-.write-review-btn:hover {
-  background-color: #8e44ad;
-  transform: scale(1.05);
-}
-
-.write-review-btn:active {
-  transform: scale(0.95);
-}
-
-.add-to-cart-btn {
-  background-color: #3498db;
-  color: white;
-}
-
-.add-to-cart-btn:hover {
-  background-color: #2980b9;
-  transform: scale(1.05);
-}
-
-.add-to-cart-btn:active {
-  transform: scale(0.95);
 }
 </style>
