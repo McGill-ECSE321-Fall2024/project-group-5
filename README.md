@@ -58,10 +58,10 @@ The main features of the web application are listed as follows:
 | Team Member | Deliverable 1 | Deliverable 2 |  Deliverable 3 |
 |-------------|---------------|---------------| ---------------|
 | Ana-Maria Floarea | 18   | 35 | 25 |
-| Alisha Malik | 13   | 30 | 0 |
-| Viviane-Laura Tain   | 19   | 38 | 0 |
+| Alisha Malik | 13   | 30 | 22 |
+| Viviane-Laura Tain   | 19   | 38 | 23 |
 | Romain Teyssier| 20   | 45 | 10 |
-| Caroline Thom | 19   | 32 | 0 |
+| Caroline Thom | 19   | 32 | 22 |
 | Reswanth Reji Pillai | 18   | 30 | 0 |
 
 ### Sprint 1
