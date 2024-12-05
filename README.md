@@ -62,9 +62,9 @@ The main features of the web application are listed as follows:
 | Viviane-Laura Tain   | 19   | 38 | 23 |
 | Romain Teyssier| 20   | 45 | 10 |
 | Caroline Thom | 19   | 32 | 22 |
-| Reswanth Reji Pillai | 18   | 30 | 0 |
+| Reswanth Reji Pillai | 18   | 30 | 30 |
 
-### Sprint 1
+### Sprint
 [Sprint 1: Overview](https://github.com/McGill-ECSE321-Fall2024/project-group-5/wiki/Deliverable-1)
 
 ### Sprint 2
