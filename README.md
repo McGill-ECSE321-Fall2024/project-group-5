@@ -57,7 +57,7 @@ The main features of the web application are listed as follows:
 ### Deliverable Contributions 
 | Team Member | Deliverable 1 | Deliverable 2 |  Deliverable 3 |
 |-------------|---------------|---------------| ---------------|
-| Ana-Maria Floarea | 18   | 35 | 0 |
+| Ana-Maria Floarea | 18   | 35 | 25 |
 | Alisha Malik | 13   | 30 | 0 |
 | Viviane-Laura Tain   | 19   | 38 | 0 |
 | Romain Teyssier| 20   | 45 | 10 |
