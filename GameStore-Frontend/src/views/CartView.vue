@@ -235,11 +235,12 @@ export default {
 
 .form-container,
 .order-summary {
-  width: 120%; /* Adjust to fit both sections */
+  flex: 1 1 45%; /* Adjust to fit both sections */
   background: #ffffff;
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
 }
 
 h1 {
